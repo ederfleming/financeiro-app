@@ -4,7 +4,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Menu: undefined;
   Cadastro: {
-    data?: string; // YYYY-MM-DD
+    data?: string; 
     categoria?: Categoria;
   };
 };
@@ -16,3 +16,10 @@ export type TabParamList = {
   Projeção: undefined;
   Tags: undefined;
 };
+
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}

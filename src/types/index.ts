@@ -6,15 +6,33 @@ export type Categoria =
   | "economia"
   | "todas";
 
+export type Recorrencia =
+  | "unica"
+  | "semanal"
+  | "quinzenal"
+  | "cada21dias"
+  | "cada28dias"
+  | "mensal";
+
 export interface Transacao {
   id: string;
   valor: number;
-  data: string; // YYYY-MM-DD
+  data: string; // YYYY-MM-DD - Data inicial da recorrência
   categoria: Categoria;
-  tag: string;
+  tag?: string;
   descricao: string;
+  recorrencia: Recorrencia;
+  datasExcluidas?: string[]; // Datas específicas onde a recorrência foi excluída
+  edicoesEspecificas?: {
+    // Edições em datas específicas
+    [data: string]: Partial<
+      Omit<
+        Transacao,
+        "id" | "recorrencia" | "datasExcluidas" | "edicoesEspecificas"
+      >
+    >;
+  };
 }
-
 export interface Config {
   saldoInicial: number;
   gastoDiarioPadrao: number;

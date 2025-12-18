@@ -2,41 +2,51 @@ import { colors } from "@/theme/colors";
 import { Categoria } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 
-export const categorias: Array<{
+export const categorias = [
+  {
+    key: "entradas" as const,
+    label: "Entradas",
+    icon: "arrow-down-circle" as keyof typeof Ionicons.glyphMap,
+    color: colors.entradas,
+  },
+  {
+    key: "saidas" as const,
+    label: "Saídas",
+    icon: "arrow-up-circle" as keyof typeof Ionicons.glyphMap,
+    color: colors.saidas,
+  },
+  {
+    key: "diarios" as const,
+    label: "Diários",
+    icon: "calendar" as keyof typeof Ionicons.glyphMap,
+    color: colors.diarios,
+  },
+  {
+    key: "cartao" as const,
+    label: "Cartão",
+    icon: "card" as keyof typeof Ionicons.glyphMap,
+    color: colors.cartao,
+  },
+  {
+    key: "economia" as const,
+    label: "Economia",
+    icon: "wallet" as keyof typeof Ionicons.glyphMap,
+    color: colors.economia,
+  },
+  {
+    key: "todas" as const,
+    label: "Todas",
+    icon: "apps" as keyof typeof Ionicons.glyphMap,
+    color: colors.todas,
+  },
+];
+
+// Exportar categorias sem "todas" para uso no cadastro
+export const categoriasParaCadastro = categorias.filter(
+  (item) => item.key !== "todas"
+) as Array<{
   key: Categoria;
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
-}> = [
-  {
-    key: "entradas",
-    label: "Entradas",
-    icon: "arrow-down-circle",
-    color: colors.entradas,
-  },
-  {
-    key: "saidas",
-    label: "Saídas",
-    icon: "arrow-up-circle",
-    color: colors.saidas,
-  },
-  {
-    key: "diarios",
-    label: "Gastos Diários",
-    icon: "calendar",
-    color: colors.diarios,
-  },
-  {
-    key: "cartao",
-    label: "Cartão de crédito",
-    icon: "card",
-    color: colors.cartao,
-  },
-  {
-    key: "economia",
-    label: "Economia",
-    icon: "wallet",
-    color: colors.economia,
-  },
-  { key: "todas", label: "Todas", icon: "apps", color: colors.todas },
-];
+}>;

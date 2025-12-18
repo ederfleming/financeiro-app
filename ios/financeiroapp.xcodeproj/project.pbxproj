@@ -21,7 +21,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = financeiroapp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = financeiroapp/Info.plist; sourceTree = "<group>"; };
 		28591D6CA9C07C15951040C3 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-financeiroapp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		3F7A9E51C80ABA7A4CD10224 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = financeiroapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		3F7A9E51C80ABA7A4CD10224 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = financeiroapp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		51F136F33ED0400BF95DF920 /* Pods-financeiroapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-financeiroapp.release.xcconfig"; path = "Target Support Files/Pods-financeiroapp/Pods-financeiroapp.release.xcconfig"; sourceTree = "<group>"; };
 		5FEA1970CA82085530A61B51 /* libPods-financeiroapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-financeiroapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C77763E7591E0FED6810140 /* Pods-financeiroapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-financeiroapp.debug.xcconfig"; path = "Target Support Files/Pods-financeiroapp/Pods-financeiroapp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -89,7 +89,6 @@
 				6C77763E7591E0FED6810140 /* Pods-financeiroapp.debug.xcconfig */,
 				51F136F33ED0400BF95DF920 /* Pods-financeiroapp.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -339,6 +338,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = financeiroapp/financeiroapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P726G9492T;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -375,6 +375,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = financeiroapp/financeiroapp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P726G9492T;
 				INFOPLIST_FILE = financeiroapp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (

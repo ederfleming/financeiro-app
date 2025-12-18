@@ -1,8 +1,8 @@
 import { RootStackParamList } from "@/types/navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -67,35 +67,13 @@ export default function SaldosScreen() {
         datas,
         transacoes,
         diasConciliados,
-        config
+        config,
+        year, // ✅ Adicionar
+        month // ✅ Adicionar
       );
       setSaldos(saldosCalculados);
 
-      setTimeout(() => {
-        const hoje = new Date();
-
-        const isMesAtual =
-          hoje.getMonth() === mesAtual.getMonth() &&
-          hoje.getFullYear() === mesAtual.getFullYear();
-
-        const index = isMesAtual
-          ? saldosCalculados.findIndex((item) => item.dia === hoje.getDate())
-          : 0;
-
-        if (index >= 0) {
-          listRef.current?.scrollToIndex({
-            index,
-            animated: true,
-          });
-
-          requestAnimationFrame(() => {
-            listRef.current?.scrollToOffset({
-              offset: ROW_HEIGHT * index,
-              animated: false,
-            });
-          });
-        }
-      }, 0);
+      // ... resto do código
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     } finally {
@@ -107,10 +85,11 @@ export default function SaldosScreen() {
   };
 
   // Recarrega quando a tela recebe foco
-  useEffect(() => {
-    carregarDados();
-  }, [mesAtual]);
-
+  useFocusEffect(
+    useCallback(() => {
+      carregarDados();
+    }, [mesAtual])
+  );
   const mudarMes = (direcao: "anterior" | "proximo") => {
     const novoMes = new Date(mesAtual);
     if (direcao === "anterior") {
@@ -264,9 +243,7 @@ export default function SaldosScreen() {
                     <Ionicons
                       name={cat.icon as keyof typeof Ionicons.glyphMap}
                       size={20}
-                      color={
-                        filtroCategoria === cat.key ? colors.white : cat.color
-                      }
+                      color={cat.color}
                     />
                     <Text
                       style={[styles.valorTexto, { paddingRight: spacing.md }]}
@@ -380,7 +357,12 @@ export default function SaldosScreen() {
           <Text style={styles.headerTexto}>Dia</Text>
         </View>
         <View style={styles.valoresColuna}>
-          <Text style={styles.headerTexto}>{categorias.filter(item => item.key === filtroCategoria)[0]?.label}</Text>
+          <Text style={styles.headerTexto}>
+            {
+              categorias.filter((item) => item.key === filtroCategoria)[0]
+                ?.label
+            }
+          </Text>
         </View>
         <View style={styles.headerSaldoColuna}>
           <Ionicons name="trending-up" size={16} color={colors.textSecondary} />

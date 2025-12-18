@@ -1,4 +1,5 @@
 import { Config, Transacao } from "@/types";
+import { getTransacoesAplicaveisNaData } from "@/utils/recorrencia";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Keys para o AsyncStorage
@@ -100,6 +101,87 @@ export const getTransacoesPorData = async (
   }
 };
 
+/**
+ * Busca transações de uma data específica, incluindo recorrentes
+ */
+export const getTransacoesPorDataComRecorrencia = async (
+  data: string
+): Promise<Transacao[]> => {
+  try {
+    const todasTransacoes = await getTransacoes();
+    return getTransacoesAplicaveisNaData(todasTransacoes, data);
+  } catch (error) {
+    console.error("Erro ao buscar transações por data com recorrência:", error);
+    return [];
+  }
+};
+
+/**
+ * Exclui uma ocorrência específica de uma transação recorrente
+ */
+export const excluirOcorrenciaRecorrente = async (
+  id: string,
+  dataExclusao: string
+): Promise<void> => {
+  try {
+    const transacoes = await getTransacoes();
+    const index = transacoes.findIndex((t) => t.id === id);
+
+    if (index !== -1) {
+      const transacao = transacoes[index];
+      const datasExcluidas = transacao.datasExcluidas || [];
+
+      if (!datasExcluidas.includes(dataExclusao)) {
+        datasExcluidas.push(dataExclusao);
+      }
+
+      transacoes[index] = {
+        ...transacao,
+        datasExcluidas,
+      };
+
+      await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+    }
+  } catch (error) {
+    console.error("Erro ao excluir ocorrência recorrente:", error);
+  }
+};
+
+/**
+ * Edita uma ocorrência específica de uma transação recorrente
+ */
+export const editarOcorrenciaRecorrente = async (
+  id: string,
+  dataEdicao: string,
+  dados: Partial<
+    Omit<
+      Transacao,
+      "id" | "recorrencia" | "datasExcluidas" | "edicoesEspecificas"
+    >
+  >
+): Promise<void> => {
+  try {
+    const transacoes = await getTransacoes();
+    const index = transacoes.findIndex((t) => t.id === id);
+
+    if (index !== -1) {
+      const transacao = transacoes[index];
+      const edicoesEspecificas = transacao.edicoesEspecificas || {};
+
+      edicoesEspecificas[dataEdicao] = dados;
+
+      transacoes[index] = {
+        ...transacao,
+        edicoesEspecificas,
+      };
+
+      await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+    }
+  } catch (error) {
+    console.error("Erro ao editar ocorrência recorrente:", error);
+  }
+};
+
 // ==================== DIAS CONCILIADOS ====================
 export const getDiasConciliados = async (): Promise<string[]> => {
   try {
@@ -137,6 +219,8 @@ export const isDiaConciliado = async (data: string): Promise<boolean> => {
     return false;
   }
 };
+
+
 
 // ==================== TAGS ====================
 export const getTags = async (): Promise<string[]> => {
