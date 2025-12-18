@@ -10,23 +10,14 @@ import CadastroScreen from "@/screens/CadastroScreen";
 import MenuScreen from "@/screens/MenuScreen";
 import ProjecaoScreen from "@/screens/ProjecaoScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
+import TagsScreen from "@/screens/TagsScreen";
 import TotaisScreen from "@/screens/TotaisScreen";
 import { colors } from "@/theme/colors";
+import { RootStackParamList, TabParamList } from "@/types/navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-// Componente customizado para o botão "+"
-const AddButton = ({ onPress }: { onPress: () => void }) => (
-  <TouchableOpacity
-    style={styles.addButton}
-    onPress={onPress}
-    activeOpacity={0.8}
-  >
-    <Ionicons name="add" size={32} color={colors.white} />
-  </TouchableOpacity>
-);
+const Tab = createBottomTabNavigator<TabParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function TabNavigator() {
   const insets = useSafeAreaInsets();
@@ -97,11 +88,11 @@ function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Menu"
-        component={MenuScreen}
+        name="Tags"
+        component={TagsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="menu-outline" size={size} color={color} />
+            <Ionicons name="pricetag-outline" size={size} color={color} />
           ),
         }}
       />
@@ -112,12 +103,8 @@ function TabNavigator() {
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator id="RootStack">
-        <Stack.Screen
-          name="MainTabs"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
+      <Stack.Navigator id="RootStack" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen
           name="Cadastro"
           component={CadastroScreen}
@@ -130,6 +117,8 @@ export default function AppNavigator() {
             headerTintColor: colors.white,
           }}
         />
+
+        <Stack.Screen name="Menu" component={MenuScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

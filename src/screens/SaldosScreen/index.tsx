@@ -1,29 +1,36 @@
+import { RootStackParamList } from "@/types/navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ColorValue,
   FlatList,
+  Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import Divider from "@/components/Divider";
 import {
   getConfig,
   getDiasConciliados,
   getTransacoes,
   toggleDiaConciliado,
 } from "@/services/storage";
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import { colors, spacing } from "@/theme/colors";
 import { Categoria, SaldoDia } from "@/types";
 import { calcularSaldosMes, formatarMoeda } from "@/utils/calculoSaldo";
+import { categorias } from "@/utils/categorias";
 import { formatDate, getDatesInMonth, getMonthName } from "@/utils/dateUtils";
+import { styles } from "./styles";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SaldosScreen() {
+  const navigation = useNavigation<NavigationProp>();
   const [saldos, setSaldos] = useState<SaldoDia[]>([]);
   const [mesAtual, setMesAtual] = useState(new Date());
   const [filtroCategoria, setFiltroCategoria] = useState<Categoria | "todas">(
@@ -31,45 +38,12 @@ export default function SaldosScreen() {
   );
   const [loading, setLoading] = useState(true);
   const listRef = useRef<FlatList<SaldoDia>>(null);
+  const isFirstLoad = useRef(true);
   const ROW_HEIGHT = 50;
 
   const totalEntradasMes = useMemo(() => {
     return saldos.reduce((acc, item) => acc + item.entradas, 0);
   }, [saldos]);
-
-  const categorias: Array<{
-    key: Categoria | "todas";
-    label: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    color: ColorValue;
-  }> = [
-    {
-      key: "entradas",
-      label: "Entradas",
-      icon: "arrow-down-circle",
-      color: colors.entradas,
-    },
-    {
-      key: "saidas",
-      label: "Saídas",
-      icon: "arrow-up-circle",
-      color: colors.saidas,
-    },
-    {
-      key: "diarios",
-      label: "Diários",
-      icon: "calendar",
-      color: colors.diarios,
-    },
-    { key: "cartao", label: "Cartão", icon: "card", color: colors.cartao },
-    {
-      key: "economia",
-      label: "Economia",
-      icon: "wallet",
-      color: colors.economia,
-    },
-    { key: "todas", label: "Todas", icon: "apps", color: colors.todas },
-  ];
 
   const categoriasMap = useMemo(() => {
     return Object.fromEntries(categorias.map((cat) => [cat.key, cat]));
@@ -77,7 +51,10 @@ export default function SaldosScreen() {
 
   const carregarDados = async () => {
     try {
-      setLoading(true);
+      if (isFirstLoad.current) {
+        setLoading(true);
+      }
+
       const year = mesAtual.getFullYear();
       const month = mesAtual.getMonth();
 
@@ -97,42 +74,42 @@ export default function SaldosScreen() {
       setTimeout(() => {
         const hoje = new Date();
 
-        if (
+        const isMesAtual =
           hoje.getMonth() === mesAtual.getMonth() &&
-          hoje.getFullYear() === mesAtual.getFullYear()
-        ) {
-          const indexHoje = saldosCalculados.findIndex(
-            (item) => item.dia === hoje.getDate()
-          );
+          hoje.getFullYear() === mesAtual.getFullYear();
 
-          if (indexHoje >= 0) {
-            listRef.current?.scrollToIndex({
-              index: indexHoje,
-              animated: true,
-            });
+        const index = isMesAtual
+          ? saldosCalculados.findIndex((item) => item.dia === hoje.getDate())
+          : 0;
 
-            requestAnimationFrame(() => {
-              listRef.current?.scrollToOffset({
-                offset: ROW_HEIGHT * indexHoje,
-                animated: false,
-              });
+        if (index >= 0) {
+          listRef.current?.scrollToIndex({
+            index,
+            animated: true,
+          });
+
+          requestAnimationFrame(() => {
+            listRef.current?.scrollToOffset({
+              offset: ROW_HEIGHT * index,
+              animated: false,
             });
-          }
+          });
         }
       }, 0);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
     } finally {
-      setLoading(false);
+      if (isFirstLoad.current) {
+        setLoading(false);
+        isFirstLoad.current = false;
+      }
     }
   };
 
   // Recarrega quando a tela recebe foco
-  useFocusEffect(
-    useCallback(() => {
-      carregarDados();
-    }, [mesAtual])
-  );
+  useEffect(() => {
+    carregarDados();
+  }, [mesAtual]);
 
   const mudarMes = (direcao: "anterior" | "proximo") => {
     const novoMes = new Date(mesAtual);
@@ -225,6 +202,25 @@ export default function SaldosScreen() {
     return dataDia < hoje;
   }
 
+  const irParaHoje = () => {
+    setMesAtual(new Date());
+  };
+
+  const abrirMenu = () => {
+    navigation.navigate("Menu");
+  };
+
+  const handleDiaPress = (dia: number) => {
+    const year = mesAtual.getFullYear();
+    const month = mesAtual.getMonth();
+    const data = formatDate(new Date(year, month, dia));
+
+    navigation.navigate("Cadastro", {
+      data,
+      categoria: filtroCategoria === "todas" ? "entradas" : filtroCategoria,
+    });
+  };
+
   const renderDia = ({ item }: { item: SaldoDia }) => {
     const categoryItem = categoriasMap[filtroCategoria];
     const valorCategoria = getValorPorCategoria(item);
@@ -232,12 +228,19 @@ export default function SaldosScreen() {
     const saldoStyle = getSaldoStyle(item.saldoAcumulado, totalEntradasMes);
 
     return (
-      <View style={[styles.diaRow, diaDesabilitado && styles.diaRowDisabled]}>
+      <Pressable
+        style={[styles.diaRow, diaDesabilitado && styles.diaRowDisabled]}
+        onLongPress={() => handleDiaPress(item.dia)}
+      >
         {/* Coluna do Dia */}
         <View style={styles.diaColuna}>
           <TouchableOpacity
-            style={[styles.diaNumero, item.conciliado && styles.diaConciliado]}
-            onPress={() => handleToggleConciliado(item.dia)}
+            style={[
+              styles.diaNumero,
+              item.conciliado && styles.diaConciliado,
+              { height: filtroCategoria === "todas" ? 120 : 45 },
+            ]}
+            onPress={() => handleToggleConciliado(item.dia)} // Long press para conciliar
           >
             <Text style={styles.diaTexto}>{item.dia}</Text>
             {item.conciliado && (
@@ -298,7 +301,7 @@ export default function SaldosScreen() {
             {formatarMoeda(item.saldoAcumulado)}
           </Text>
         </View>
-      </View>
+      </Pressable>
     );
   };
 
@@ -306,6 +309,13 @@ export default function SaldosScreen() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header com navegação de mês */}
       <View style={styles.header}>
+        <TouchableOpacity
+          onPress={irParaHoje}
+          style={{ marginRight: spacing.sm }}
+        >
+          <Ionicons name="today-outline" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => mudarMes("anterior")}>
           <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
@@ -321,6 +331,13 @@ export default function SaldosScreen() {
             size={24}
             color={colors.textPrimary}
           />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={abrirMenu}
+          style={{ marginLeft: spacing.sm }}
+        >
+          <Ionicons name="menu" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -363,7 +380,7 @@ export default function SaldosScreen() {
           <Text style={styles.headerTexto}>Dia</Text>
         </View>
         <View style={styles.valoresColuna}>
-          <Text style={styles.headerTexto}>{filtroCategoria}</Text>
+          <Text style={styles.headerTexto}>{categorias.filter(item => item.key === filtroCategoria)[0]?.label}</Text>
         </View>
         <View style={styles.headerSaldoColuna}>
           <Ionicons name="trending-up" size={16} color={colors.textSecondary} />
@@ -383,6 +400,9 @@ export default function SaldosScreen() {
           renderItem={renderDia}
           keyExtractor={(item) => item.dia.toString()}
           showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => (
+            <Divider color={colors.backgroundSecondary} />
+          )}
           getItemLayout={(_, index) => ({
             length: ROW_HEIGHT,
             offset: ROW_HEIGHT * index,
@@ -399,162 +419,3 @@ export default function SaldosScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  mesAno: {
-    fontSize: fontSize.xxl,
-    fontWeight: "bold",
-    color: colors.textPrimary,
-  },
-  filtrosContainer: {
-    height: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  filtrosContent: {
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    gap: spacing.sm,
-  },
-  filtroButton: {
-    height: 35,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.round,
-    backgroundColor: colors.backgroundTertiary,
-    marginRight: spacing.sm,
-    gap: spacing.sm,
-  },
-  filtroTexto: {
-    fontSize: fontSize.md,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  filtroTextoActive: {
-    color: colors.textLight,
-  },
-  tabelaHeader: {
-    flexDirection: "row",
-
-    paddingVertical: spacing.md,
-    backgroundColor: colors.backgroundSecondary,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderDark,
-  },
-  headerTexto: {
-    fontSize: fontSize.sm,
-    fontWeight: "600",
-    color: colors.textSecondary,
-    textTransform: "uppercase",
-  },
-  diaRow: {
-    minHeight: 50,
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderDark,
-    alignItems: "stretch",
-  },
-  diaRowDisabled: {
-    opacity: 0.4,
-  },
-  diaColuna: {
-    width: 60,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  diaNumero: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.round,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.backgroundTertiary,
-    position: "relative",
-  },
-  diaConciliado: {
-    backgroundColor: colors.successLight,
-  },
-  diaTexto: {
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-    color: colors.textPrimary,
-  },
-  checkMark: {
-    position: "absolute",
-    top: -2,
-    right: -2,
-    width: 16,
-    height: 16,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.success,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  valoresColuna: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingLeft: spacing.lg,
-  },
-  valorLinha: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 2,
-  },
-  valorLabel: {
-    fontSize: fontSize.sm,
-    color: colors.textSecondary,
-  },
-  valorTexto: {
-    fontSize: fontSize.lg,
-    color: colors.textPrimary,
-  },
-  headerSaldoColuna: {
-    width: 120,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: spacing.md,
-  },
-  rowSaldoColuna: {
-    width: 120,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "stretch",
-  },
-  saldoPositivo: {
-    backgroundColor: colors.saldoPositivo,
-  },
-  saldoNegativo: {
-    backgroundColor: colors.saldoNegativo,
-  },
-  saldoTexto: {
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-    color: colors.textPrimary,
-  },
-  saldoTextoNegativo: {
-    color: colors.errorDark,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

@@ -5,8 +5,8 @@ export const colors = {
 
   // Cores de fundo
   background: "#F9F9F9",
-  backgroundSecondary: "#F5F5F5",
-  backgroundTertiary: "#F2F2F2",
+  backgroundSecondary: "#ECECEC",
+  backgroundTertiary: "#E3E3E3",
 
   // Cores de texto
   textPrimary: "#333333",
@@ -37,11 +37,11 @@ export const colors = {
   saldoNegativo: "#FFCDD2",
 
   // Cores de categoria
-  entradas: "#2b672dff",
+  entradas: "#2b672d",
   saidas: "#F44336",
   diarios: "#9C27B0",
   cartao: "#FF9800",
-  economia: "#78da7cff",
+  economia: "#78da7c",
   todas: "#5cabec",
 
   // Sombras

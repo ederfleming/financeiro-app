@@ -3,7 +3,8 @@ export type Categoria =
   | "saidas"
   | "diarios"
   | "cartao"
-  | "economia";
+  | "economia"
+  | "todas";
 
 export interface Transacao {
   id: string;
