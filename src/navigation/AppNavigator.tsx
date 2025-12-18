@@ -1,0 +1,161 @@
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+
+// Imports das telas (vamos criar em seguida)
+import CadastroScreen from "@/screens/CadastroScreen";
+import MenuScreen from "@/screens/MenuScreen";
+import ProjecaoScreen from "@/screens/ProjecaoScreen";
+import SaldosScreen from "@/screens/SaldosScreen";
+import TotaisScreen from "@/screens/TotaisScreen";
+import { colors } from "@/theme/colors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+// Componente customizado para o botão "+"
+const AddButton = ({ onPress }: { onPress: () => void }) => (
+  <TouchableOpacity
+    style={styles.addButton}
+    onPress={onPress}
+    activeOpacity={0.8}
+  >
+    <Ionicons name="add" size={32} color={colors.white} />
+  </TouchableOpacity>
+);
+
+function TabNavigator() {
+  const insets = useSafeAreaInsets();
+  return (
+    <Tab.Navigator
+      id="MainTabs"
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
+        tabBarStyle: {
+          height: 50 + insets.bottom,
+          paddingBottom: insets.bottom,
+          paddingTop: 8,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+        },
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen
+        name="Saldos"
+        component={SaldosScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="wallet-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Totais"
+        component={TotaisScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calculator-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* Botão central "+" */}
+      <Tab.Screen
+        name="AddPlaceholder"
+        component={View}
+        options={({ navigation }) => ({
+          tabBarLabel: "",
+          tabBarButton: () => (
+            <TouchableOpacity
+              style={styles.addButtonContainer}
+              onPress={() => navigation.navigate("Cadastro" as never)}
+              activeOpacity={0.8}
+            >
+              <View style={styles.addButton}>
+                <Ionicons name="add" size={32} color={colors.white} />
+              </View>
+            </TouchableOpacity>
+          ),
+        })}
+      />
+
+      <Tab.Screen
+        name="Projeção"
+        component={ProjecaoScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bar-chart" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Menu"
+        component={MenuScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="menu-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+export default function AppNavigator() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator id="RootStack">
+        <Stack.Screen
+          name="MainTabs"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Cadastro"
+          component={CadastroScreen}
+          options={{
+            presentation: "modal",
+            title: "Nova Transação",
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.white,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  addButtonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: -20,
+    shadowColor: colors.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+});

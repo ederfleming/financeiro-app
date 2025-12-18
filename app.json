@@ -2,6 +2,13 @@
   "expo": {
     "name": "financeiro-app",
     "slug": "financeiro-app",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "android": {
+      "package": "com.eder.fleming.financeiroapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.eder.fleming.financeiroapp",
+      "icon": "./assets/ios-icon.png"
+    }
   }
 }

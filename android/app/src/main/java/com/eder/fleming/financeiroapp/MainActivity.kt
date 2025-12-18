@@ -1,4 +1,4 @@
-package com.financeiroapp
+package com.eder.fleming.financeiroapp
 
 import android.os.Build
 import android.os.Bundle
