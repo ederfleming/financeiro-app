@@ -87,14 +87,19 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.successLight,
   },
   diaRowWeekend: {
-    backgroundColor: colors.warningLight,
+    backgroundColor: colors.primaryLight,
     borderLeftWidth: 4,
-    borderLeftColor: colors.warning,
+    borderLeftColor: colors.primaryDark,
   },
   diaTexto: {
     fontSize: fontSize.lg,
     fontWeight: "600",
     color: colors.textPrimary,
+  },
+  diaTextoWeekend: {
+    fontSize: fontSize.lg,
+    fontWeight: "600",
+    color: colors.white,
   },
   checkMark: {
     position: "absolute",

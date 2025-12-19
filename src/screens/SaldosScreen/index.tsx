@@ -229,7 +229,11 @@ export default function SaldosScreen() {
             ]}
             onPress={() => handleToggleConciliado(item.dia)} // Long press para conciliar
           >
-            <Text style={styles.diaTexto}>{item.dia}</Text>
+            <Text
+              style={[styles.diaTexto, fimDeSemana && styles.diaTextoWeekend]}
+            >
+              {item.dia}
+            </Text>
             {item.conciliado && (
               <View style={styles.checkMark}>
                 <Ionicons name="checkmark" size={12} color={colors.white} />
