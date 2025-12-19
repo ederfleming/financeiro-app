@@ -5,6 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Keys para o AsyncStorage
 const KEYS = {
   TRANSACOES: "@financeiro:transacoes",
+  TRANSACOES_MES: (year: number, month: number) =>
+    `@financeiro:transacoes:${year}-${month}`,
   CONFIG: "@financeiro:config",
   DIAS_CONCILIADOS: "@financeiro:dias_conciliados",
   TAGS: "@financeiro:tags",
@@ -43,6 +45,39 @@ export const setConfig = async (config: Config): Promise<void> => {
 };
 
 // ==================== TRANSAÇÕES ====================
+/**
+ * Salva todas as transações (mantém para compatibilidade e migração)
+ */
+const saveAllTransacoes = async (transacoes: Transacao[]): Promise<void> => {
+  await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+};
+
+/**
+ * Organiza transações por mês e salva separadamente
+ */
+const saveTransacoesPorMes = async (transacoes: Transacao[]): Promise<void> => {
+  const transacoesPorMes: { [key: string]: Transacao[] } = {};
+
+  transacoes.forEach((t) => {
+    const [year, month] = t.data.split("-");
+    const key = `${year}-${month}`;
+
+    if (!transacoesPorMes[key]) {
+      transacoesPorMes[key] = [];
+    }
+    transacoesPorMes[key].push(t);
+  });
+
+  // Salva cada mês separadamente
+  for (const [key, trans] of Object.entries(transacoesPorMes)) {
+    const [year, month] = key.split("-");
+    await AsyncStorage.setItem(
+      KEYS.TRANSACOES_MES(parseInt(year), parseInt(month)),
+      JSON.stringify(trans)
+    );
+  }
+};
+
 export const getTransacoes = async (): Promise<Transacao[]> => {
   try {
     const transacoes = await AsyncStorage.getItem(KEYS.TRANSACOES);
@@ -53,11 +88,43 @@ export const getTransacoes = async (): Promise<Transacao[]> => {
   }
 };
 
+/**
+ * Busca transações de um mês específico (otimizado)
+ */
+export const getTransacoesMes = async (
+  year: number,
+  month: number
+): Promise<Transacao[]> => {
+  try {
+    const key = KEYS.TRANSACOES_MES(year, month);
+    const transacoes = await AsyncStorage.getItem(key);
+
+    if (transacoes) {
+      return JSON.parse(transacoes);
+    }
+
+    // Fallback: se não existe por mês, busca de todas e filtra
+    const todas = await getTransacoes();
+    return todas.filter((t) => {
+      const [y, m] = t.data.split("-").map(Number);
+      return y === year && m === month + 1; // month é 0-indexed
+    });
+  } catch (error) {
+    console.error("Erro ao buscar transações do mês:", error);
+    return [];
+  }
+};
+
 export const addTransacao = async (transacao: Transacao): Promise<void> => {
   try {
     const transacoes = await getTransacoes();
     transacoes.push(transacao);
-    await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+
+    // Salva no índice geral
+    await saveAllTransacoes(transacoes);
+
+    // Reorganiza e salva por mês
+    await saveTransacoesPorMes(transacoes);
   } catch (error) {
     console.error("Erro ao adicionar transação:", error);
   }
@@ -72,7 +139,9 @@ export const updateTransacao = async (
     const index = transacoes.findIndex((t) => t.id === id);
     if (index !== -1) {
       transacoes[index] = { ...transacoes[index], ...transacao };
-      await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+
+      await saveAllTransacoes(transacoes);
+      await saveTransacoesPorMes(transacoes);
     }
   } catch (error) {
     console.error("Erro ao atualizar transação:", error);
@@ -83,12 +152,13 @@ export const deleteTransacao = async (id: string): Promise<void> => {
   try {
     const transacoes = await getTransacoes();
     const filtered = transacoes.filter((t) => t.id !== id);
-    await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(filtered));
+
+    await saveAllTransacoes(filtered);
+    await saveTransacoesPorMes(filtered);
   } catch (error) {
     console.error("Erro ao deletar transação:", error);
   }
 };
-
 export const getTransacoesPorData = async (
   data: string
 ): Promise<Transacao[]> => {
@@ -219,8 +289,6 @@ export const isDiaConciliado = async (data: string): Promise<boolean> => {
     return false;
   }
 };
-
-
 
 // ==================== TAGS ====================
 export const getTags = async (): Promise<string[]> => {

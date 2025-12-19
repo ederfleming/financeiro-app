@@ -15,6 +15,33 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.gray[100],
   },
+  todayButton: {
+    marginRight: spacing.sm,
+  },
+  todayIconContainer: {
+    position: "relative",
+    width: 28,
+    height: 28,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  todayBadge: {
+    position: "absolute",
+    top: 8,
+    left: 6,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.purple[500],
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 2,
+  },
+  todayBadgeText: {
+    fontSize: 9,
+    fontWeight: "bold",
+    color: colors.white,
+  },
   mesAno: {
     fontSize: fontSize.xxl,
     fontWeight: "bold",
@@ -63,53 +90,8 @@ export const styles = StyleSheet.create({
     color: colors.gray[600],
     textTransform: "uppercase",
   },
-  diaRow: {
-    minHeight: 45,
-    flexDirection: "row",
-    alignItems: "stretch",
-    backgroundColor: colors.gray[50],
-  },
-  diaRowDisabled: {
-    opacity: 0.4,
-  },
   diaColuna: {
     width: 60,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  diaNumero: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.gray[200],
-    position: "relative",
-  },
-  diaConciliado: {
-    backgroundColor: colors.green[200],
-  },
-  diaRowWeekend: {
-    backgroundColor: colors.purple[300],
-    borderLeftWidth: 4,
-    borderLeftColor: colors.purple[700],
-  },
-  diaTexto: {
-    fontSize: fontSize.lg,
-    fontWeight: "700",
-    color: colors.gray[800],
-  },
-  diaTextoWeekend: {
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-    color: colors.white,
-  },
-  checkMark: {
-    position: "absolute",
-    top: -2,
-    right: -2,
-    width: 16,
-    height: 16,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.green[500],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -119,19 +101,9 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingLeft: spacing.lg,
   },
-  valorLinha: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 2,
-  },
   valorLabel: {
     fontSize: fontSize.sm,
     color: colors.gray[600],
-  },
-  valorTexto: {
-    fontSize: fontSize.lg,
-    color: colors.gray[800],
   },
   headerSaldoColuna: {
     width: 140,
@@ -139,26 +111,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: spacing.md,
-  },
-  rowSaldoColuna: {
-    width: 140,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "stretch",
-  },
-  saldoPositivo: {
-    backgroundColor: colors.yellow[200],
-  },
-  saldoNegativo: {
-    backgroundColor: colors.red[200],
-  },
-  saldoTexto: {
-    fontSize: fontSize.lg,
-    fontWeight: "600",
-    color: colors.gray[800],
-  },
-  saldoTextoNegativo: {
-    color: colors.red[700],
   },
   loadingContainer: {
     flex: 1,
