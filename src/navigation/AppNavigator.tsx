@@ -26,14 +26,14 @@ function TabNavigator() {
     <Tab.Navigator
       id="MainTabs"
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textTertiary,
+        tabBarActiveTintColor: colors.purple[500],
+        tabBarInactiveTintColor: colors.gray[400],
         tabBarStyle: {
           height: 50 + insets.bottom,
           paddingBottom: insets.bottom,
           paddingTop: 8,
           borderTopWidth: 1,
-          borderTopColor: colors.border,
+          borderTopColor: colors.gray[100],
         },
         headerShown: false,
       }}
@@ -113,7 +113,7 @@ export default function AppNavigator() {
             presentation: "modal",
             title: "Nova Transação",
             headerStyle: {
-              backgroundColor: colors.primary,
+              backgroundColor: colors.purple[500],
             },
             headerTintColor: colors.white,
           }}
@@ -135,11 +135,11 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.purple[500],
     justifyContent: "center",
     alignItems: "center",
     marginTop: -20,
-    shadowColor: colors.shadow,
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 2,

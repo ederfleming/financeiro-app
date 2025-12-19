@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.gray[100],
   },
   header: {
     flexDirection: "row",
@@ -13,7 +13,8 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xs,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
+    backgroundColor: colors.purple[500],
   },
   headerButton: {
     width: 40,
@@ -24,13 +25,13 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: fontSize.xl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.white,
   },
   filtrosContainer: {
     maxHeight: 60,
     paddingHorizontal: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
   },
   filtrosContent: {
     alignItems: "center",
@@ -43,13 +44,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: spacing.lg,
     borderRadius: borderRadius.round,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: colors.white,
     marginRight: spacing.sm,
     gap: spacing.sm,
   },
   filtroTexto: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     fontWeight: "500",
   },
   filtroTextoActive: {
@@ -69,7 +70,7 @@ export const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
-    shadowColor: colors.shadow,
+    shadowColor: colors.black,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -97,7 +98,7 @@ export const styles = StyleSheet.create({
   transacaoDescricao: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginBottom: 4,
   },
   transacaoMeta: {
@@ -107,27 +108,27 @@ export const styles = StyleSheet.create({
   },
   transacaoCategoria: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
   transacaoSeparador: {
     fontSize: fontSize.sm,
-    color: colors.textTertiary,
+    color: colors.gray[400],
   },
   transacaoTag: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
   transacaoValor: {
     fontSize: fontSize.lg,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   transacaoAcoes: {
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.gray[100],
     paddingTop: spacing.md,
   },
   acaoButton: {
@@ -138,7 +139,7 @@ export const styles = StyleSheet.create({
   acaoTexto: {
     fontSize: fontSize.sm,
     fontWeight: "600",
-    color: colors.primary,
+    color: colors.purple[500],
   },
   emptyContainer: {
     flex: 1,
@@ -150,20 +151,20 @@ export const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: fontSize.xl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     textAlign: "center",
     marginBottom: spacing.xl,
   },
   emptyButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.purple[500],
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: borderRadius.lg,
@@ -196,20 +197,20 @@ export const styles = StyleSheet.create({
   modalExclusaoTitulo: {
     fontSize: fontSize.xl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginTop: spacing.lg,
     textAlign: "center",
   },
   modalExclusaoSubtitulo: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginTop: spacing.sm,
     textAlign: "center",
   },
   opcaoExclusaoButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: colors.gray[200],
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
@@ -217,7 +218,7 @@ export const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   opcaoExclusaoButtonDanger: {
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors.red[200],
   },
   opcaoExclusaoTexto: {
     flex: 1,
@@ -226,12 +227,12 @@ export const styles = StyleSheet.create({
   opcaoExclusaoTitulo: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginBottom: 4,
   },
   opcaoExclusaoDescricao: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
   cancelarExclusaoButton: {
     padding: spacing.lg,
@@ -241,6 +242,6 @@ export const styles = StyleSheet.create({
   cancelarExclusaoTexto: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
 });

@@ -1,5 +1,6 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { colors } from "@/theme/colors";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function TotaisScreen() {
   return (
@@ -7,17 +8,17 @@ export default function TotaisScreen() {
       <Text style={styles.text}>Tela de Totais</Text>
     </View>
   );
- }
- 
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: "center",
-     alignItems: "center",
-     backgroundColor: "#fff",
-   },
-   text: {
-     fontSize: 20,
-     fontWeight: "bold",
-   },
- });
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.gray[100],
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});

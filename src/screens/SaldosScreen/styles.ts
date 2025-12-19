@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.gray[100],
   },
   header: {
     flexDirection: "row",
@@ -13,18 +13,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
   },
   mesAno: {
     fontSize: fontSize.xxl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   filtrosContainer: {
     height: 60,
     paddingHorizontal: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
   },
   filtrosContent: {
     alignItems: "center",
@@ -38,35 +38,36 @@ export const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.round,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: colors.gray[200],
     marginRight: spacing.sm,
     gap: spacing.sm,
   },
   filtroTexto: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     fontWeight: "500",
   },
   filtroTextoActive: {
-    color: colors.textLight,
+    color: colors.white,
   },
   tabelaHeader: {
     flexDirection: "row",
     paddingVertical: spacing.md,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: colors.gray[100],
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderDark,
+    borderBottomColor: colors.gray[300],
   },
   headerTexto: {
     fontSize: fontSize.sm,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: colors.gray[600],
     textTransform: "uppercase",
   },
   diaRow: {
     minHeight: 45,
     flexDirection: "row",
     alignItems: "stretch",
+    backgroundColor: colors.gray[50],
   },
   diaRowDisabled: {
     opacity: 0.4,
@@ -80,21 +81,21 @@ export const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: colors.gray[200],
     position: "relative",
   },
   diaConciliado: {
-    backgroundColor: colors.successLight,
+    backgroundColor: colors.green[200],
   },
   diaRowWeekend: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.purple[300],
     borderLeftWidth: 4,
-    borderLeftColor: colors.primaryDark,
+    borderLeftColor: colors.purple[700],
   },
   diaTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
-    color: colors.textPrimary,
+    fontWeight: "700",
+    color: colors.gray[800],
   },
   diaTextoWeekend: {
     fontSize: fontSize.lg,
@@ -108,7 +109,7 @@ export const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: borderRadius.sm,
-    backgroundColor: colors.success,
+    backgroundColor: colors.green[500],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -126,11 +127,11 @@ export const styles = StyleSheet.create({
   },
   valorLabel: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
   valorTexto: {
     fontSize: fontSize.lg,
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   headerSaldoColuna: {
     width: 140,
@@ -146,18 +147,18 @@ export const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   saldoPositivo: {
-    backgroundColor: colors.saldoPositivo,
+    backgroundColor: colors.yellow[200],
   },
   saldoNegativo: {
-    backgroundColor: colors.saldoNegativo,
+    backgroundColor: colors.red[200],
   },
   saldoTexto: {
     fontSize: fontSize.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   saldoTextoNegativo: {
-    color: colors.errorDark,
+    color: colors.red[700],
   },
   loadingContainer: {
     flex: 1,

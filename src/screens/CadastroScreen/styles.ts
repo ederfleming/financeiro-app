@@ -4,7 +4,27 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.gray[100],
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: spacing.xl,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
+    backgroundColor: colors.purple[500],
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: "bold",
+    color: colors.white,
   },
   keyboardView: {
     flex: 1,
@@ -13,7 +33,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: spacing.xl,
+    paddingHorizontal: spacing.xl,
   },
   section: {
     marginBottom: spacing.xl,
@@ -21,7 +41,7 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginBottom: spacing.md,
   },
   dataSeletor: {
@@ -30,7 +50,8 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
   },
   dataButton: {
     padding: spacing.sm,
@@ -43,7 +64,7 @@ export const styles = StyleSheet.create({
   dataTexto: {
     fontSize: fontSize.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   valorContainer: {
     flexDirection: "row",
@@ -55,14 +76,14 @@ export const styles = StyleSheet.create({
   cifrao: {
     fontSize: fontSize.xxxl,
     fontWeight: "bold",
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginRight: spacing.sm,
   },
   valorInput: {
     flex: 1,
     fontSize: fontSize.xxxl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   categoriasContainer: {
     gap: spacing.md,
@@ -73,7 +94,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: colors.gray[100],
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xl,
     minWidth: 100,
@@ -81,7 +102,7 @@ export const styles = StyleSheet.create({
   categoriaTexto: {
     fontSize: fontSize.sm,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginTop: spacing.xs,
   },
   categoriaTextoActive: {
@@ -92,7 +113,7 @@ export const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     fontSize: fontSize.md,
-    color: colors.textPrimary,
+    color: colors.gray[800],
     minHeight: 50,
   },
   recorrenciaButton: {
@@ -109,11 +130,11 @@ export const styles = StyleSheet.create({
   recorrenciaLabel: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   recorrenciaDescricao: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginTop: 2,
   },
   tagsContainer: {
@@ -125,22 +146,22 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.round,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.gray[100],
   },
   tagButtonActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors.purple[500],
+    borderColor: colors.purple[500],
   },
   tagTexto: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     fontWeight: "500",
   },
   tagTextoActive: {
     color: colors.white,
   },
   salvarButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.purple[500],
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     alignItems: "center",
@@ -163,7 +184,8 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
-    maxHeight: "70%",
+    maxHeight: "75%",
+    paddingBottom: spacing.xxl,
   },
   modalHeader: {
     flexDirection: "row",
@@ -171,12 +193,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: spacing.xl,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
   },
   modalTitulo: {
     fontSize: fontSize.xl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   recorrenciaOption: {
     flexDirection: "row",
@@ -184,19 +206,19 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.gray[100],
   },
   recorrenciaOptionActive: {
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: colors.gray[200],
   },
   recorrenciaOptionLabel: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
   },
   recorrenciaOptionDescricao: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginTop: 2,
   },
   modalExclusaoContent: {
@@ -214,20 +236,20 @@ export const styles = StyleSheet.create({
   modalExclusaoTitulo: {
     fontSize: fontSize.xl,
     fontWeight: "bold",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginTop: spacing.lg,
     textAlign: "center",
   },
   modalExclusaoSubtitulo: {
     fontSize: fontSize.md,
-    color: colors.textSecondary,
+    color: colors.gray[600],
     marginTop: spacing.sm,
     textAlign: "center",
   },
   opcaoExclusaoButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: colors.gray[200],
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.md,
@@ -235,7 +257,7 @@ export const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   opcaoExclusaoButtonDanger: {
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors.red[200],
   },
   opcaoExclusaoTexto: {
     flex: 1,
@@ -244,12 +266,12 @@ export const styles = StyleSheet.create({
   opcaoExclusaoTitulo: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.gray[800],
     marginBottom: 4,
   },
   opcaoExclusaoDescricao: {
     fontSize: fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
   cancelarExclusaoButton: {
     padding: spacing.lg,
@@ -259,6 +281,6 @@ export const styles = StyleSheet.create({
   cancelarExclusaoTexto: {
     fontSize: fontSize.md,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: colors.gray[600],
   },
 });

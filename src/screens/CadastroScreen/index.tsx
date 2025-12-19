@@ -89,8 +89,8 @@ export default function CadastroScreen() {
     { key: "unica", label: "Única", descricao: "Não se repete" },
     { key: "semanal", label: "Semanal", descricao: "A cada 7 dias" },
     { key: "quinzenal", label: "Quinzenal", descricao: "A cada 14 dias" },
-    { key: "cada21dias", label: "Cada 21 dias", descricao: "A cada 21 dias" },
-    { key: "cada28dias", label: "Cada 28 dias", descricao: "A cada 28 dias" },
+    { key: "cada21dias", label: "Cada 21 dias", descricao: "A cada 3 semanas" },
+    { key: "cada28dias", label: "Cada 28 dias", descricao: "A cada 4 semanas" },
     { key: "mensal", label: "Mensal", descricao: "Todo mês no mesmo dia" },
   ];
 
@@ -245,6 +245,10 @@ export default function CadastroScreen() {
     }
   };
 
+  const handleClose = () => {
+    navigation.goBack();
+  };
+
   const mudarData = (direcao: "anterior" | "proximo") => {
     const dataAtual = parseDate(data);
     const novaData = new Date(dataAtual);
@@ -271,6 +275,20 @@ export default function CadastroScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.headerButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Data</Text>
+
+        <TouchableOpacity onPress={handleClose} style={styles.headerButton}>
+          <Ionicons name="close" size={28} color={colors.white} />
+        </TouchableOpacity>
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
@@ -282,7 +300,6 @@ export default function CadastroScreen() {
         >
           {/* Seletor de Data */}
           <View style={styles.section}>
-            <Text style={styles.label}>Data</Text>
             <View style={styles.dataSeletor}>
               <TouchableOpacity
                 onPress={() => mudarData("anterior")}
@@ -291,7 +308,7 @@ export default function CadastroScreen() {
                 <Ionicons
                   name="chevron-back"
                   size={24}
-                  color={colors.primary}
+                  color={colors.purple[500]}
                 />
               </TouchableOpacity>
 
@@ -299,7 +316,7 @@ export default function CadastroScreen() {
                 <Ionicons
                   name="calendar-outline"
                   size={20}
-                  color={colors.textSecondary}
+                  color={colors.gray[600]}
                 />
                 <Text style={styles.dataTexto}>{dataFormatada}</Text>
               </View>
@@ -311,7 +328,7 @@ export default function CadastroScreen() {
                 <Ionicons
                   name="chevron-forward"
                   size={24}
-                  color={colors.primary}
+                  color={colors.purple[500]}
                 />
               </TouchableOpacity>
             </View>
@@ -328,7 +345,7 @@ export default function CadastroScreen() {
                 onChangeText={formatarValorInput}
                 keyboardType="numeric"
                 placeholder="0,00"
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor={colors.gray[400]}
               />
             </View>
           </View>
@@ -379,7 +396,7 @@ export default function CadastroScreen() {
               value={descricao}
               onChangeText={setDescricao}
               placeholder="Ex: Compras no mercado"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={colors.gray[400]}
             />
           </View>
 
@@ -393,7 +410,7 @@ export default function CadastroScreen() {
               <Ionicons
                 name="repeat-outline"
                 size={20}
-                color={colors.textSecondary}
+                color={colors.gray[600]}
               />
               <View style={styles.recorrenciaTextoContainer}>
                 <Text style={styles.recorrenciaLabel}>
@@ -406,7 +423,7 @@ export default function CadastroScreen() {
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.textTertiary}
+                color={colors.gray[400]}
               />
             </TouchableOpacity>
           </View>
@@ -495,7 +512,7 @@ export default function CadastroScreen() {
               <TouchableOpacity
                 onPress={() => setModalRecorrenciaVisible(false)}
               >
-                <Ionicons name="close" size={24} color={colors.textPrimary} />
+                <Ionicons name="close" size={24} color={colors.gray[800]} />
               </TouchableOpacity>
             </View>
             <ScrollView>
@@ -523,7 +540,7 @@ export default function CadastroScreen() {
                     <Ionicons
                       name="checkmark-circle"
                       size={24}
-                      color={colors.primary}
+                      color={colors.purple[500]}
                     />
                   )}
                 </TouchableOpacity>
@@ -543,7 +560,7 @@ export default function CadastroScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalExclusaoContent}>
             <View style={styles.modalExclusaoHeader}>
-              <Ionicons name="create" size={48} color={colors.primary} />
+              <Ionicons name="create" size={48} color={colors.purple[500]} />
               <Text style={styles.modalExclusaoTitulo}>
                 Editar transação recorrente
               </Text>
@@ -559,7 +576,7 @@ export default function CadastroScreen() {
               <Ionicons
                 name="calendar-outline"
                 size={24}
-                color={colors.primary}
+                color={colors.purple[500]}
               />
               <View style={styles.opcaoExclusaoTexto}>
                 <Text style={styles.opcaoExclusaoTitulo}>
@@ -577,7 +594,7 @@ export default function CadastroScreen() {
               style={styles.opcaoExclusaoButton}
               onPress={handleEditarTodas}
             >
-              <Ionicons name="repeat" size={24} color={colors.primary} />
+              <Ionicons name="repeat" size={24} color={colors.purple[500]} />
               <View style={styles.opcaoExclusaoTexto}>
                 <Text style={styles.opcaoExclusaoTitulo}>
                   Todas as ocorrências

@@ -1,53 +1,64 @@
 export const colors = {
-  // Cores principais
-  primary: "#7d06fc",
-  primaryDark: "#5501ae",
-  primaryLight: "#baa1ff",
+  purple: {
+    100: "#E8DDFF",
+    300: "#BAA1FF",
+    500: "#7D06FC",
+    700: "#5501AE",
+    900: "#2E005F",
+  },
 
-  // Cores de fundo
-  background: "#F9F9F9",
-  backgroundSecondary: "#ECECEC",
-  backgroundTertiary: "#E3E3E3",
+  green: {
+    100: "#E6F4EA",
+    200: "#C8E6C9",
+    500: "#4CAF50",
+    700: "#2E7D32",
+    900: "#1B5E20",
+  },
 
-  // Cores de texto
-  textPrimary: "#333333",
-  textSecondary: "#666666",
-  textTertiary: "#999999",
-  textLight: "#FFFFFF",
+  yellow: {
+    100: "#FFFDE7",
+    200: "#FFF9C4",
+    500: "#FFC107",
+    700: "#FFA000",
+    900: "#FF6F00",
+  },
 
-  // Cores de borda
-  border: "#F0F0F0",
-  borderDark: "#E0E0E0",
+  red: {
+    100: "#FDECEA",
+    200: "#FFCDD2",
+    500: "#F44336",
+    700: "#C62828",
+    900: "#8E0000",
+  },
 
-  // Cores de status
-  success: "#4CAF50",
-  successDark: "#2E7D32",
-  successLight: "#C8E6C9",
+  blue: {
+    100: "#E3F2FD",
+    300: "#64B5F6",
+    500: "#2196F3",
+    700: "#1565C0",
+    900: "#0D47A1",
+  },
 
-  warning: "#FFC107",
-  warningLight: "#FFF9C4",
+  orange: {
+    100: "#FFF3E0",
+    300: "#FFB74D",
+    500: "#FF9800",
+    700: "#F57C00",
+    900: "#E65100",
+  },
+  gray: {
+    50: "#F9F9F9",
+    100: "#ECECEC",
+    200: "#E3E3E3",
+    300: "#E0E0E0",
+    400: "#999999",
+    600: "#666666",
+    800: "#333333",
+    900: "#1F1F1F",
+  },
 
-  error: "#F44336",
-  errorDark: "#C62828",
-  errorLight: "#FFCDD2",
-
-  info: "#2196F3",
-
-  // Cores específicas do app
-  saldoPositivo: "#FFF9C4",
-  saldoNegativo: "#FFCDD2",
-
-  // Cores de categoria
-  entradas: "#2b672d",
-  saidas: "#F44336",
-  diarios: "#7d06fc",
-  cartao: "#FF9800",
-  economia: "#78da7c",
-  todas: "#5cabec",
-
-  // Sombras
-  shadow: "#000000",
   white: "#FFFFFF",
+  black: "#000000",
 } as const;
 
 export const spacing = {
@@ -66,7 +77,7 @@ export const borderRadius = {
   xl: 16,
   round: 20,
   circle: 9999,
-} as const
+} as const;
 
 export const fontSize = {
   xs: 10,
@@ -76,4 +87,4 @@ export const fontSize = {
   xl: 18,
   xxl: 20,
   xxxl: 24,
-} as const
+} as const;

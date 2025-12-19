@@ -7,37 +7,37 @@ export const categorias = [
     key: "entradas" as const,
     label: "Entradas",
     icon: "arrow-down-circle" as keyof typeof Ionicons.glyphMap,
-    color: colors.entradas,
+    color: colors.green[500],
   },
   {
     key: "saidas" as const,
     label: "Saídas",
     icon: "arrow-up-circle" as keyof typeof Ionicons.glyphMap,
-    color: colors.saidas,
+    color: colors.red[700],
   },
   {
     key: "diarios" as const,
     label: "Diários",
     icon: "calendar" as keyof typeof Ionicons.glyphMap,
-    color: colors.diarios,
+    color: colors.purple[500],
   },
   {
     key: "cartao" as const,
     label: "Cartão",
     icon: "card" as keyof typeof Ionicons.glyphMap,
-    color: colors.cartao,
+    color: colors.orange[300],
   },
   {
     key: "economia" as const,
     label: "Economia",
     icon: "wallet" as keyof typeof Ionicons.glyphMap,
-    color: colors.economia,
+    color: colors.green[900],
   },
   {
     key: "todas" as const,
     label: "Todas",
     icon: "apps" as keyof typeof Ionicons.glyphMap,
-    color: colors.todas,
+    color: colors.blue[300],
   },
 ];
 

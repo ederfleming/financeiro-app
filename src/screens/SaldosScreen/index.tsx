@@ -140,8 +140,8 @@ export default function SaldosScreen() {
   function getSaldoStyle(saldo: number, totalEntradas: number) {
     if (totalEntradas === 0) {
       return {
-        backgroundColor: colors.errorLight,
-        textColor: colors.textPrimary,
+        backgroundColor: colors.red[200],
+        textColor: colors.gray[800],
       };
     }
 
@@ -149,30 +149,30 @@ export default function SaldosScreen() {
 
     if (percentual >= 70)
       return {
-        backgroundColor: colors.successDark,
+        backgroundColor: colors.green[700],
         textColor: colors.white,
       };
 
     if (percentual >= 40)
       return {
-        backgroundColor: colors.successLight,
-        textColor: colors.textPrimary,
+        backgroundColor: colors.green[200],
+        textColor: colors.gray[800],
       };
 
     if (percentual >= 0)
       return {
-        backgroundColor: colors.warningLight,
-        textColor: colors.textPrimary,
+        backgroundColor: colors.yellow[200],
+        textColor: colors.gray[800],
       };
 
     if (percentual >= -10)
       return {
-        backgroundColor: colors.errorLight,
-        textColor: colors.textPrimary,
+        backgroundColor: colors.red[200],
+        textColor: colors.gray[800],
       };
 
     return {
-      backgroundColor: colors.errorDark,
+      backgroundColor: colors.red[700],
       textColor: colors.white,
     };
   }
@@ -310,11 +310,11 @@ export default function SaldosScreen() {
           onPress={irParaHoje}
           style={{ marginRight: spacing.sm }}
         >
-          <Ionicons name="today-outline" size={22} color={colors.textPrimary} />
+          <Ionicons name="today-outline" size={22} color={colors.gray[800]} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => mudarMes("anterior")}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.gray[800]} />
         </TouchableOpacity>
 
         <Text style={styles.mesAno}>
@@ -323,18 +323,14 @@ export default function SaldosScreen() {
         </Text>
 
         <TouchableOpacity onPress={() => mudarMes("proximo")}>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={colors.textPrimary}
-          />
+          <Ionicons name="chevron-forward" size={24} color={colors.gray[800]} />
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={abrirMenu}
           style={{ marginLeft: spacing.sm }}
         >
-          <Ionicons name="menu" size={24} color={colors.textPrimary} />
+          <Ionicons name="menu" size={24} color={colors.gray[800]} />
         </TouchableOpacity>
       </View>
 
@@ -385,7 +381,7 @@ export default function SaldosScreen() {
           </Text>
         </View>
         <View style={styles.headerSaldoColuna}>
-          <Ionicons name="trending-up" size={16} color={colors.textSecondary} />
+          <Ionicons name="trending-up" size={16} color={colors.gray[600]} />
           <Text style={[styles.headerTexto, { marginLeft: 8 }]}>Saldos</Text>
         </View>
       </View>
@@ -393,7 +389,7 @@ export default function SaldosScreen() {
       {/* Lista de dias */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.purple[500]} />
         </View>
       ) : (
         <FlatList
@@ -402,9 +398,7 @@ export default function SaldosScreen() {
           renderItem={renderDia}
           keyExtractor={(item) => item.dia.toString()}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => (
-            <Divider color={colors.backgroundSecondary} />
-          )}
+          ItemSeparatorComponent={() => <Divider color={colors.gray[100]} />}
           getItemLayout={(_, index) => ({
             length: ROW_HEIGHT,
             offset: ROW_HEIGHT * index,

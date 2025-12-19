@@ -169,7 +169,7 @@ export default function DetalhesScreen() {
             <Ionicons
               name={cat?.icon || "help-circle"}
               size={24}
-              color={cat?.color || colors.textSecondary}
+              color={cat?.color || colors.gray[600]}
             />
           </View>
           <View style={styles.transacaoInfo}>
@@ -188,7 +188,7 @@ export default function DetalhesScreen() {
                   <Ionicons
                     name="repeat-outline"
                     size={12}
-                    color={colors.textTertiary}
+                    color={colors.gray[400]}
                   />
                 </>
               )}
@@ -201,15 +201,19 @@ export default function DetalhesScreen() {
             style={styles.acaoButton}
             onPress={() => handleEditar(item)}
           >
-            <Ionicons name="create-outline" size={20} color={colors.primary} />
+            <Ionicons
+              name="create-outline"
+              size={20}
+              color={colors.purple[500]}
+            />
             <Text style={styles.acaoTexto}>Editar</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.acaoButton}
             onPress={() => handleRemover(item)}
           >
-            <Ionicons name="trash-outline" size={20} color={colors.error} />
-            <Text style={[styles.acaoTexto, { color: colors.error }]}>
+            <Ionicons name="trash-outline" size={20} color={colors.red[500]} />
+            <Text style={[styles.acaoTexto, { color: colors.red[500] }]}>
               Excluir
             </Text>
           </TouchableOpacity>
@@ -223,7 +227,7 @@ export default function DetalhesScreen() {
       <Ionicons
         name="document-text-outline"
         size={64}
-        color={colors.textTertiary}
+        color={colors.gray[400]}
       />
       <Text style={styles.emptyTitle}>Nenhuma transação</Text>
       <Text style={styles.emptySubtitle}>
@@ -251,7 +255,7 @@ export default function DetalhesScreen() {
           onPress={() => navigation.goBack()}
           style={styles.headerButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>{dataFormatada}</Text>
@@ -260,7 +264,7 @@ export default function DetalhesScreen() {
           onPress={handleNovaTransacao}
           style={styles.headerButton}
         >
-          <Ionicons name="add" size={28} color={colors.primary} />
+          <Ionicons name="add" size={28} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -300,7 +304,7 @@ export default function DetalhesScreen() {
       {/* Lista de transações */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.purple[500]} />
         </View>
       ) : (
         <FlatList
@@ -326,7 +330,11 @@ export default function DetalhesScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalExclusaoContent}>
             <View style={styles.modalExclusaoHeader}>
-              <Ionicons name="alert-circle" size={48} color={colors.warning} />
+              <Ionicons
+                name="alert-circle"
+                size={48}
+                color={colors.yellow[500]}
+              />
               <Text style={styles.modalExclusaoTitulo}>
                 Excluir transação recorrente
               </Text>
@@ -342,7 +350,7 @@ export default function DetalhesScreen() {
               <Ionicons
                 name="calendar-outline"
                 size={24}
-                color={colors.primary}
+                color={colors.purple[500]}
               />
               <View style={styles.opcaoExclusaoTexto}>
                 <Text style={styles.opcaoExclusaoTitulo}>
@@ -363,10 +371,13 @@ export default function DetalhesScreen() {
               ]}
               onPress={handleExcluirTodas}
             >
-              <Ionicons name="repeat" size={24} color={colors.error} />
+              <Ionicons name="repeat" size={24} color={colors.red[500]} />
               <View style={styles.opcaoExclusaoTexto}>
                 <Text
-                  style={[styles.opcaoExclusaoTitulo, { color: colors.error }]}
+                  style={[
+                    styles.opcaoExclusaoTitulo,
+                    { color: colors.red[500] },
+                  ]}
                 >
                   Todas as ocorrências
                 </Text>
