@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "financeiro-app",
+    "name": "Panorama Financeiro",
     "slug": "financeiro-app",
     "version": "1.0.0",
     "android": {
@@ -9,6 +9,11 @@
     "ios": {
       "bundleIdentifier": "com.eder.fleming.financeiroapp",
       "icon": "./assets/ios-icon.png"
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF"
     }
   }
 }

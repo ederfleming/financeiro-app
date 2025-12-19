@@ -1,7 +1,7 @@
 export const colors = {
   // Cores principais
-  primary: "#8653fc",
-  primaryDark: "#8100f9",
+  primary: "#7d06fc",
+  primaryDark: "#5501ae",
   primaryLight: "#baa1ff",
 
   // Cores de fundo
@@ -40,7 +40,7 @@ export const colors = {
   // Cores de categoria
   entradas: "#2b672d",
   saidas: "#F44336",
-  diarios: "#9C27B0",
+  diarios: "#7d06fc",
   cartao: "#FF9800",
   economia: "#78da7c",
   todas: "#5cabec",
