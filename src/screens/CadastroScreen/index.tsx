@@ -16,18 +16,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   addTransacao,
-  deleteTransacao,
   editarOcorrenciaRecorrente,
-  excluirOcorrenciaRecorrente,
   getTags,
-  getTransacoesPorDataComRecorrencia,
+  getTransacoes,
   updateTransacao,
 } from "@/services/storage";
 import { colors } from "@/theme/colors";
 import { Categoria, Recorrencia, Transacao } from "@/types";
 import { RootStackParamList } from "@/types/navigation";
-import { formatarMoeda } from "@/utils/calculoSaldo";
-import { categorias, categoriasParaCadastro } from "@/utils/categorias";
+import { categoriasParaCadastro } from "@/utils/categorias";
 import { formatDate, parseDate } from "@/utils/dateUtils";
 import { styles } from "./styles";
 
@@ -39,6 +36,7 @@ export default function CadastroScreen() {
 
   const dataInicial = route.params?.data || formatDate(new Date());
   const categoriaInicial = route.params?.categoria || "entradas";
+  const transacaoId = route.params?.transacaoId; // ID da transação para editar
 
   const [valor, setValor] = useState("");
   const [data, setData] = useState(dataInicial);
@@ -48,27 +46,39 @@ export default function CadastroScreen() {
   const [recorrencia, setRecorrencia] = useState<Recorrencia>("unica");
   const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [transacoesDia, setTransacoesDia] = useState<Transacao[]>([]);
-  const [editandoId, setEditandoId] = useState<string | null>(null);
   const [transacaoOriginal, setTransacaoOriginal] = useState<Transacao | null>(
     null
-  ); // ✅ Guardar transação original
+  );
   const [modalRecorrenciaVisible, setModalRecorrenciaVisible] = useState(false);
-  const [modalExclusaoVisible, setModalExclusaoVisible] = useState(false);
-  const [modalEdicaoVisible, setModalEdicaoVisible] = useState(false); // ✅ Novo modal
-  const [transacaoParaExcluir, setTransacaoParaExcluir] =
-    useState<Transacao | null>(null);
+  const [modalEdicaoVisible, setModalEdicaoVisible] = useState(false);
 
   useEffect(() => {
     carregarDados();
-  }, [data]);
+  }, []);
 
   const carregarDados = async () => {
     const tagsCarregadas = await getTags();
     setTags(tagsCarregadas);
 
-    const transacoes = await getTransacoesPorDataComRecorrencia(data);
-    setTransacoesDia(transacoes);
+    // Se tem transacaoId, é uma edição - carregar os dados
+    if (transacaoId) {
+      const todasTransacoes = await getTransacoes();
+      const transacao = todasTransacoes.find((t) => t.id === transacaoId);
+
+      if (transacao) {
+        setTransacaoOriginal(transacao);
+        setValor(
+          transacao.valor.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+        setCategoria(transacao.categoria);
+        setTagSelecionada(transacao.tag || "");
+        setDescricao(transacao.descricao);
+        setRecorrencia(transacao.recorrencia);
+      }
+    }
   };
 
   const recorrencias: Array<{
@@ -126,31 +136,23 @@ export default function CadastroScreen() {
     return true;
   };
 
-  const limparFormulario = () => {
-    setValor("");
-    setDescricao("");
-    setTagSelecionada("");
-    setRecorrencia("unica");
-    setEditandoId(null);
-    setTransacaoOriginal(null);
-  };
-
   const handleSalvar = async () => {
     if (!validarFormulario()) return;
 
     try {
       setLoading(true);
 
-      if (editandoId && transacaoOriginal) {
-        // ✅ Se é recorrente e está editando, mostrar opções
+      if (transacaoId && transacaoOriginal) {
+        // Está editando
         if (transacaoOriginal.recorrencia !== "unica") {
+          // É recorrente, mostrar opções
           setModalEdicaoVisible(true);
           setLoading(false);
           return;
         }
 
-        // Se não for recorrente, edita normal
-        await updateTransacao(editandoId, {
+        // Não é recorrente, edita normal
+        await updateTransacao(transacaoId, {
           valor: converterValorParaNumero(valor),
           data,
           categoria,
@@ -158,6 +160,13 @@ export default function CadastroScreen() {
           descricao,
           recorrencia,
         });
+
+        Alert.alert("Sucesso", "Transação atualizada!", [
+          {
+            text: "OK",
+            onPress: () => navigation.goBack(),
+          },
+        ]);
       } else {
         // Nova transação
         const novaTransacao: Transacao = {
@@ -171,10 +180,14 @@ export default function CadastroScreen() {
         };
 
         await addTransacao(novaTransacao);
-      }
 
-      limparFormulario();
-      await carregarDados();
+        Alert.alert("Sucesso", "Transação cadastrada!", [
+          {
+            text: "OK",
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      }
     } catch (error) {
       console.error("Erro ao salvar transação:", error);
       Alert.alert("Erro", "Não foi possível salvar a transação");
@@ -183,12 +196,11 @@ export default function CadastroScreen() {
     }
   };
 
-  // ✅ Editar apenas esta ocorrência
   const handleEditarApenasEsta = async () => {
-    if (!editandoId || !transacaoOriginal) return;
+    if (!transacaoId || !transacaoOriginal) return;
 
     try {
-      await editarOcorrenciaRecorrente(editandoId, data, {
+      await editarOcorrenciaRecorrente(transacaoId, data, {
         valor: converterValorParaNumero(valor),
         categoria,
         tag: tagSelecionada || undefined,
@@ -196,20 +208,23 @@ export default function CadastroScreen() {
       });
 
       setModalEdicaoVisible(false);
-      limparFormulario();
-      await carregarDados();
+      Alert.alert("Sucesso", "Ocorrência atualizada!", [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } catch (error) {
       console.error("Erro ao editar ocorrência:", error);
       Alert.alert("Erro", "Não foi possível editar a ocorrência");
     }
   };
 
-  // ✅ Editar todas as ocorrências
   const handleEditarTodas = async () => {
-    if (!editandoId) return;
+    if (!transacaoId) return;
 
     try {
-      await updateTransacao(editandoId, {
+      await updateTransacao(transacaoId, {
         valor: converterValorParaNumero(valor),
         categoria,
         tag: tagSelecionada || undefined,
@@ -218,102 +233,16 @@ export default function CadastroScreen() {
       });
 
       setModalEdicaoVisible(false);
-      limparFormulario();
-      await carregarDados();
+      Alert.alert("Sucesso", "Todas as ocorrências atualizadas!", [
+        {
+          text: "OK",
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } catch (error) {
       console.error("Erro ao editar transação:", error);
       Alert.alert("Erro", "Não foi possível editar a transação");
     }
-  };
-
-  const handleEditar = (transacao: Transacao) => {
-    setEditandoId(transacao.id);
-    setTransacaoOriginal(transacao); // ✅ Guardar original
-    setValor(
-      transacao.valor.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    );
-    setCategoria(transacao.categoria);
-    setTagSelecionada(transacao.tag || "");
-    setDescricao(transacao.descricao);
-    setRecorrencia(transacao.recorrencia);
-  };
-
-  const handleRemover = (transacao: Transacao) => {
-    if (transacao.recorrencia !== "unica") {
-      setTransacaoParaExcluir(transacao);
-      setModalExclusaoVisible(true);
-    } else {
-      Alert.alert(
-        "Confirmar exclusão",
-        "Deseja realmente excluir esta transação?",
-        [
-          { text: "Cancelar", style: "cancel" },
-          {
-            text: "Excluir",
-            style: "destructive",
-            onPress: async () => {
-              await deleteTransacao(transacao.id);
-              await carregarDados();
-              if (editandoId === transacao.id) {
-                limparFormulario();
-              }
-            },
-          },
-        ]
-      );
-    }
-  };
-
-  const handleExcluirApenasEsta = async () => {
-    if (!transacaoParaExcluir) return;
-
-    try {
-      await excluirOcorrenciaRecorrente(transacaoParaExcluir.id, data);
-      setModalExclusaoVisible(false);
-      setTransacaoParaExcluir(null);
-      await carregarDados();
-
-      if (editandoId === transacaoParaExcluir.id) {
-        limparFormulario();
-      }
-    } catch (error) {
-      console.error("Erro ao excluir ocorrência:", error);
-      Alert.alert("Erro", "Não foi possível excluir a ocorrência");
-    }
-  };
-
-  const handleExcluirTodas = async () => {
-    if (!transacaoParaExcluir) return;
-
-    Alert.alert(
-      "Confirmar exclusão total",
-      "Isso vai excluir TODAS as ocorrências desta transação recorrente. Tem certeza?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir Todas",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteTransacao(transacaoParaExcluir.id);
-              setModalExclusaoVisible(false);
-              setTransacaoParaExcluir(null);
-              await carregarDados();
-
-              if (editandoId === transacaoParaExcluir.id) {
-                limparFormulario();
-              }
-            } catch (error) {
-              console.error("Erro ao excluir transação:", error);
-              Alert.alert("Erro", "Não foi possível excluir a transação");
-            }
-          },
-        },
-      ]
-    );
   };
 
   const mudarData = (direcao: "anterior" | "proximo") => {
@@ -327,7 +256,6 @@ export default function CadastroScreen() {
     }
 
     setData(formatDate(novaData));
-    limparFormulario();
   };
 
   const dataObj = parseDate(data);
@@ -541,106 +469,11 @@ export default function CadastroScreen() {
             <Text style={styles.salvarTexto}>
               {loading
                 ? "Salvando..."
-                : editandoId
+                : transacaoId
                 ? "Atualizar Transação"
                 : "Adicionar Transação"}
             </Text>
           </TouchableOpacity>
-
-          {editandoId && (
-            <TouchableOpacity
-              style={styles.cancelarButton}
-              onPress={limparFormulario}
-            >
-              <Text style={styles.cancelarTexto}>Cancelar Edição</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Lista de Transações do Dia */}
-          {transacoesDia.length > 0 && (
-            <View style={styles.listaSection}>
-              <Text style={styles.listaTitulo}>
-                Transações do dia ({transacoesDia.length})
-              </Text>
-              {transacoesDia.map((transacao) => {
-                const cat = categorias.find(
-                  (c) => c.key === transacao.categoria
-                );
-                return (
-                  <View key={transacao.id} style={styles.transacaoItem}>
-                    <View style={styles.transacaoHeader}>
-                      <View style={styles.transacaoIconeContainer}>
-                        <Ionicons
-                          name={cat?.icon || "help-circle"}
-                          size={24}
-                          color={cat?.color || colors.textSecondary}
-                        />
-                      </View>
-                      <View style={styles.transacaoInfo}>
-                        <Text style={styles.transacaoDescricao}>
-                          {transacao.descricao}
-                        </Text>
-                        <View style={styles.transacaoMeta}>
-                          <Text style={styles.transacaoCategoria}>
-                            {cat?.label}
-                          </Text>
-                          {transacao.tag && (
-                            <>
-                              <Text style={styles.transacaoSeparador}>•</Text>
-                              <Text style={styles.transacaoTag}>
-                                {transacao.tag}
-                              </Text>
-                            </>
-                          )}
-                          {transacao.recorrencia !== "unica" && (
-                            <>
-                              <Text style={styles.transacaoSeparador}>•</Text>
-                              <Ionicons
-                                name="repeat-outline"
-                                size={12}
-                                color={colors.textTertiary}
-                              />
-                            </>
-                          )}
-                        </View>
-                      </View>
-                      <Text style={styles.transacaoValor}>
-                        {formatarMoeda(transacao.valor)}
-                      </Text>
-                    </View>
-                    <View style={styles.transacaoAcoes}>
-                      <TouchableOpacity
-                        style={styles.acaoButton}
-                        onPress={() => handleEditar(transacao)}
-                      >
-                        <Ionicons
-                          name="create-outline"
-                          size={20}
-                          color={colors.primary}
-                        />
-                        <Text style={styles.acaoTexto}>Editar</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.acaoButton}
-                        onPress={() => handleRemover(transacao)}
-                      >
-                        <Ionicons
-                          name="trash-outline"
-                          size={20}
-                          color={colors.error}
-                        />
-                        <Text
-                          style={[styles.acaoTexto, { color: colors.error }]}
-                        >
-                          Excluir
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -700,90 +533,12 @@ export default function CadastroScreen() {
         </TouchableOpacity>
       </Modal>
 
-      {/* ✅ ADICIONAR: Modal de Exclusão de Recorrência */}
-      <Modal
-        visible={modalExclusaoVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => {
-          setModalExclusaoVisible(false);
-          setTransacaoParaExcluir(null);
-        }}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalExclusaoContent}>
-            <View style={styles.modalExclusaoHeader}>
-              <Ionicons name="alert-circle" size={48} color={colors.warning} />
-              <Text style={styles.modalExclusaoTitulo}>
-                Excluir transação recorrente
-              </Text>
-              <Text style={styles.modalExclusaoSubtitulo}>
-                Esta é uma transação recorrente. O que deseja fazer?
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={styles.opcaoExclusaoButton}
-              onPress={handleExcluirApenasEsta}
-            >
-              <Ionicons
-                name="calendar-outline"
-                size={24}
-                color={colors.primary}
-              />
-              <View style={styles.opcaoExclusaoTexto}>
-                <Text style={styles.opcaoExclusaoTitulo}>
-                  Apenas esta ocorrência
-                </Text>
-                <Text style={styles.opcaoExclusaoDescricao}>
-                  Exclui apenas a transação do dia{" "}
-                  {parseDate(data).getDate().toString().padStart(2, "0")}/
-                  {(parseDate(data).getMonth() + 1).toString().padStart(2, "0")}
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.opcaoExclusaoButton,
-                styles.opcaoExclusaoButtonDanger,
-              ]}
-              onPress={handleExcluirTodas}
-            >
-              <Ionicons name="repeat" size={24} color={colors.error} />
-              <View style={styles.opcaoExclusaoTexto}>
-                <Text
-                  style={[styles.opcaoExclusaoTitulo, { color: colors.error }]}
-                >
-                  Todas as ocorrências
-                </Text>
-                <Text style={styles.opcaoExclusaoDescricao}>
-                  Exclui esta e todas as futuras ocorrências
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.cancelarExclusaoButton}
-              onPress={() => {
-                setModalExclusaoVisible(false);
-                setTransacaoParaExcluir(null);
-              }}
-            >
-              <Text style={styles.cancelarExclusaoTexto}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* ✅ NOVO: Modal de Edição de Recorrência */}
+      {/* Modal de Edição de Recorrência */}
       <Modal
         visible={modalEdicaoVisible}
         transparent
         animationType="fade"
-        onRequestClose={() => {
-          setModalEdicaoVisible(false);
-        }}
+        onRequestClose={() => setModalEdicaoVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalExclusaoContent}>
@@ -835,9 +590,7 @@ export default function CadastroScreen() {
 
             <TouchableOpacity
               style={styles.cancelarExclusaoButton}
-              onPress={() => {
-                setModalEdicaoVisible(false);
-              }}
+              onPress={() => setModalEdicaoVisible(false)}
             >
               <Text style={styles.cancelarExclusaoTexto}>Cancelar</Text>
             </TouchableOpacity>
