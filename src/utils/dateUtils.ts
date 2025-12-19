@@ -75,3 +75,13 @@ export const isPastDate = (dateString: string): boolean => {
   today.setHours(0, 0, 0, 0);
   return date < today;
 };
+
+/**
+ * Verifica é fim de semana
+ */
+export function isFimDeSemana(dia: number, mesAtual: Date) {
+  const date = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), dia);
+
+  const dayOfWeek = date.getDay(); // 0 = domingo, 6 = sábado
+  return dayOfWeek === 0 || dayOfWeek === 6;
+}

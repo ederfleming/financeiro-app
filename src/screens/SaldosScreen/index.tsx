@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   ScrollView,
@@ -24,7 +25,12 @@ import { colors, spacing } from "@/theme/colors";
 import { Categoria, SaldoDia } from "@/types";
 import { calcularSaldosMes, formatarMoeda } from "@/utils/calculoSaldo";
 import { categorias } from "@/utils/categorias";
-import { formatDate, getDatesInMonth, getMonthName } from "@/utils/dateUtils";
+import {
+  formatDate,
+  getDatesInMonth,
+  getMonthName,
+  isFimDeSemana,
+} from "@/utils/dateUtils";
 import { styles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -206,6 +212,7 @@ export default function SaldosScreen() {
     const diaDesabilitado = isDiaPassado(item.dia, mesAtual);
     const saldoStyle = getSaldoStyle(item.saldoAcumulado, totalEntradasMes);
 
+    const fimDeSemana = isFimDeSemana(item.dia, mesAtual);
     return (
       <Pressable
         style={[styles.diaRow, diaDesabilitado && styles.diaRowDisabled]}
@@ -217,6 +224,7 @@ export default function SaldosScreen() {
             style={[
               styles.diaNumero,
               item.conciliado && styles.diaConciliado,
+              fimDeSemana && styles.diaRowWeekend,
               { height: filtroCategoria === "todas" ? 120 : 45 },
             ]}
             onPress={() => handleToggleConciliado(item.dia)} // Long press para conciliar
@@ -231,7 +239,15 @@ export default function SaldosScreen() {
         </View>
 
         {/* Coluna de Valores por Categoria (scroll horizontal) */}
-        <View style={styles.valoresColuna}>
+        <Pressable
+          style={styles.valoresColuna}
+          onLongPress={() => {
+            const year = mesAtual.getFullYear();
+            const month = mesAtual.getMonth();
+            const dataFormatada = formatDate(new Date(year, month, item.dia));
+            navigation.navigate("Detalhes", { data: dataFormatada });
+          }}
+        >
           {filtroCategoria === "todas" ? (
             categorias
               .filter((categorie) => categorie.key !== "todas")
@@ -265,7 +281,7 @@ export default function SaldosScreen() {
               </Text>
             </View>
           )}
-        </View>
+        </Pressable>
 
         {/* Coluna de Saldo */}
         <View
@@ -373,7 +389,7 @@ export default function SaldosScreen() {
       {/* Lista de dias */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <Text>Carregando...</Text>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -401,3 +417,5 @@ export default function SaldosScreen() {
     </SafeAreaView>
   );
 }
+
+//Tem um problema Claude... vocÊ não retirou a lista de transações de dentro da tela de cadastro. E a cada item que eu for editar, ele já deve vir preenchido da tela assim como você faz atualmente na tela de cadastro, ou seja, o comportamente de exclusão e edição da tela de cadastro deve ser transferido pra tela de detalhes, que ao redirecionar para a edição de uma transação deve vir preenchido e validado se é uma edição ou uma nova transação.

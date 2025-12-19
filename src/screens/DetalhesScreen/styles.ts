@@ -1,0 +1,246 @@
+import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: "bold",
+    color: colors.textPrimary,
+  },
+  filtrosContainer: {
+    maxHeight: 60,
+    paddingHorizontal: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  filtrosContent: {
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
+  },
+  filtroButton: {
+    height: 35,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.round,
+    backgroundColor: colors.backgroundTertiary,
+    marginRight: spacing.sm,
+    gap: spacing.sm,
+  },
+  filtroTexto: {
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    fontWeight: "500",
+  },
+  filtroTextoActive: {
+    color: colors.white,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listContent: {
+    padding: spacing.xl,
+    flexGrow: 1,
+  },
+  transacaoItem: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    shadowColor: colors.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  transacaoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  transacaoIconeContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.lg,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: spacing.md,
+  },
+  transacaoInfo: {
+    flex: 1,
+  },
+  transacaoDescricao: {
+    fontSize: fontSize.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  transacaoMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  transacaoCategoria: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+  },
+  transacaoSeparador: {
+    fontSize: fontSize.sm,
+    color: colors.textTertiary,
+  },
+  transacaoTag: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+  },
+  transacaoValor: {
+    fontSize: fontSize.lg,
+    fontWeight: "bold",
+    color: colors.textPrimary,
+  },
+  transacaoAcoes: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: spacing.md,
+  },
+  acaoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  acaoTexto: {
+    fontSize: fontSize.sm,
+    fontWeight: "600",
+    color: colors.primary,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.xxl * 2,
+  },
+  emptyTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: "bold",
+    color: colors.textPrimary,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  emptySubtitle: {
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    textAlign: "center",
+    marginBottom: spacing.xl,
+  },
+  emptyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+    gap: spacing.sm,
+  },
+  emptyButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: "600",
+    color: colors.white,
+  },
+  // Estilos do modal (iguais ao CadastroScreen)
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalExclusaoContent: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xxl,
+    marginHorizontal: spacing.xl,
+    maxWidth: 400,
+    width: "90%",
+  },
+  modalExclusaoHeader: {
+    alignItems: "center",
+    marginBottom: spacing.xxl,
+  },
+  modalExclusaoTitulo: {
+    fontSize: fontSize.xl,
+    fontWeight: "bold",
+    color: colors.textPrimary,
+    marginTop: spacing.lg,
+    textAlign: "center",
+  },
+  modalExclusaoSubtitulo: {
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+    textAlign: "center",
+  },
+  opcaoExclusaoButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.backgroundTertiary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  opcaoExclusaoButtonDanger: {
+    backgroundColor: colors.errorLight,
+  },
+  opcaoExclusaoTexto: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  opcaoExclusaoTitulo: {
+    fontSize: fontSize.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  opcaoExclusaoDescricao: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+  },
+  cancelarExclusaoButton: {
+    padding: spacing.lg,
+    alignItems: "center",
+    marginTop: spacing.md,
+  },
+  cancelarExclusaoTexto: {
+    fontSize: fontSize.md,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+});

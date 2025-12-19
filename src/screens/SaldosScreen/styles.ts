@@ -86,6 +86,11 @@ export const styles = StyleSheet.create({
   diaConciliado: {
     backgroundColor: colors.successLight,
   },
+  diaRowWeekend: {
+    backgroundColor: colors.warningLight,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.warning,
+  },
   diaTexto: {
     fontSize: fontSize.lg,
     fontWeight: "600",

@@ -7,6 +7,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 // Imports das telas (vamos criar em seguida)
 import CadastroScreen from "@/screens/CadastroScreen";
+import DetalhesScreen from "@/screens/DetalhesScreen";
 import MenuScreen from "@/screens/MenuScreen";
 import ProjecaoScreen from "@/screens/ProjecaoScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
@@ -117,7 +118,7 @@ export default function AppNavigator() {
             headerTintColor: colors.white,
           }}
         />
-
+        <Stack.Screen name="Detalhes" component={DetalhesScreen} />
         <Stack.Screen name="Menu" component={MenuScreen} />
       </Stack.Navigator>
     </NavigationContainer>

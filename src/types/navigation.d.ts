@@ -4,8 +4,12 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Menu: undefined;
   Cadastro: {
-    data?: string; 
+    data?: string; // YYYY-MM-DD
     categoria?: Categoria;
+    transacaoId?: string; // Para edição
+  };
+  Detalhes: {
+    data: string; // YYYY-MM-DD
   };
 };
 
