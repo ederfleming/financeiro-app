@@ -47,6 +47,7 @@ export default function DiaListItem({
   const saldoStyle = getSaldoStyle(item.saldoAcumulado, totalEntradasMes);
   const fimDeSemana = isFimDeSemana(item.dia, mesAtual);
 
+
   const getValorPorCategoria = (): number => {
     switch (filtroCategoria) {
       case "entradas":
@@ -78,7 +79,9 @@ export default function DiaListItem({
             styles.diaNumero,
             item.conciliado && styles.diaConciliado,
             fimDeSemana && styles.diaRowWeekend,
-            { height: filtroCategoria === "todas" ? 120 : 45 },
+            {
+              height: filtroCategoria === "todas" ? 120 : 45,
+            },
           ]}
           onPress={() => onToggleConciliado(item.dia)}
         >

@@ -106,7 +106,19 @@ export default function SaldosScreen() {
           renderItem={renderDia}
           keyExtractor={(item) => item.dia.toString()}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <Divider color={colors.gray[100]} />}
+          ItemSeparatorComponent={(item) => {
+            const today = new Date();
+            const isTodayInCurrentMonth =
+              today.getMonth() === mesAtual.getMonth() &&
+              today.getFullYear() === mesAtual.getFullYear();
+            if (
+              isTodayInCurrentMonth &&
+              item.leadingItem.dia === today.getDate()
+            ) {
+              return <Divider color={colors.purple[500]} />;
+            }
+            return <Divider color={colors.gray[100]} />;
+          }}
           getItemLayout={(_, index) => ({
             length: 50,
             offset: 50 * index,
