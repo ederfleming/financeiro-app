@@ -18,19 +18,19 @@ export const categorias = [
   {
     key: "diarios" as const,
     label: "Diários",
-    icon: "calendar" as keyof typeof Ionicons.glyphMap,
-    color: colors.purple[500],
+    icon: "cart-outline" as keyof typeof Ionicons.glyphMap,
+    color: colors.orange[300],
   },
   {
     key: "cartao" as const,
     label: "Cartão",
-    icon: "card" as keyof typeof Ionicons.glyphMap,
-    color: colors.orange[300],
+    icon: "card-outline" as keyof typeof Ionicons.glyphMap,
+    color: colors.purple[500],
   },
   {
     key: "economia" as const,
     label: "Economia",
-    icon: "wallet" as keyof typeof Ionicons.glyphMap,
+    icon: "wallet-outline" as keyof typeof Ionicons.glyphMap,
     color: colors.green[900],
   },
   {

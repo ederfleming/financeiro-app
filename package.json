@@ -17,6 +17,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "expo": "~54.0.29",
+    "expo-local-authentication": "~17.0.8",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
     "react-native": "0.81.5",

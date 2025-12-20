@@ -1,6 +1,8 @@
 import { Categoria } from "./index";
 
 export type RootStackParamList = {
+  Login: undefined; // ✅ Adicionar
+  ConfiguracaoInicial: undefined; // ✅ Adicionar
   MainTabs: undefined;
   Menu: undefined;
   Cadastro: {
@@ -17,7 +19,7 @@ export type TabParamList = {
   Saldos: undefined;
   Totais: undefined;
   AddPlaceholder: undefined;
-  Projeção: undefined;
+  Panoramas: undefined;
   Tags: undefined;
 };
 

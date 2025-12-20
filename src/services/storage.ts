@@ -1,4 +1,5 @@
 import { Config, Transacao } from "@/types";
+import { formatDate } from "@/utils/dateUtils";
 import { getTransacoesAplicaveisNaData } from "@/utils/recorrencia";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,8 +20,10 @@ export const getConfig = async (): Promise<Config> => {
     if (!config) {
       const defaultConfig: Config = {
         saldoInicial: 0,
+        dataInicial: formatDate(new Date()), // ✅ Data atual como padrão
         gastoDiarioPadrao: 0,
         percentualEconomia: 0,
+        onboardingCompleto: false, // ✅ Adicionar
       };
       await setConfig(defaultConfig);
       return defaultConfig;
@@ -30,9 +33,22 @@ export const getConfig = async (): Promise<Config> => {
     console.error("Erro ao buscar config:", error);
     return {
       saldoInicial: 0,
+      dataInicial: formatDate(new Date()),
       gastoDiarioPadrao: 0,
       percentualEconomia: 0,
+      onboardingCompleto: false,
     };
+  }
+};
+
+// ✅ Adicionar função para verificar onboarding
+export const isOnboardingCompleto = async (): Promise<boolean> => {
+  try {
+    const config = await getConfig();
+    return config.onboardingCompleto;
+  } catch (error) {
+    console.error("Erro ao verificar onboarding:", error);
+    return false;
   }
 };
 

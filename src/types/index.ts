@@ -35,10 +35,11 @@ export interface Transacao {
 }
 export interface Config {
   saldoInicial: number;
+  dataInicial: string; // ✅ Adicionar
   gastoDiarioPadrao: number;
   percentualEconomia: number;
+  onboardingCompleto: boolean; // ✅ Adicionar
 }
-
 export interface DiaData {
   data: string; // YYYY-MM-DD
   conciliado: boolean;

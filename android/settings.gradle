@@ -31,7 +31,13 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'Panorama Financeiro'
+rootProject.name = 'Panorama
+
+expoAutolinking.useExpoVersionCatalog()
+
+include ':app'
+includeBuild(expoAutolinking.reactNativeGradlePlugin)
+
 
 expoAutolinking.useExpoVersionCatalog()
 

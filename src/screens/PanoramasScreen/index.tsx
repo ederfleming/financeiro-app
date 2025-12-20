@@ -2,10 +2,10 @@ import { colors } from "@/theme/colors";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function ProjecaoScreen() {
+export default function PanoramasScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Tela de Projeção</Text>
+      <Text style={styles.text}>Tela de Panoramas</Text>
     </View>
   );
 }

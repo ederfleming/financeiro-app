@@ -7,9 +7,11 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 // Imports das telas (vamos criar em seguida)
 import CadastroScreen from "@/screens/CadastroScreen";
+import ConfiguracaoInicialScreen from "@/screens/ConfiguracaoInicialScreen";
 import DetalhesScreen from "@/screens/DetalhesScreen";
+import LoginScreen from "@/screens/LoginScreen";
 import MenuScreen from "@/screens/MenuScreen";
-import ProjecaoScreen from "@/screens/ProjecaoScreen";
+import PanoramasScreen from "@/screens/PanoramasScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
 import TagsScreen from "@/screens/TagsScreen";
 import TotaisScreen from "@/screens/TotaisScreen";
@@ -79,8 +81,8 @@ function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Projeção"
-        component={ProjecaoScreen}
+        name="Panoramas"
+        component={PanoramasScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bar-chart" size={size} color={color} />
@@ -104,7 +106,19 @@ function TabNavigator() {
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator id="RootStack" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        id="RootStack"
+        screenOptions={{ headerShown: false }}
+        initialRouteName="Login" // ✅ Começa no login
+      >
+        {/* ✅ Telas de Onboarding */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen
+          name="ConfiguracaoInicial"
+          component={ConfiguracaoInicialScreen}
+        />
+
+        {/* Telas principais */}
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen
           name="Cadastro"

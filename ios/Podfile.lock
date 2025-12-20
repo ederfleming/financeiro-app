@@ -34,6 +34,8 @@ PODS:
     - ExpoModulesCore
   - ExpoKeepAwake (15.0.8):
     - ExpoModulesCore
+  - ExpoLocalAuthentication (17.0.8):
+    - ExpoModulesCore
   - ExpoModulesCore (3.0.29):
     - hermes-engine
     - RCTRequired
@@ -1837,6 +1839,7 @@ DEPENDENCIES:
   - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
+  - ExpoLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
@@ -1923,6 +1926,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo/node_modules/expo-keep-awake/ios"
+  ExpoLocalAuthentication:
+    :path: "../node_modules/expo-local-authentication/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   FBLazyVector:
@@ -2074,6 +2079,7 @@ SPEC CHECKSUMS:
   ExpoFileSystem: aefcd337b94b874f88752ebefc52813b84992fad
   ExpoFont: 26bbea90749b8dd0b69effc9fab54248e684f290
   ExpoKeepAwake: 44bf6715bc1d2ddb17afe19d927cd039cda123f0
+  ExpoLocalAuthentication: a5d1c60718a852faa1852ef76298d8a167dc99f5
   ExpoModulesCore: 77496909fd3c800f97f7f2007dd26aeac4bb3798
   FBLazyVector: e95a291ad2dadb88e42b06e0c5fb8262de53ec12
   hermes-engine: 9f4dfe93326146a1c99eb535b1cb0b857a3cd172
@@ -2146,6 +2152,6 @@ SPEC CHECKSUMS:
   RNScreens: dd61bc3a3e6f6901ad833efa411917d44827cf51
   Yoga: 3fd22c2cae22d7a2b0f0b538f55f7c2a17dc94d5
 
-PODFILE CHECKSUM: e21c06ab9a0d8fcb7515c23c7a63eaa0f2e184cc
+PODFILE CHECKSUM: a64c4dce9538ed7facbf052846bf01808cdaf092
 
 COCOAPODS: 1.16.2
