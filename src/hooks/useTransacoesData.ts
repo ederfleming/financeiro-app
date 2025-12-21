@@ -5,6 +5,7 @@ import { Alert } from "react-native";
 import {
   deleteTransacao,
   excluirOcorrenciaRecorrente,
+  excluirRecorrenciaAPartirDe,
   getTransacoesPorDataComRecorrencia,
 } from "@/services/storage";
 import { Categoria, Transacao } from "@/types";
@@ -115,6 +116,27 @@ export function useTransacoesData({ data }: UseTransacoesDataProps) {
     );
   }, [transacaoParaExcluir, carregarDados]);
 
+  // ✨ NOVA FUNÇÃO: Exclui desta data em diante
+  const excluirDestaEmDiante = useCallback(async () => {
+    if (!transacaoParaExcluir) return;
+
+    try {
+      await excluirRecorrenciaAPartirDe(transacaoParaExcluir.id, data);
+      setModalExclusaoVisible(false);
+      setTransacaoParaExcluir(null);
+      await carregarDados();
+
+      // ✨ Alert de sucesso
+      Alert.alert(
+        "Sucesso",
+        "Transações a partir desta data foram excluídas com sucesso!"
+      );
+    } catch (error) {
+      console.error("Erro ao excluir recorrência a partir de data:", error);
+      Alert.alert("Erro", "Não foi possível excluir a recorrência");
+    }
+  }, [transacaoParaExcluir, data, carregarDados]);
+
   return {
     // Estados
     transacoes,
@@ -133,6 +155,7 @@ export function useTransacoesData({ data }: UseTransacoesDataProps) {
     carregarDados,
     iniciarExclusao,
     excluirApenasEsta,
+    excluirDestaEmDiante, // ✨ NOVO
     excluirTodas,
   };
 }

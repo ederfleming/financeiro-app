@@ -101,23 +101,96 @@ export const transacaoAplicavelNaData = (
 };
 
 /**
- * Filtra transações que se aplicam a uma data específica (incluindo recorrentes)
- * e aplica edições específicas se houver
+ * Verifica se uma transação recorrente deve aparecer em uma data específica
+ * Agora considera o campo dataFimRecorrencia
  */
 export const getTransacoesAplicaveisNaData = (
-  todasTransacoes: Transacao[],
+  transacoes: Transacao[],
   data: string
 ): Transacao[] => {
-  return todasTransacoes
-    .filter((transacao) => transacaoAplicavelNaData(transacao, data))
-    .map((transacao) => {
-      // Se há edição específica para esta data, aplica
-      if (transacao.edicoesEspecificas?.[data]) {
-        return {
-          ...transacao,
-          ...transacao.edicoesEspecificas[data],
-        };
+  const dataAlvo = new Date(data + "T00:00:00");
+  const resultado: Transacao[] = [];
+
+  transacoes.forEach((transacao) => {
+    const dataInicio = new Date(transacao.data + "T00:00:00");
+
+    // Verifica se a data alvo é anterior ao início da recorrência
+    if (dataAlvo < dataInicio) {
+      return;
+    }
+
+    // ✨ NOVO: Verifica se a recorrência foi encerrada
+    if (transacao.dataFimRecorrencia) {
+      const dataFim = new Date(transacao.dataFimRecorrencia + "T00:00:00");
+      if (dataAlvo > dataFim) {
+        return; // Data alvo está após o fim da recorrência
       }
-      return transacao;
-    });
+    }
+
+    // Verifica se a data está na lista de exclusões
+    if (transacao.datasExcluidas?.includes(data)) {
+      return;
+    }
+
+    // Verifica se a transação se aplica nesta data baseado na recorrência
+    if (transacao.recorrencia === "unica") {
+      if (transacao.data === data) {
+        resultado.push(aplicarEdicaoEspecifica(transacao, data));
+      }
+      return;
+    }
+
+    // Lógica de recorrência (diaria, semanal, etc.)
+    if (verificaSeDataCorresponde(transacao, dataAlvo)) {
+      resultado.push(aplicarEdicaoEspecifica(transacao, data));
+    }
+  });
+
+  return resultado;
+};
+
+// Função auxiliar para verificar se data corresponde à recorrência
+const verificaSeDataCorresponde = (
+  transacao: Transacao,
+  dataAlvo: Date
+): boolean => {
+  const dataInicio = new Date(transacao.data + "T00:00:00");
+  const diffTime = dataAlvo.getTime() - dataInicio.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  switch (transacao.recorrencia) {
+    case "diaria":
+      return diffDays >= 0;
+    case "semanal":
+      return diffDays >= 0 && diffDays % 7 === 0;
+    case "quinzenal":
+      return diffDays >= 0 && diffDays % 15 === 0;
+    case "cada21dias":
+      return diffDays >= 0 && diffDays % 21 === 0;
+    case "cada28dias":
+      return diffDays >= 0 && diffDays % 28 === 0;
+    case "mensal":
+      return (
+        diffDays >= 0 &&
+        dataAlvo.getDate() === dataInicio.getDate() &&
+        (dataAlvo.getMonth() >= dataInicio.getMonth() ||
+          dataAlvo.getFullYear() > dataInicio.getFullYear())
+      );
+    default:
+      return false;
+  }
+};
+
+// Aplica edições específicas se existirem
+const aplicarEdicaoEspecifica = (
+  transacao: Transacao,
+  data: string
+): Transacao => {
+  if (transacao.edicoesEspecificas?.[data]) {
+    return {
+      ...transacao,
+      ...transacao.edicoesEspecificas[data],
+    };
+  }
+  return transacao;
 };

@@ -41,12 +41,18 @@ Representa o estado inicial e as preferências de domínio do usuário.
 ```typescript
 export interface Config {
   saldoInicial: number;
-  dataInicial: string;        // Formato YYYY-MM-DD
+  dataInicial: string;
+  gastosEstimados: GastoVariavel[];
+  diasParaDivisao: 28 | 30 | 31;
   gastoDiarioPadrao: number;
   percentualEconomia: number;
   onboardingCompleto: boolean;
 }
+
 ```
+
+> 📌 **Nota:** `gastoDiarioPadrao` é um valor derivado de `gastosEstimados / diasParaDivisao`. Ele é persistido apenas por performance e consistência de projeção, não devendo ser editado diretamente.
+
 * **Garantia de Existência:** O service assegura que este objeto sempre exista. Se ausente, injeta um padrão e redireciona para o Onboarding.
 
 ### 4.2 Tipos de Categoria e Recorrência
@@ -78,6 +84,7 @@ export interface Transacao {
 
   // CONTROLE DE RECORRÊNCIA VIRTUAL
   datasExcluidas?: string[];  // Blacklist de datas da série
+  dataFimRecorrencia?: string; // ✨ NOVO: Encerra a recorrência nesta data (YYYY-MM-DD)
   edicoesEspecificas?: {      // Overrides pontuais por data
     [data: string]: Partial<
       Omit<Transacao, "id" | "recorrencia" | "datasExcluidas" | "edicoesEspecificas">
@@ -124,7 +131,10 @@ A função `getTransacoesPorDataComRecorrencia(data)` resolve a recorrência
 
 **Fluxo de resolução:**
 
-1. **Avaliação Temporal:** Verifica se a data consultada pertence à série.
+1. Avaliação Temporal:
+   - Verifica se a data consultada é >= data inicial
+   - Verifica se NÃO ultrapassa `dataFimRecorrencia` (quando definida)
+
 2. **Supressão:** Ignora datas presentes em `datasExcluidas`.
 3. **Override:** Aplica `edicoesEspecificas[data]` via *shallow merge* sobre a transação mestre.
 
@@ -134,10 +144,11 @@ A função `getTransacoesPorDataComRecorrencia(data)` resolve a recorrência
 ## 7. Diferença Crítica de Operações
 | Operação | Método | Impacto |
 | :--- | :--- | :--- |
-| **Alterar Série** | `updateTransacao` | Afeta a raiz e, consequentemente, **todas** as ocorrências (passadas e futuras). |
-| **Editar Ocorrência** | `editarOcorrenciaRecorrente` | Cria uma exceção (override). Afeta **apenas a data específica**. |
-| **Excluir Ocorrência** | `excluirOcorrenciaRecorrente` | Adiciona a data à blacklist. A série permanece, mas "some" naquele dia. |
-| **Excluir Série** | `deleteTransacao` | **Remoção total**. Destrói o mestre e todas as suas instâncias virtuais. |
+| **Alterar Série** | `updateTransacao` | Afeta a raiz e todas as ocorrências. |
+| **Editar Ocorrência** | `editarOcorrenciaRecorrente` | Cria exceção. Afeta apenas a data específica. |
+| **Excluir Ocorrência** | `excluirOcorrenciaRecorrente` | Adiciona à blacklist. A série permanece. |
+| **✨ Excluir A Partir De** | `excluirRecorrenciaAPartirDe` | Define data fim. Encerra série mas preserva histórico. |
+| **Excluir Série** | `deleteTransacao` | Remoção total. Destrói tudo. |
 
 ---
 

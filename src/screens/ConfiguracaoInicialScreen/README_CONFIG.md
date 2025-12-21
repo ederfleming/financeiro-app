@@ -42,3 +42,7 @@ Os dados são consolidados no objeto `Config` e salvos no AsyncStorage:
 ## 🚩 Status
 - **Status:** ✅ Implementada.
 - **Importância:** 🔒 Crítica (Base de todo o domínio financeiro).
+
+
+
+

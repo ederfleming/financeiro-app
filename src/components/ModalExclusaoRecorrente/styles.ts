@@ -70,4 +70,8 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.gray[600],
   },
+  opcaoButtonWarning: {
+    borderColor: colors.yellow[500] + "30", // 30 = opacity ~20%
+    borderWidth: 1,
+  },
 });
