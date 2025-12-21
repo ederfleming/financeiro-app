@@ -101,3 +101,21 @@ export const formatarDataExtenso = (dateString: string): string => {
   
   return `${day} de ${mesNome} de ${year}`;
 };
+
+/**
+ * Verifica se uma data é hoje
+ */
+export const isHoje = (data: string): boolean => {
+  return data === formatDate(new Date());
+};
+
+/**
+ * Verifica se uma data é futura (depois de hoje)
+ */
+export const isFutura = (data: string): boolean => {
+  const dataObj = parseDate(data);
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  dataObj.setHours(0, 0, 0, 0);
+  return dataObj > hoje;
+};
