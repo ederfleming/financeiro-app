@@ -14,6 +14,10 @@ export const calcularProximaData = (
     case "unica":
       return null;
 
+    case "diaria": // ✅ Adicionar
+      data.setDate(data.getDate() + 1);
+      return formatDate(data);
+
     case "semanal":
       data.setDate(data.getDate() + 7);
       return formatDate(data);
@@ -72,6 +76,9 @@ export const transacaoAplicavelNaData = (
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   switch (transacao.recorrencia) {
+    case "diaria": // ✅ Adicionar - todos os dias
+      return true; // Sempre aplica para qualquer dia futuro
+
     case "semanal":
       return diffDays % 7 === 0;
 

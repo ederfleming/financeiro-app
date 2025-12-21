@@ -24,6 +24,7 @@ export const calcularTotaisDia = (data: string, transacoes: Transacao[]) => {
   return totais;
 };
 
+
 /**
  * Calcula o saldo de um dia específico
  */
@@ -46,9 +47,19 @@ export const calcularSaldoMesAnterior = (
   month: number,
   transacoes: Transacao[],
   diasConciliados: string[],
-  saldoInicial: number
+  config: Config
 ): number => {
-  // Se é janeiro, volta para dezembro do ano anterior
+  // Se é o mês/ano da data inicial configurada, retorna o saldo inicial
+  const dataInicialConfig = new Date(config.dataInicial);
+  const anoInicial = dataInicialConfig.getFullYear();
+  const mesInicial = dataInicialConfig.getMonth();
+
+  // ✅ Se é o mês inicial ou anterior a ele, usa o saldo inicial da config
+  if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
+    return config.saldoInicial;
+  }
+
+  // Calcula o mês anterior
   const mesAnterior = month === 0 ? 11 : month - 1;
   const anoAnterior = month === 0 ? year - 1 : year;
 
@@ -62,8 +73,14 @@ export const calcularSaldoMesAnterior = (
     datasMesAnterior.push(formatDate(data));
   }
 
-  // Calcula todos os saldos do mês anterior
-  let saldoAcumulado = saldoInicial;
+  // Calcula todos os saldos do mês anterior recursivamente
+  let saldoAcumulado = calcularSaldoMesAnterior(
+    anoAnterior,
+    mesAnterior,
+    transacoes,
+    diasConciliados,
+    config
+  );
 
   datasMesAnterior.forEach((data) => {
     const totais = calcularTotaisDia(data, transacoes);
@@ -94,13 +111,13 @@ export const calcularSaldosMes = (
 ): SaldoDia[] => {
   const saldos: SaldoDia[] = [];
 
-  // Busca o saldo inicial do mês (que é o saldo final do mês anterior)
+  // ✅ Busca o saldo inicial do mês (que é o saldo final do mês anterior)
   let saldoAcumulado = calcularSaldoMesAnterior(
     year,
     month,
     transacoes,
     diasConciliados,
-    config.saldoInicial
+    config
   );
 
   datas.forEach((data) => {

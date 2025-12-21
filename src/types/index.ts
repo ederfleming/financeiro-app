@@ -8,11 +8,13 @@ export type Categoria =
 
 export type Recorrencia =
   | "unica"
+  | "diaria"
   | "semanal"
   | "quinzenal"
   | "cada21dias"
   | "cada28dias"
   | "mensal";
+
 
 export interface Transacao {
   id: string;
@@ -35,10 +37,10 @@ export interface Transacao {
 }
 export interface Config {
   saldoInicial: number;
-  dataInicial: string; // ✅ Adicionar
+  dataInicial: string;
   gastoDiarioPadrao: number;
   percentualEconomia: number;
-  onboardingCompleto: boolean; // ✅ Adicionar
+  onboardingCompleto: boolean;
 }
 export interface DiaData {
   data: string; // YYYY-MM-DD

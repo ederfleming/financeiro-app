@@ -1,8 +1,8 @@
 import { Categoria } from "./index";
 
 export type RootStackParamList = {
-  Login: undefined; // ✅ Adicionar
-  ConfiguracaoInicial: undefined; // ✅ Adicionar
+  Login: undefined;
+  ConfiguracaoInicial: undefined;
   MainTabs: undefined;
   Menu: undefined;
   Cadastro: {
@@ -22,8 +22,6 @@ export type TabParamList = {
   Panoramas: undefined;
   Tags: undefined;
 };
-
-
 declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
