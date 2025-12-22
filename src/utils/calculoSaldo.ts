@@ -3,6 +3,12 @@ import { formatDate, isFutura, isHoje } from "./dateUtils";
 import { getTransacoesAplicaveisNaData } from "./recorrencia";
 
 /**
+ * Normaliza valores monetários (2 casas)
+ */
+const normalizar = (valor: number) =>
+  Math.round((valor + Number.EPSILON) * 100) / 100;
+
+/**
  * Calcula os totais de transações por categoria para um dia específico
  */
 export const calcularTotaisDia = (
@@ -18,36 +24,28 @@ export const calcularTotaisDia = (
     economia: 0,
   };
 
-  // Filtra transações aplicáveis à data (incluindo recorrentes)
   const transacoesAplicaveis = getTransacoesAplicaveisNaData(transacoes, data);
 
-  // Calcula os totais por categoria
+  // Soma por categoria (normalizando na soma)
   transacoesAplicaveis.forEach((t) => {
     if (t.categoria === "diarios") {
-      totais.diarios += t.valor;
+      totais.diarios = normalizar(totais.diarios + t.valor);
     } else {
-      totais[t.categoria] += t.valor;
+      totais[t.categoria] = normalizar(totais[t.categoria] + t.valor);
     }
   });
 
-  // ✨ LÓGICA DO GASTO DIÁRIO PADRÃO
   const gastoDiarioReal = totais.diarios;
 
-  // Verifica se o dia está antes da dataInicial configurada
+  // Lógica do gasto diário padrão
   if (data < config.dataInicial) {
-    totais.diarios = 0; // Dias antes da config ficam zerados
-  }
-  // Se não tem gasto real E (é hoje OU é futuro) → usa estimativa
-  else if (gastoDiarioReal === 0 && (isHoje(data) || isFutura(data))) {
-    totais.diarios = config.gastoDiarioPadrao;
-  }
-  // Se não tem gasto real E é passado → fica zero
-  else if (gastoDiarioReal === 0) {
     totais.diarios = 0;
-  }
-  // Se tem gasto real → usa o real (qualquer dia)
-  else {
-    totais.diarios = gastoDiarioReal;
+  } else if (gastoDiarioReal === 0 && (isHoje(data) || isFutura(data))) {
+    totais.diarios = normalizar(config.gastoDiarioPadrao);
+  } else if (gastoDiarioReal === 0) {
+    totais.diarios = 0;
+  } else {
+    totais.diarios = normalizar(gastoDiarioReal);
   }
 
   return totais;
@@ -55,6 +53,7 @@ export const calcularTotaisDia = (
 
 /**
  * Calcula o saldo de um dia específico
+ * (FUNÇÃO PURA — NÃO NORMALIZAR AQUI)
  */
 export const calcularSaldoDia = (
   saldoAnterior: number,
@@ -77,31 +76,19 @@ export const calcularSaldoMesAnterior = (
   diasConciliados: string[],
   config: Config
 ): number => {
-  // Se é o mês/ano da data inicial configurada, retorna o saldo inicial
   const dataInicialConfig = new Date(config.dataInicial);
   const anoInicial = dataInicialConfig.getFullYear();
   const mesInicial = dataInicialConfig.getMonth();
 
-  // ✅ Se é o mês inicial ou anterior a ele, usa o saldo inicial da config
   if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
-    return config.saldoInicial;
+    return normalizar(config.saldoInicial);
   }
 
-  // Calcula o mês anterior
   const mesAnterior = month === 0 ? 11 : month - 1;
   const anoAnterior = month === 0 ? year - 1 : year;
 
-  // Pega o último dia do mês anterior
   const ultimoDiaMesAnterior = new Date(year, month, 0).getDate();
 
-  // Cria array de datas do mês anterior
-  const datasMesAnterior: string[] = [];
-  for (let dia = 1; dia <= ultimoDiaMesAnterior; dia++) {
-    const data = new Date(anoAnterior, mesAnterior, dia);
-    datasMesAnterior.push(formatDate(data));
-  }
-
-  // Calcula todos os saldos do mês anterior recursivamente
   let saldoAcumulado = calcularSaldoMesAnterior(
     anoAnterior,
     mesAnterior,
@@ -110,18 +97,21 @@ export const calcularSaldoMesAnterior = (
     config
   );
 
-  datasMesAnterior.forEach((data) => {
+  for (let dia = 1; dia <= ultimoDiaMesAnterior; dia++) {
+    const data = formatDate(new Date(anoAnterior, mesAnterior, dia));
     const totais = calcularTotaisDia(data, transacoes, config);
 
-    saldoAcumulado = calcularSaldoDia(
-      saldoAcumulado,
-      totais.entradas,
-      totais.saidas,
-      totais.diarios,
-      totais.cartao,
-      totais.economia
+    saldoAcumulado = normalizar(
+      calcularSaldoDia(
+        saldoAcumulado,
+        totais.entradas,
+        totais.saidas,
+        totais.diarios,
+        totais.cartao,
+        totais.economia
+      )
     );
-  });
+  }
 
   return saldoAcumulado;
 };
@@ -139,83 +129,6 @@ export const calcularSaldosMes = (
 ): SaldoDia[] => {
   const saldos: SaldoDia[] = [];
 
-  // ✅ Busca o saldo inicial do mês (que é o saldo final do mês anterior)
-  let saldoAcumulado = calcularSaldoMesAnterior(
-    year,
-    month,
-    transacoes,
-    diasConciliados,
-    config
-  );
-
-  datas.forEach((data) => {
-    const totais = calcularTotaisDia(data, transacoes, config);
-
-    saldoAcumulado = calcularSaldoDia(
-      saldoAcumulado,
-      totais.entradas,
-      totais.saidas,
-      totais.diarios,
-      totais.cartao,
-      totais.economia
-    );
-
-    const dia = parseInt(data.split("-")[2]);
-
-    saldos.push({
-      dia,
-      entradas: totais.entradas,
-      saidas: totais.saidas,
-      diarios: totais.diarios,
-      cartao: totais.cartao,
-      economia: totais.economia,
-      saldoAcumulado,
-      conciliado: diasConciliados.includes(data),
-    });
-  });
-
-  return saldos;
-};
-
-/**
- * Calcula o gasto diário médio do mês
- */
-export const calcularGastoDiarioMedio = (
-  transacoes: Transacao[],
-  datas: string[]
-): number => {
-  const totalDiarios = transacoes
-    .filter((t) => t.categoria === "diarios" && datas.includes(t.data))
-    .reduce((sum, t) => sum + t.valor, 0);
-
-  return datas.length > 0 ? totalDiarios / datas.length : 0;
-};
-
-/**
- * Calcula os saldos de todos os dias de um mês específico para o Panorama
- * (sem filtros, apenas saldo acumulado)
- */
-export const calcularSaldosTrimestre = (
-  year: number,
-  month: number,
-  transacoes: Transacao[],
-  diasConciliados: string[],
-  config: Config
-): SaldoDia[] => {
-  const normalizar = (valor: number) => Math.round(valor * 100) / 100;
-  const saldos: SaldoDia[] = [];
-
-  // Pega o último dia do mês
-  const ultimoDia = new Date(year, month + 1, 0).getDate();
-
-  // Cria array de datas do mês
-  const datas: string[] = [];
-  for (let dia = 1; dia <= ultimoDia; dia++) {
-    const data = new Date(year, month, dia);
-    datas.push(formatDate(data));
-  }
-
-  // ✅ Busca o saldo inicial do mês (saldo final do mês anterior)
   let saldoAcumulado = normalizar(
     calcularSaldoMesAnterior(year, month, transacoes, diasConciliados, config)
   );
@@ -250,27 +163,73 @@ export const calcularSaldosTrimestre = (
 
   return saldos;
 };
+
 /**
- * Formata valor para moeda brasileira
+ * Calcula os saldos de todos os dias de um mês específico para o Panorama
  */
-export const formatarMoeda = (valor: number): string => {
-  return valor.toLocaleString("pt-BR", {
+export const calcularSaldosTrimestre = (
+  year: number,
+  month: number,
+  transacoes: Transacao[],
+  diasConciliados: string[],
+  config: Config
+): SaldoDia[] => {
+  const saldos: SaldoDia[] = [];
+
+  const ultimoDia = new Date(year, month + 1, 0).getDate();
+
+  let saldoAcumulado = normalizar(
+    calcularSaldoMesAnterior(year, month, transacoes, diasConciliados, config)
+  );
+
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = formatDate(new Date(year, month, dia));
+    const totais = calcularTotaisDia(data, transacoes, config);
+
+    saldoAcumulado = normalizar(
+      calcularSaldoDia(
+        saldoAcumulado,
+        totais.entradas,
+        totais.saidas,
+        totais.diarios,
+        totais.cartao,
+        totais.economia
+      )
+    );
+
+    saldos.push({
+      dia,
+      entradas: totais.entradas,
+      saidas: totais.saidas,
+      diarios: totais.diarios,
+      cartao: totais.cartao,
+      economia: totais.economia,
+      saldoAcumulado,
+      conciliado: diasConciliados.includes(data),
+    });
+  }
+
+  return saldos;
+};
+
+/**
+ * Formatação
+ */
+export const formatarMoeda = (valor: number): string =>
+  valor.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
-};
 
 export const formatarMoedaAbreviada = (valor: number): string => {
   const abs = Math.abs(valor);
 
   if (abs < 1000) {
-    // remove centavos sem arredondar
-    const inteiro = Math.trunc(valor);
-    return `R$ ${inteiro.toLocaleString("pt-BR")}`;
+    return `R$ ${Math.trunc(valor).toLocaleString("pt-BR")}`;
   }
 
-  // milhares
-  const milhares = Math.trunc((valor / 1000) * 100) / 100;
+  const inteiro = Math.trunc(valor);
+  const milhares = Math.trunc(inteiro / 10) / 100;
 
   return `R$ ${milhares.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
