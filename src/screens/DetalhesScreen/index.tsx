@@ -28,22 +28,20 @@ export default function DetalhesScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<DetalhesScreenRouteProp>();
 
-  const { data } = route.params;
+  const { data, filter } = route.params;
 
   const {
     transacoesFiltradas,
     filtroCategoria,
     loading,
     modalExclusaoVisible,
-    transacaoParaExcluir,
     setFiltroCategoria,
     setModalExclusaoVisible,
-    setTransacaoParaExcluir,
     iniciarExclusao,
     excluirApenasEsta,
     excluirTodas,
     excluirDestaEmDiante,
-  } = useTransacoesData({ data });
+  } = useTransacoesData({ data, filter });
 
   const handleEditar = (transacao: Transacao) => {
     navigation.navigate("Cadastro", {

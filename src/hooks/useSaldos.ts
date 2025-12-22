@@ -153,11 +153,11 @@ export function useSaldos() {
   );
 
   const abrirDetalhes = useCallback(
-    (dia: number) => {
+    (dia: number, filter: string) => {
       const year = mesAtual.getFullYear();
       const month = mesAtual.getMonth();
       const dataFormatada = formatDate(new Date(year, month, dia));
-      navigation.navigate("Detalhes", { data: dataFormatada });
+      navigation.navigate("Detalhes", { data: dataFormatada, filter });
     },
     [mesAtual, navigation]
   );

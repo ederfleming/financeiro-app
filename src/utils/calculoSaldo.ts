@@ -192,6 +192,65 @@ export const calcularGastoDiarioMedio = (
 };
 
 /**
+ * Calcula os saldos de todos os dias de um mês específico para o Panorama
+ * (sem filtros, apenas saldo acumulado)
+ */
+export const calcularSaldosTrimestre = (
+  year: number,
+  month: number,
+  transacoes: Transacao[],
+  diasConciliados: string[],
+  config: Config
+): SaldoDia[] => {
+  const normalizar = (valor: number) => Math.round(valor * 100) / 100;
+  const saldos: SaldoDia[] = [];
+
+  // Pega o último dia do mês
+  const ultimoDia = new Date(year, month + 1, 0).getDate();
+
+  // Cria array de datas do mês
+  const datas: string[] = [];
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = new Date(year, month, dia);
+    datas.push(formatDate(data));
+  }
+
+  // ✅ Busca o saldo inicial do mês (saldo final do mês anterior)
+  let saldoAcumulado = normalizar(
+    calcularSaldoMesAnterior(year, month, transacoes, diasConciliados, config)
+  );
+
+  datas.forEach((data) => {
+    const totais = calcularTotaisDia(data, transacoes, config);
+
+    saldoAcumulado = normalizar(
+      calcularSaldoDia(
+        saldoAcumulado,
+        totais.entradas,
+        totais.saidas,
+        totais.diarios,
+        totais.cartao,
+        totais.economia
+      )
+    );
+
+    const dia = parseInt(data.split("-")[2]);
+
+    saldos.push({
+      dia,
+      entradas: totais.entradas,
+      saidas: totais.saidas,
+      diarios: totais.diarios,
+      cartao: totais.cartao,
+      economia: totais.economia,
+      saldoAcumulado,
+      conciliado: diasConciliados.includes(data),
+    });
+  });
+
+  return saldos;
+};
+/**
  * Formata valor para moeda brasileira
  */
 export const formatarMoeda = (valor: number): string => {
@@ -199,4 +258,22 @@ export const formatarMoeda = (valor: number): string => {
     style: "currency",
     currency: "BRL",
   });
+};
+
+export const formatarMoedaAbreviada = (valor: number): string => {
+  const abs = Math.abs(valor);
+
+  if (abs < 1000) {
+    // remove centavos sem arredondar
+    const inteiro = Math.trunc(valor);
+    return `R$ ${inteiro.toLocaleString("pt-BR")}`;
+  }
+
+  // milhares
+  const milhares = Math.trunc((valor / 1000) * 100) / 100;
+
+  return `R$ ${milhares.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}k`;
 };

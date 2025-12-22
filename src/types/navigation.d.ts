@@ -12,6 +12,7 @@ export type RootStackParamList = {
   };
   Detalhes: {
     data: string; // YYYY-MM-DD
+    filter: string; // filtro selecionado
   };
 };
 

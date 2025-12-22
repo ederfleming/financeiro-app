@@ -7,27 +7,35 @@ import { getMonthName } from "@/utils/dateUtils";
 import { styles } from "./styles";
 
 interface HeaderMesNavegacaoProps {
-  mesAtual: Date;
+  mesAtual?: Date; // ⬅️ agora opcional
+  tituloCustom?: string; // ✨ NOVO
   onMudarMes: (direcao: "anterior" | "proximo") => void;
   onIrParaHoje: () => void;
   onAbrirMenu?: () => void;
   showMenuButton?: boolean;
   showTodayButton?: boolean;
+  todayButtonAccessibilityLabel?: string; // ✨ NOVO (opcional)
 }
 
 export default function HeaderMesNavegacao({
   mesAtual,
+  tituloCustom,
   onMudarMes,
   onIrParaHoje,
   onAbrirMenu,
   showMenuButton = true,
   showTodayButton = true,
+  todayButtonAccessibilityLabel = "Ir para hoje", // ✨ NOVO
 }: HeaderMesNavegacaoProps) {
   return (
     <View style={styles.header}>
-      {/* Botão Ir para Hoje */}
+      {/* Botão Ir para Hoje/Trimestre Atual */}
       {showTodayButton && (
-        <TouchableOpacity onPress={onIrParaHoje} style={styles.todayButton}>
+        <TouchableOpacity
+          onPress={onIrParaHoje}
+          style={styles.todayButton}
+          accessibilityLabel={todayButtonAccessibilityLabel} // ✨ NOVO
+        >
           <CalendarTodayIcon size={30} />
         </TouchableOpacity>
       )}
@@ -39,8 +47,14 @@ export default function HeaderMesNavegacao({
 
       {/* Mês/Ano */}
       <Text style={styles.mesAno}>
-        {getMonthName(mesAtual.getMonth())}/
-        {mesAtual.getFullYear().toString().slice(-2)}
+        {tituloCustom
+          ? tituloCustom
+          : mesAtual
+          ? `${getMonthName(mesAtual.getMonth())}/${mesAtual
+              .getFullYear()
+              .toString()
+              .slice(-2)}`
+          : ""}
       </Text>
 
       {/* Navegação Próximo */}

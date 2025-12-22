@@ -16,7 +16,7 @@ interface DiaListItemProps {
   totalEntradasMes: number;
   onToggleConciliado: (dia: number) => void;
   onLongPressDia: (dia: number) => void;
-  onLongPressValores: (dia: number) => void;
+  onLongPressValores: (dia: number, filterCategoria: string) => void;
   getSaldoStyle: (
     saldo: number,
     totalEntradas: number
@@ -46,7 +46,6 @@ export default function DiaListItem({
   const diaDesabilitado = isDiaPassado(item.dia, mesAtual);
   const saldoStyle = getSaldoStyle(item.saldoAcumulado, totalEntradasMes);
   const fimDeSemana = isFimDeSemana(item.dia, mesAtual);
-
 
   const getValorPorCategoria = (): number => {
     switch (filtroCategoria) {
@@ -101,7 +100,7 @@ export default function DiaListItem({
       {/* Coluna de Valores por Categoria */}
       <Pressable
         style={styles.valoresColuna}
-        onLongPress={() => onLongPressValores(item.dia)}
+        onLongPress={() => onLongPressValores(item.dia, filtroCategoria)}
       >
         {filtroCategoria === "todas" ? (
           categorias

@@ -119,10 +119,10 @@ export default function ConfiguracaoInicialScreen() {
     return gastosVariaveis.reduce((acc, gasto) => acc + gasto.valor, 0);
   };
 
-  const calcularGastoDiario = (): number => {
-    const total = calcularTotalGastos();
-    return total / diasParaDivisao;
-  };
+const calcularGastoDiario = (): number => {
+  const total = calcularTotalGastos();
+  return Math.round((total / diasParaDivisao) * 100) / 100;
+};
 
   const handleFinalizar = async () => {
     try {
