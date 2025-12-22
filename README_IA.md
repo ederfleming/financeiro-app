@@ -77,6 +77,3 @@ Hooks customizados que encapsulam o estado e cálculos financeiros:
 * `README_STORAGE.md`: Documentação técnica do motor de persistência.
 * `index.ts` (types): Definições globais de `Transacao`, `Config`, `Categoria` e `Recorrencia`.
 
-## 🚩 Bloco de Trabalho Atual
-**Objetivo:** Implementar a lógica de 'Panoramas' (projeção trimestral).
-**Tarefa:** Criar lógica na pasta `utils/` para calcular o saldo futuro baseando-se no `saldoInicial` (config) e na projeção de transações recorrentes e parceladas para os próximos 3 meses.
