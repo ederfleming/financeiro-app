@@ -1,19 +1,31 @@
 {
   "expo": {
-    "name": "Panorama$",
-    "slug": "financeiro-app",
-    "version": "1.0.0",
+    "expo": {
+      "name": "Panorama$",
+      "slug": "panoramas",
+      "scheme": "panoramas",
+      "version": "1.0.0"
+    },
     "android": {
-      "package": "com.eder.fleming.financeiroapp"
+      "package": "br.com.flederming.panoramas"
     },
     "ios": {
-      "bundleIdentifier": "com.eder.fleming.financeiroapp",
-      "icon": "./assets/ios-icon.png"
+      "bundleIdentifier": "br.com.flederming.panoramas",
+      "icon": "./assets/ios-icon.png",
+      "appleTeamId": "7Q333HU3A6"
     },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFF"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "35b5cc22-1b96-434a-923e-535a1a3f9421"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

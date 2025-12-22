@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -33,18 +39,19 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  logoImage:{
+  logoImage: {
     width: 110,
     height: 110,
   },
   appName: {
     fontSize: fontSize.xxxl * 1.5,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.white,
     marginBottom: spacing.sm,
   },
   appSubtitle: {
     fontSize: fontSize.lg,
+    fontFamily: typography.regular,
     color: colors.purple[100],
   },
   loginContainer: {
@@ -78,7 +85,7 @@ export const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.purple[500],
   },
   biometricsText: {

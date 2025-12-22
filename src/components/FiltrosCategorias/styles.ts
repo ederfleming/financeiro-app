@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -29,7 +35,7 @@ export const styles = StyleSheet.create({
   filtroTexto: {
     fontSize: fontSize.md,
     color: colors.gray[600],
-    fontWeight: "500",
+    fontFamily: typography.medium,
   },
   filtroTextoActive: {
     color: colors.white,

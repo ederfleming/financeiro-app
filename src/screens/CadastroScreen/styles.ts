@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -23,7 +29,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.white,
   },
   keyboardView: {
@@ -40,7 +46,7 @@ export const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
     marginBottom: spacing.md,
   },
@@ -63,7 +69,7 @@ export const styles = StyleSheet.create({
   },
   dataTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   valorContainer: {
@@ -75,14 +81,14 @@ export const styles = StyleSheet.create({
   },
   cifrao: {
     fontSize: fontSize.xxxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[600],
     marginRight: spacing.sm,
   },
   valorInput: {
     flex: 1,
     fontSize: fontSize.xxxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   categoriasContainer: {
@@ -101,7 +107,7 @@ export const styles = StyleSheet.create({
   },
   categoriaTexto: {
     fontSize: fontSize.sm,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
     marginTop: spacing.xs,
   },
@@ -129,7 +135,7 @@ export const styles = StyleSheet.create({
   },
   recorrenciaLabel: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   recorrenciaDescricao: {
@@ -155,7 +161,7 @@ export const styles = StyleSheet.create({
   tagTexto: {
     fontSize: fontSize.md,
     color: colors.gray[600],
-    fontWeight: "500",
+    fontFamily: typography.medium,
   },
   tagTextoActive: {
     color: colors.white,
@@ -172,7 +178,7 @@ export const styles = StyleSheet.create({
   },
   salvarTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.white,
   },
   modalOverlay: {
@@ -197,7 +203,7 @@ export const styles = StyleSheet.create({
   },
   modalTitulo: {
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   recorrenciaOption: {
@@ -213,11 +219,12 @@ export const styles = StyleSheet.create({
   },
   recorrenciaOptionLabel: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   recorrenciaOptionDescricao: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     marginTop: 2,
   },
@@ -235,13 +242,14 @@ export const styles = StyleSheet.create({
   },
   modalExclusaoTitulo: {
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
     marginTop: spacing.lg,
     textAlign: "center",
   },
   modalExclusaoSubtitulo: {
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     marginTop: spacing.sm,
     textAlign: "center",
@@ -265,12 +273,13 @@ export const styles = StyleSheet.create({
   },
   opcaoExclusaoTitulo: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
     marginBottom: 4,
   },
   opcaoExclusaoDescricao: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   cancelarExclusaoButton: {
@@ -280,7 +289,7 @@ export const styles = StyleSheet.create({
   },
   cancelarExclusaoTexto: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
   },
 });

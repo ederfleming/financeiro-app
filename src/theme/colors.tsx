@@ -61,6 +61,13 @@ export const colors = {
   black: "#000000",
 } as const;
 
+export const typography = {
+  regular: "InterRegular",
+  medium: "InterMedium",
+  semibold: "InterSemiBold",
+  bold: "InterBold",
+} as const;
+
 export const spacing = {
   xs: 4,
   sm: 8,

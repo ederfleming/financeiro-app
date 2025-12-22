@@ -79,10 +79,6 @@ export default function ConfiguracaoInicialScreen() {
 
   // ========== FUNÇÕES DO STEP 2 ==========
   const adicionarGasto = () => {
-    if (!novoGastoDescricao.trim()) {
-      Alert.alert("Erro", "Digite a descrição do gasto");
-      return;
-    }
     if (!novoGastoValor) {
       Alert.alert("Erro", "Digite o valor do gasto");
       return;
@@ -119,10 +115,10 @@ export default function ConfiguracaoInicialScreen() {
     return gastosVariaveis.reduce((acc, gasto) => acc + gasto.valor, 0);
   };
 
-const calcularGastoDiario = (): number => {
-  const total = calcularTotalGastos();
-  return Math.round((total / diasParaDivisao) * 100) / 100;
-};
+  const calcularGastoDiario = (): number => {
+    const total = calcularTotalGastos();
+    return Math.round((total / diasParaDivisao) * 100) / 100;
+  };
 
   const handleFinalizar = async () => {
     try {
@@ -143,9 +139,9 @@ const calcularGastoDiario = (): number => {
 
       Alert.alert(
         "Sucesso",
-        `Configuração salva com sucesso!\n\nGasto diário recomendado: ${formatarMoeda(
+        `Gastos iniciais salvos com sucesso!\n\nGasto diário recomendado: ${formatarMoeda(
           gastoDiario
-        )}`,
+        )}\n\nSeus gastos variáveis podem ser editados posteriormente no menu de configurações.`,
         [
           {
             text: "OK",
@@ -271,7 +267,10 @@ const calcularGastoDiario = (): number => {
                 </View>
                 <Text style={styles.title}>Gastos Variáveis</Text>
                 <Text style={styles.subtitle}>
-                  Cadastre seus gastos mensais fixos
+                  Cadastre seus gastos mensais variáveis.
+                </Text>
+                <Text style={styles.subtitle}>
+                  Ex.: Alimentação, Transporte, Lazer.
                 </Text>
               </View>
 

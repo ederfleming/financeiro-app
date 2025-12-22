@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -30,13 +36,14 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: fontSize.xxxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
     marginBottom: spacing.sm,
     textAlign: "center",
   },
   subtitle: {
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     textAlign: "center",
   },
@@ -48,12 +55,13 @@ export const styles = StyleSheet.create({
   },
   label: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
     marginBottom: spacing.xs,
   },
   helper: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     marginBottom: spacing.md,
   },
@@ -68,14 +76,14 @@ export const styles = StyleSheet.create({
   },
   cifrao: {
     fontSize: fontSize.xxxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[600],
     marginRight: spacing.sm,
   },
   valorInput: {
     flex: 1,
     fontSize: fontSize.xxxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   dataSeletor: {
@@ -98,7 +106,7 @@ export const styles = StyleSheet.create({
   },
   dataTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   infoBox: {
@@ -112,6 +120,7 @@ export const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.blue[900],
     lineHeight: 20,
   },
@@ -131,7 +140,7 @@ export const styles = StyleSheet.create({
   },
   salvarTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.white,
   },
   progressContainer: {
@@ -151,6 +160,7 @@ export const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     textAlign: "center",
   },
@@ -174,7 +184,7 @@ export const styles = StyleSheet.create({
   },
   diaButtonText: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
   },
   diaButtonTextActive: {
@@ -198,7 +208,7 @@ export const styles = StyleSheet.create({
   addButtonText: {
     color: colors.white,
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
   },
   emptyState: {
     alignItems: "center",
@@ -206,12 +216,13 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
     marginTop: spacing.lg,
   },
   emptySubtext: {
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[400],
     marginTop: spacing.sm,
   },
@@ -228,21 +239,22 @@ export const styles = StyleSheet.create({
   },
   resumoLabel: {
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   resumoValor: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   resumoLabelDestaque: {
     fontSize: fontSize.lg,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.purple[700],
   },
   resumoValorDestaque: {
     fontSize: fontSize.xl,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.purple[700],
   },
   divider: {
@@ -264,7 +276,7 @@ export const styles = StyleSheet.create({
   },
   voltarTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.purple[500],
   },
 
@@ -290,7 +302,7 @@ export const styles = StyleSheet.create({
   },
   modalTitulo: {
     fontSize: fontSize.xl,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.gray[900],
   },
   modalBody: {
@@ -301,6 +313,7 @@ export const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     fontSize: fontSize.lg,
+    fontFamily: typography.regular,
     color: colors.gray[800],
     borderWidth: 1,
     borderColor: colors.gray[200],
@@ -315,6 +328,6 @@ export const styles = StyleSheet.create({
   modalButtonText: {
     color: colors.white,
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
   },
 });

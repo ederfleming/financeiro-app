@@ -1,4 +1,4 @@
-import { colors, fontSize, spacing } from "@/theme/colors";
+import { colors, fontSize, spacing, typography } from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
   message: {
     marginTop: spacing.lg,
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[600],
   },
 });

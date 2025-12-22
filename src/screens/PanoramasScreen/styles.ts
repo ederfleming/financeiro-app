@@ -1,4 +1,4 @@
-import { colors, fontSize, spacing } from "@/theme/colors";
+import { colors, fontSize, spacing, typography } from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
   },
   colunaHeaderText: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.purple[700],
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -64,12 +64,12 @@ export const styles = StyleSheet.create({
   },
   diaTexto: {
     fontSize: fontSize.md,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   diaTextoWeekend: {
     fontSize: fontSize.md,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.white,
   },
   rowSaldoColuna: {
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   },
   saldoTexto: {
     fontSize: fontSize.md,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
 });

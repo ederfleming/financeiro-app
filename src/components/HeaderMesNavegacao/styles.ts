@@ -1,4 +1,4 @@
-import { colors, fontSize, spacing } from "@/theme/colors";
+import { colors, fontSize, spacing, typography } from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   },
   mesAno: {
     fontSize: fontSize.xxl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   icon: {

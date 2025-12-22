@@ -1,4 +1,4 @@
-package com.eder.fleming.financeiroapp
+package br.com.flederming.panoramas
 
 import android.app.Application
 import android.content.res.Configuration

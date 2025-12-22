@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -22,13 +28,14 @@ export const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
     marginTop: spacing.lg,
     textAlign: "center",
   },
   subtitulo: {
     fontSize: fontSize.md,
+    fontFamily: typography.regular,
     color: colors.gray[600],
     marginTop: spacing.sm,
     textAlign: "center",
@@ -49,7 +56,7 @@ export const styles = StyleSheet.create({
   },
   opcaoTitulo: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
     marginBottom: 4,
   },
@@ -64,7 +71,7 @@ export const styles = StyleSheet.create({
   },
   cancelarTexto: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
   },
 });

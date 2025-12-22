@@ -113,7 +113,6 @@ export default function CadastroScreen() {
         >
           {/* Seletor de Data */}
           <View style={styles.section}>
-            <Text style={styles.label}>Data</Text>
             <View style={styles.dataSeletor}>
               <TouchableOpacity
                 onPress={() => mudarData("anterior")}

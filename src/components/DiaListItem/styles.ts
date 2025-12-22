@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -33,12 +39,12 @@ export const styles = StyleSheet.create({
   },
   diaTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "700",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   diaTextoWeekend: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.white,
   },
   checkMark: {
@@ -66,6 +72,7 @@ export const styles = StyleSheet.create({
   },
   valorTexto: {
     fontSize: fontSize.lg,
+    fontFamily: typography.regular,
     color: colors.gray[800],
   },
   rowSaldoColuna: {
@@ -76,7 +83,7 @@ export const styles = StyleSheet.create({
   },
   saldoTexto: {
     fontSize: fontSize.lg,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
 });

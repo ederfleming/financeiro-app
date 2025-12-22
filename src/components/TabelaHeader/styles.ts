@@ -1,4 +1,4 @@
-import { colors, fontSize, spacing } from "@/theme/colors";
+import { colors, fontSize, spacing, typography } from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   headerTexto: {
     fontSize: fontSize.sm,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[600],
     textTransform: "uppercase",
   },

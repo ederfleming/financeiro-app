@@ -1,4 +1,10 @@
-import { borderRadius, colors, fontSize, spacing } from "@/theme/colors";
+import {
+  borderRadius,
+  colors,
+  fontSize,
+  spacing,
+  typography,
+} from "@/theme/colors";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -34,7 +40,7 @@ export const styles = StyleSheet.create({
   },
   descricao: {
     fontSize: fontSize.md,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.gray[800],
     marginBottom: 4,
   },
@@ -45,19 +51,22 @@ export const styles = StyleSheet.create({
   },
   categoriaLabel: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   separator: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[400],
   },
   tag: {
     fontSize: fontSize.sm,
+    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   valor: {
     fontSize: fontSize.lg,
-    fontWeight: "bold",
+    fontFamily: typography.bold,
     color: colors.gray[800],
   },
   actionsContainer: {
@@ -75,7 +84,7 @@ export const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: fontSize.sm,
-    fontWeight: "600",
+    fontFamily: typography.semibold,
     color: colors.purple[500],
   },
 });

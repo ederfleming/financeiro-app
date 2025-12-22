@@ -1,4 +1,4 @@
-package com.eder.fleming.financeiroapp
+package br.com.flederming.panoramas
 
 import android.os.Build
 import android.os.Bundle
