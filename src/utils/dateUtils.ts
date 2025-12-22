@@ -119,3 +119,15 @@ export const isFutura = (data: string): boolean => {
   dataObj.setHours(0, 0, 0, 0);
   return dataObj > hoje;
 };
+
+export function getInicioTrimestre(date: Date): Date {
+  const d = new Date(date);
+  const mes = d.getMonth();
+  const inicioTrimestre = Math.floor(mes / 3) * 3;
+
+  d.setMonth(inicioTrimestre);
+  d.setDate(1);
+  d.setHours(0, 0, 0, 0);
+
+  return d;
+}

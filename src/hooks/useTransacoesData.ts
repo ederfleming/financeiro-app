@@ -12,12 +12,13 @@ import { Categoria, Transacao } from "@/types";
 
 interface UseTransacoesDataProps {
   data: string;
+  filter: string;
 }
 
-export function useTransacoesData({ data }: UseTransacoesDataProps) {
+export function useTransacoesData({ data, filter }: UseTransacoesDataProps) {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const [filtroCategoria, setFiltroCategoria] = useState<Categoria | "todas">(
-    "todas"
+    filter as Categoria | "todas"
   );
   const [loading, setLoading] = useState(true);
   const [modalExclusaoVisible, setModalExclusaoVisible] = useState(false);
