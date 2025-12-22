@@ -9,6 +9,7 @@ interface ModalExclusaoRecorrenteProps {
   visible: boolean;
   onClose: () => void;
   onExcluirApenasEsta: () => void;
+  onExcluirDestaEmDiante: () => void; // ✨ NOVO
   onExcluirTodas: () => void;
   dataFormatada: string;
 }
@@ -17,6 +18,7 @@ export default function ModalExclusaoRecorrente({
   visible,
   onClose,
   onExcluirApenasEsta,
+  onExcluirDestaEmDiante, // ✨ NOVO
   onExcluirTodas,
   dataFormatada,
 }: ModalExclusaoRecorrenteProps) {
@@ -31,7 +33,11 @@ export default function ModalExclusaoRecorrente({
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Ionicons name="alert-circle" size={48} color={colors.yellow[500]} />
+            <Ionicons
+              name="alert-circle"
+              size={48}
+              color={colors.yellow[500]}
+            />
             <Text style={styles.titulo}>Excluir transação recorrente</Text>
             <Text style={styles.subtitulo}>
               Esta é uma transação recorrente. O que deseja fazer?
@@ -56,7 +62,27 @@ export default function ModalExclusaoRecorrente({
             </View>
           </TouchableOpacity>
 
-          {/* Opção 2: Todas */}
+          {/* ✨ NOVA OPÇÃO 2: Desta em diante */}
+          <TouchableOpacity
+            style={[styles.opcaoButton, styles.opcaoButtonWarning]}
+            onPress={onExcluirDestaEmDiante}
+          >
+            <Ionicons
+              name="arrow-forward"
+              size={24}
+              color={colors.yellow[500]}
+            />
+            <View style={styles.opcaoTexto}>
+              <Text style={[styles.opcaoTitulo, { color: colors.yellow[500] }]}>
+                Desta data em diante
+              </Text>
+              <Text style={styles.opcaoDescricao}>
+                Exclui a partir de {dataFormatada} (mantém as anteriores)
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Opção 3: Todas */}
           <TouchableOpacity
             style={[styles.opcaoButton, styles.opcaoButtonDanger]}
             onPress={onExcluirTodas}
@@ -67,7 +93,7 @@ export default function ModalExclusaoRecorrente({
                 Todas as ocorrências
               </Text>
               <Text style={styles.opcaoDescricao}>
-                Exclui esta e todas as futuras ocorrências
+                Exclui todas (passadas e futuras)
               </Text>
             </View>
           </TouchableOpacity>

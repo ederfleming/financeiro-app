@@ -85,3 +85,37 @@ export function isFimDeSemana(dia: number, mesAtual: Date) {
   const dayOfWeek = date.getDay(); // 0 = domingo, 6 = sábado
   return dayOfWeek === 0 || dayOfWeek === 6;
 }
+
+/**
+ * ✨ NOVA: Formata uma data YYYY-MM-DD para formato extenso em português
+ * Exemplo: "2024-12-25" → "25 de dezembro de 2024"
+ */
+export const formatarDataExtenso = (dateString: string): string => {
+  const mesesExtenso = [
+    "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+    "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+  ];
+  
+  const [year, month, day] = dateString.split("-").map(Number);
+  const mesNome = mesesExtenso[month - 1];
+  
+  return `${day} de ${mesNome} de ${year}`;
+};
+
+/**
+ * Verifica se uma data é hoje
+ */
+export const isHoje = (data: string): boolean => {
+  return data === formatDate(new Date());
+};
+
+/**
+ * Verifica se uma data é futura (depois de hoje)
+ */
+export const isFutura = (data: string): boolean => {
+  const dataObj = parseDate(data);
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  dataObj.setHours(0, 0, 0, 0);
+  return dataObj > hoje;
+};

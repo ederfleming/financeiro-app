@@ -134,4 +134,187 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.white,
   },
+  progressContainer: {
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.lg,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: colors.gray[200],
+    borderRadius: borderRadius.sm,
+    overflow: "hidden",
+    marginBottom: spacing.sm,
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: colors.purple[500],
+  },
+  progressText: {
+    fontSize: fontSize.sm,
+    color: colors.gray[600],
+    textAlign: "center",
+  },
+  diasSeletor: {
+    flexDirection: "row",
+    gap: spacing.md,
+  },
+  diaButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
+    borderColor: colors.gray[300],
+    backgroundColor: colors.white,
+    alignItems: "center",
+  },
+  diaButtonActive: {
+    borderColor: colors.purple[500],
+    backgroundColor: colors.purple[500] + "10",
+  },
+  diaButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: "600",
+    color: colors.gray[600],
+  },
+  diaButtonTextActive: {
+    color: colors.purple[500],
+  },
+  listHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.lg,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.purple[500],
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    gap: 6,
+  },
+  addButtonText: {
+    color: colors.white,
+    fontSize: fontSize.md,
+    fontWeight: "600",
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 48,
+  },
+  emptyText: {
+    fontSize: fontSize.lg,
+    fontWeight: "600",
+    color: colors.gray[600],
+    marginTop: spacing.lg,
+  },
+  emptySubtext: {
+    fontSize: fontSize.md,
+    color: colors.gray[400],
+    marginTop: spacing.sm,
+  },
+  resumo: {
+    backgroundColor: colors.purple[500] + "10",
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginTop: spacing.lg,
+  },
+  resumoLinha: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  resumoLabel: {
+    fontSize: fontSize.md,
+    color: colors.gray[600],
+  },
+  resumoValor: {
+    fontSize: fontSize.lg,
+    fontWeight: "600",
+    color: colors.gray[800],
+  },
+  resumoLabelDestaque: {
+    fontSize: fontSize.lg,
+    fontWeight: "700",
+    color: colors.purple[700],
+  },
+  resumoValorDestaque: {
+    fontSize: fontSize.xl,
+    fontWeight: "700",
+    color: colors.purple[700],
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.gray[200],
+    marginVertical: spacing.md,
+  },
+  // Botão Voltar
+  voltarButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xxl,
+    borderRadius: borderRadius.lg,
+    borderWidth: 2,
+    borderColor: colors.purple[500],
+    backgroundColor: colors.white,
+    gap: spacing.sm,
+  },
+  voltarTexto: {
+    fontSize: fontSize.lg,
+    fontWeight: "600",
+    color: colors.purple[500],
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: borderRadius.xl,
+    borderTopRightRadius: borderRadius.xl,
+    paddingBottom: 32,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: spacing.xxl,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[100],
+  },
+  modalTitulo: {
+    fontSize: fontSize.xl,
+    fontWeight: "700",
+    color: colors.gray[900],
+  },
+  modalBody: {
+    padding: spacing.xxl,
+  },
+  input: {
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    fontSize: fontSize.lg,
+    color: colors.gray[800],
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
+  modalButton: {
+    backgroundColor: colors.purple[500],
+    paddingVertical: spacing.lg,
+    borderRadius: borderRadius.lg,
+    alignItems: "center",
+    marginTop: spacing.xxl,
+  },
+  modalButtonText: {
+    color: colors.white,
+    fontSize: fontSize.lg,
+    fontWeight: "600",
+  },
 });

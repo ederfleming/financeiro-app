@@ -20,10 +20,12 @@ export const getConfig = async (): Promise<Config> => {
     if (!config) {
       const defaultConfig: Config = {
         saldoInicial: 0,
-        dataInicial: formatDate(new Date()), // ✅ Data atual como padrão
+        dataInicial: formatDate(new Date()),
+        gastosVariaveis: [], // ✨ NOVO
+        diasParaDivisao: 30, // ✨ NOVO
         gastoDiarioPadrao: 0,
         percentualEconomia: 0,
-        onboardingCompleto: false, // ✅ Adicionar
+        onboardingCompleto: false,
       };
       await setConfig(defaultConfig);
       return defaultConfig;
@@ -34,6 +36,8 @@ export const getConfig = async (): Promise<Config> => {
     return {
       saldoInicial: 0,
       dataInicial: formatDate(new Date()),
+      gastosVariaveis: [], // ✨ NOVO
+      diasParaDivisao: 30, // ✨ NOVO
       gastoDiarioPadrao: 0,
       percentualEconomia: 0,
       onboardingCompleto: false,
@@ -226,10 +230,42 @@ export const excluirOcorrenciaRecorrente = async (
         datasExcluidas,
       };
 
-      await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+      // await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+      await saveAllTransacoes(transacoes);
+      await saveTransacoesPorMes(transacoes);
     }
   } catch (error) {
     console.error("Erro ao excluir ocorrência recorrente:", error);
+  }
+};
+
+/**
+ * ✨ NOVA FUNÇÃO: Exclui uma transação recorrente a partir de uma data específica
+ * Define o campo dataFimRecorrencia para o dia anterior à data de exclusão
+ */
+export const excluirRecorrenciaAPartirDe = async (
+  id: string,
+  dataInicio: string
+): Promise<void> => {
+  try {
+    const transacoes = await getTransacoes();
+    const index = transacoes.findIndex((t) => t.id === id);
+
+    if (index !== -1) {
+      // Calcula a data final (dia anterior ao início da exclusão)
+      const dataInicioObj = new Date(dataInicio + "T00:00:00");
+      dataInicioObj.setDate(dataInicioObj.getDate() - 1);
+      const dataFim = dataInicioObj.toISOString().split("T")[0];
+
+      transacoes[index] = {
+        ...transacoes[index],
+        dataFimRecorrencia: dataFim,
+      };
+
+      await AsyncStorage.setItem(KEYS.TRANSACOES, JSON.stringify(transacoes));
+    }
+  } catch (error) {
+    console.error("Erro ao excluir recorrência a partir de data:", error);
   }
 };
 

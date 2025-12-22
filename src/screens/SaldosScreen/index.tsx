@@ -1,6 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
 import React, { useCallback } from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import DiaListItem from "@/components/DiaListItem";
@@ -15,6 +16,7 @@ import { colors } from "@/theme/colors";
 import { SaldoDia } from "@/types";
 import { categorias } from "@/utils/categorias";
 import { Ionicons } from "@expo/vector-icons";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { styles } from "./styles";
 
 export default function SaldosScreen() {
@@ -42,6 +44,20 @@ export default function SaldosScreen() {
       carregarDados();
     }, [carregarDados])
   );
+
+  const swipeGesture = Gesture.Pan()
+    .activeOffsetX([-50, 50]) // ✨ Só ativa com movimento horizontal significativo
+    .onEnd((event) => {
+      const SWIPE_THRESHOLD = 50;
+
+      if (event.translationX > SWIPE_THRESHOLD) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); // ✨ Feedback tátil
+        mudarMes("anterior");
+      } else if (event.translationX < -SWIPE_THRESHOLD) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); // ✨ Feedback tátil
+        mudarMes("proximo");
+      }
+    });
 
   const renderDia = ({ item }: { item: SaldoDia }) => (
     <DiaListItem
@@ -97,41 +113,45 @@ export default function SaldosScreen() {
       <TabelaHeader columns={colunas} />
 
       {/* Lista de dias */}
-      {loading ? (
-        <LoadingScreen message="Carregando saldos..." />
-      ) : (
-        <FlatList
-          ref={listRef}
-          data={saldos}
-          renderItem={renderDia}
-          keyExtractor={(item) => item.dia.toString()}
-          showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={(item) => {
-            const today = new Date();
-            const isTodayInCurrentMonth =
-              today.getMonth() === mesAtual.getMonth() &&
-              today.getFullYear() === mesAtual.getFullYear();
-            if (
-              isTodayInCurrentMonth &&
-              item.leadingItem.dia === today.getDate()
-            ) {
-              return <Divider color={colors.purple[500]} />;
-            }
-            return <Divider color={colors.gray[100]} />;
-          }}
-          getItemLayout={(_, index) => ({
-            length: 50,
-            offset: 50 * index,
-            index,
-          })}
-          onScrollToIndexFailed={(info) => {
-            listRef.current?.scrollToOffset({
-              offset: info.averageItemLength * info.index,
-              animated: true,
-            });
-          }}
-        />
-      )}
+      <GestureDetector gesture={swipeGesture}>
+        <View collapsable={false} style={{ flex: 1 }}>
+          {loading ? (
+            <LoadingScreen message="Carregando saldos..." />
+          ) : (
+            <FlatList
+              ref={listRef}
+              data={saldos}
+              renderItem={renderDia}
+              keyExtractor={(item) => item.dia.toString()}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={(item) => {
+                const today = new Date();
+                const isTodayInCurrentMonth =
+                  today.getMonth() === mesAtual.getMonth() &&
+                  today.getFullYear() === mesAtual.getFullYear();
+                if (
+                  isTodayInCurrentMonth &&
+                  item.leadingItem.dia === today.getDate()
+                ) {
+                  return <Divider color={colors.purple[500]} />;
+                }
+                return <Divider color={colors.gray[100]} />;
+              }}
+              getItemLayout={(_, index) => ({
+                length: 50,
+                offset: 50 * index,
+                index,
+              })}
+              onScrollToIndexFailed={(info) => {
+                listRef.current?.scrollToOffset({
+                  offset: info.averageItemLength * info.index,
+                  animated: true,
+                });
+              }}
+            />
+          )}
+        </View>
+      </GestureDetector>
     </SafeAreaView>
   );
 }

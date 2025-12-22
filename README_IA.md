@@ -45,6 +45,35 @@ Aplicação de controle financeiro pessoal focada em fornecer um panorama da sa�
 
 ---
 
-<!-- ## 🚩 Bloco de Trabalho Atual
-**Objetivo:** Implementar a lógica de 'Panoramas' (projeção trimestral).
-**Tarefa:** Criar lógica na pasta `utils/` para calcular o saldo futuro baseando-se no `saldoInicial` (config) e na projeção de transações recorrentes e parceladas para os próximos 3 meses. -->
+## 📂 Estrutura de Arquivos Atual (Contexto de Desenvolvimento)
+
+Para facilitar a navegação e a criação de novas features, a estrutura atual do projeto está organizada conforme abaixo:
+
+### ⚛️ Componentes (`src/components/`)
+Componentes de interface reutilizáveis e modais de regra de negócio e todas as pastas tem um arquivo index.tsx e um styles.ts:
+* **Navegação & Header:** `HeaderMesNavegação`, `TabelaHeader`.
+* **Cards & Listas:** `TransacaoCard`, `GastoVariavelCard`, `DialListItem`, `Divider`.
+* **Feedback & Estados:** `LoadingScreen`, `EmptyState`.
+* **Modais de Regra:** `ModalEdicaoRecorrente`, `ModalExclusaoRecorrente` (gerenciam a lógica de exceção na recorrência virtual).
+* **Filtros:** `FiltrosCategorias`.
+
+### 🧠 Lógica & Regras (`src/hooks/`)
+Hooks customizados que encapsulam o estado e cálculos financeiros:
+* `useSaldos.ts`: Gerencia o cálculo e exibição dos saldos da planilha.
+* `useTransacoesData.ts`: Manipula a busca e formatação das transações para a UI.
+* `useTransacaoForm.ts`: Lógica de validação e submissão para criação/edição.
+* `useSaldoStyles.ts`: Encapsula lógicas de estilização condicional (cores de saldo positivo/negativo).
+
+### 📱 Telas (`src/screens/`)
+* `LoginScreen`: Autenticação biométrica.
+* `ConfiguracaoInicialScreen`: Setup do saldo e data inicial (Onboarding).
+* `SaldosScreen`: Visualização principal em formato de planilha.
+* `DetalhesScreen`: Detalhamento de transações e instâncias de recorrência.
+* `PanoramasScreen`: (Em desenvolvimento) Projeção futura de 90 dias.
+* `TotaisScreen` & `TagsScreen`: Agrupamentos e gestão de categorias.
+
+### ⚙️ Serviços & Tipagem (`src/services/` & `src/types/`)
+* `storage.ts`: Motor de persistência centralizado (Snapshot Model).
+* `README_STORAGE.md`: Documentação técnica do motor de persistência.
+* `index.ts` (types): Definições globais de `Transacao`, `Config`, `Categoria` e `Recorrencia`.
+

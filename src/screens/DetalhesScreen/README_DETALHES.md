@@ -25,8 +25,9 @@ A tela depende obrigatoriamente do parâmetro:
 A feature implementa uma lógica de proteção para evitar perda de dados acidental:
 
 1. **Transação Única:** Exclusão direta via `deleteTransacao` após confirmação simples (`Alert`).
-2. **Transação Recorrente (Fluxo em 2 etapas):**
+2. **Transação Recorrente (Fluxo em 3 etapas):** 
    - **Excluir apenas esta ocorrência:** Invoca `excluirOcorrenciaRecorrente`. A série histórica permanece intacta, apenas a data atual é marcada como excluída.
+   - **Excluir desta data em diante:** Invoca `excluirRecorrenciaAPartirDe`. Define `dataFimRecorrencia` para encerrar a série a partir da data selecionada, preservando o histórico anterior.
    - **Excluir todas as ocorrências:** Invoca `deleteTransacao`, removendo o registro mestre da série e, consequentemente, todas as instâncias virtuais (passadas e futuras).
 
 ## 🔗 Navegação e Integração

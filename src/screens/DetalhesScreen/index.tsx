@@ -10,7 +10,7 @@ import { colors } from "@/theme/colors";
 import { Transacao } from "@/types";
 import { RootStackParamList } from "@/types/navigation";
 import { categorias } from "@/utils/categorias";
-import { parseDate } from "@/utils/dateUtils";
+import { formatarDataExtenso, parseDate } from "@/utils/dateUtils";
 
 // Componentes
 import FiltrosCategorias from "@/components/FiltrosCategorias";
@@ -42,6 +42,7 @@ export default function DetalhesScreen() {
     iniciarExclusao,
     excluirApenasEsta,
     excluirTodas,
+    excluirDestaEmDiante,
   } = useTransacoesData({ data });
 
   const handleEditar = (transacao: Transacao) => {
@@ -140,13 +141,11 @@ export default function DetalhesScreen() {
       {/* Modal de Exclusão */}
       <ModalExclusaoRecorrente
         visible={modalExclusaoVisible}
-        onClose={() => {
-          setModalExclusaoVisible(false);
-          setTransacaoParaExcluir(null);
-        }}
+        onClose={() => setModalExclusaoVisible(false)}
         onExcluirApenasEsta={excluirApenasEsta}
+        onExcluirDestaEmDiante={excluirDestaEmDiante} // ✨ NOVA
         onExcluirTodas={excluirTodas}
-        dataFormatada={dataFormatadaCurta}
+        dataFormatada={formatarDataExtenso(data)}
       />
     </SafeAreaView>
   );

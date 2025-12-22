@@ -1,11 +1,15 @@
 import { Config, SaldoDia, Transacao } from "@/types";
-import { formatDate } from "./dateUtils";
+import { formatDate, isFutura, isHoje } from "./dateUtils";
 import { getTransacoesAplicaveisNaData } from "./recorrencia";
 
 /**
  * Calcula os totais de transações por categoria para um dia específico
  */
-export const calcularTotaisDia = (data: string, transacoes: Transacao[]) => {
+export const calcularTotaisDia = (
+  data: string,
+  transacoes: Transacao[],
+  config: Config
+) => {
   const totais = {
     entradas: 0,
     saidas: 0,
@@ -17,13 +21,37 @@ export const calcularTotaisDia = (data: string, transacoes: Transacao[]) => {
   // Filtra transações aplicáveis à data (incluindo recorrentes)
   const transacoesAplicaveis = getTransacoesAplicaveisNaData(transacoes, data);
 
+  // Calcula os totais por categoria
   transacoesAplicaveis.forEach((t) => {
-    totais[t.categoria] += t.valor;
+    if (t.categoria === "diarios") {
+      totais.diarios += t.valor;
+    } else {
+      totais[t.categoria] += t.valor;
+    }
   });
+
+  // ✨ LÓGICA DO GASTO DIÁRIO PADRÃO
+  const gastoDiarioReal = totais.diarios;
+
+  // Verifica se o dia está antes da dataInicial configurada
+  if (data < config.dataInicial) {
+    totais.diarios = 0; // Dias antes da config ficam zerados
+  }
+  // Se não tem gasto real E (é hoje OU é futuro) → usa estimativa
+  else if (gastoDiarioReal === 0 && (isHoje(data) || isFutura(data))) {
+    totais.diarios = config.gastoDiarioPadrao;
+  }
+  // Se não tem gasto real E é passado → fica zero
+  else if (gastoDiarioReal === 0) {
+    totais.diarios = 0;
+  }
+  // Se tem gasto real → usa o real (qualquer dia)
+  else {
+    totais.diarios = gastoDiarioReal;
+  }
 
   return totais;
 };
-
 
 /**
  * Calcula o saldo de um dia específico
@@ -83,7 +111,7 @@ export const calcularSaldoMesAnterior = (
   );
 
   datasMesAnterior.forEach((data) => {
-    const totais = calcularTotaisDia(data, transacoes);
+    const totais = calcularTotaisDia(data, transacoes, config);
 
     saldoAcumulado = calcularSaldoDia(
       saldoAcumulado,
@@ -121,7 +149,7 @@ export const calcularSaldosMes = (
   );
 
   datas.forEach((data) => {
-    const totais = calcularTotaisDia(data, transacoes);
+    const totais = calcularTotaisDia(data, transacoes, config);
 
     saldoAcumulado = calcularSaldoDia(
       saldoAcumulado,
