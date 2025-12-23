@@ -1,51 +1,44 @@
----
+## 🎯 Próximos Passos: Implementação da Tela de Menu (Versão Atualizada)
 
-## 🎯 Como Continuar
+Sou desenvolvedor front-end trabalhando no **Panorama$**. Após revisar o `RESUMO_PROJETO.md`, os objetivos atualizados para esta sprint são:
 
-Para iniciar uma nova sessão de desenvolvimento, forneça:
+### 1. Feature Selecionada
 
-1. **Qual feature:** Nome da funcionalidade a implementar
-2. **Quais arquivos:** Arquivos relacionados que devem ser analisados
-3. **Qual o objetivo:** Descrição clara do comportamento esperado
+* **Implementação da Tela de Menu**
 
-**Exemplo:**
-```
-"Vou implementar a tela de edição de gastos variáveis.
-Preciso que você veja: ConfiguracaoInicialScreen, storage.ts, Config interface.
-Objetivo: Permitir adicionar/editar/remover gastos variáveis após o onboarding,
-com recálculo automático do gastoDiarioPadrao."
-```
+### 2. Arquivos para Análise
 
-**Contexto sempre disponível:**
-- Este arquivo de resumo (`RESUMO_PROJETO.md`)
-- READMEs específicos de cada feature
-- Estrutura do projeto documentada acima
+Para uma implementação integrada, os seguintes arquivos devem ser analisados:
 
----
+* **Tipagem & Navegação:** Definições de interfaces e rotas do sistema.
+* **Storage:** Lógica de persistência para as novas regras de gasto.
+* **Setup:** Tela de cadastro inicial (será o componente base para a nova funcionalidade).
+* **Utils & Temas:** Padronização visual e funções auxiliares da pasta `util`.
 
-Sou desenvolvedor front-end trabalhando no Panorama$.
-Acabei de ler o RESUMO_PROJETO.md acima.
+### 3. Objetivos da Implementação
 
-1. **Qual feature:** Agora quero implementar: **Tela de Menu**
+#### A. Subtela: Previsão de Gasto Diário
 
-2. **Quais arquivos:** Arquivos relacionados que devem ser analisados;
-  - Talvez seja importante você conhecer os arquivos de tipagem, navegação, storage, tela de cadastro inicial, temas e arquivos da pasta util.
+* **Acesso:** Criar entrada na Tela de Menu para esta nova visualização.
+* **Gerenciamento:** Listagem de gastos variáveis com opções de **adicionar** e **remover**.
+* **Lógica de Substituição:** * O novo gasto variável deve substituir o `gastoDiarioPadrao` antigo conforme a nova regra.
+* **Respeito ao Histórico:** O novo valor **não** deve afetar dias anteriores à data escolhida.
+* **Priorização:** A aplicação deve validar se o valor a ser exibido/considerado é o gasto padrão ou o gasto real, seguindo a hierarquia de dados do projeto.
 
-3. **Qual o objetivo:** 
-- Criar uma tela de menu, a princípio com 2 subtelas: Previsão de gasto diário e Reiniciar panoramas;
-  * Para a previsão de gastos diários devemos: 
-    - Criar uma tela acessível pelo Menu
-    - Listar gastos variáveis cadastrados
-    - Permitir adicionar/editar/remover gastos
-    - Permitir escolher a partir de qual data esse novo valor será aplicado
-    - O novo valor não pode substituir os valores já cadastrados nos dias anteriores ao escolhido
-    - Recalcular gastoDiarioPadrao automaticamente
-    - Salvar no storage e recarregar telas afetadas (Saldos, Panoramas)
-    - Pode reaproveitar o máximo possivel da tela de configurações iniciais
 
-  * A segunda opção do menu deve ser 'Reiniciar Panoramas':
-    - Deve mostrar um modal de alerta avisando que todos os valores cadastrados serão perdidos se confirmado;
-    - Se cancelado, apenas fecha o modal;
-    - Se confirmado, deve zerar todos os valores cadastrados, todas as tags criadas, e deve redicionar para a tela de configurações iniciais para ser feito o setup inicial do projeto novamente.
-    
-Me pergunte se tiver dúvidas ou peça os arquivos necessários.
+* **Sincronização:** * Recalcular o `gastoDiarioPadrao` automaticamente após alterações.
+* Salvar no storage e forçar o recarregamento das telas dependentes (**Saldos** e **Panoramas**).
+
+
+* **Desenvolvimento:** Reaproveitar **na íntegra** a tela de cadastro inicial para manter a consistência.
+
+#### B. Opção: Reiniciar Panoramas
+
+* **Segurança:** Exibir modal de alerta crítico antes de qualquer ação.
+* **Ações:**
+* **Cancelar:** Fecha o modal e mantém o estado atual.
+* **Confirmar:** Executa o *hard reset* (limpa todos os valores, zera as tags e apaga o storage relacionado).
+
+
+* **Fluxo de Saída:** Após o reset, redirecionar obrigatoriamente para a tela de **Configurações Iniciais** para um novo setup.
+

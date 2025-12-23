@@ -604,10 +604,8 @@ PanoramasScreen re-renderiza 3 novas colunas
 - Manter padrão de organização: `index.tsx` + `styles.ts` + `README.md`
 
 ### **2. Limitações Atuais**
-- **Panoramas:** Scroll não sincronizado entre colunas (independentes)
 - **Panoramas:** Dia atual não destacado visualmente
 - **Panoramas:** Dias conciliados não exibidos (campo existe mas não renderizado)
-- **Saldos:** Coluna "diarios" não diferencia visualmente estimativa vs real
 - **Config:** Não existe edição de gastos variáveis pós-onboarding
 - **Config:** Não há validação de duplicatas em gastos variáveis
 

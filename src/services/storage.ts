@@ -5,12 +5,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Keys para o AsyncStorage
 const KEYS = {
-  TRANSACOES: "@financeiro:transacoes",
+  TRANSACOES: "@panorama$:transacoes",
   TRANSACOES_MES: (year: number, month: number) =>
-    `@financeiro:transacoes:${year}-${month}`,
-  CONFIG: "@financeiro:config",
-  DIAS_CONCILIADOS: "@financeiro:dias_conciliados",
-  TAGS: "@financeiro:tags",
+    `@panorama$:transacoes:${year}-${month}`,
+  CONFIG: "@panorama$:config",
+  DIAS_CONCILIADOS: "@panorama$:dias_conciliados",
+  TAGS: "@panorama$:tags",
 };
 
 // ==================== CONFIG ====================

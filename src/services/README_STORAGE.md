@@ -24,11 +24,11 @@ O Panorama$ utiliza um modelo de **Persistência por Snapshot Sequencial**. Como
 ## 3. Hierarquia de Chaves e Estratégia de Leitura
 | Chave | Escopo | Uso Principal | Estratégia |
 | :--- | :--- | :--- | :--- |
-| `@financeiro:config` | Global | Bootstrap / Login | Singleton |
-| `@financeiro:transacoes` | Global | Base de cálculo e projeção | Full Snapshot |
-| `@financeiro:transacoes:Y-M` | Mensal | Tela de Saldos | Particionado (Cache) |
-| `@financeiro:dias_conciliados` | Global | Conciliação | Lista simples |
-| `@financeiro:tags` | Global | UI / Cadastro | Lista simples |
+| `@panorama$:config` | Global | Bootstrap / Login | Singleton |
+| `@panorama$:transacoes` | Global | Base de cálculo e projeção | Full Snapshot |
+| `@panorama$:transacoes:Y-M` | Mensal | Tela de Saldos | Particionado (Cache) |
+| `@panorama$:dias_conciliados` | Global | Conciliação | Lista simples |
+| `@panorama$:tags` | Global | UI / Cadastro | Lista simples |
 
 > 📌 **Nota:** O particionamento mensal existe exclusivamente para performance de UI, garantindo que a planilha de saldos carregue instantaneamente.
 
@@ -117,7 +117,7 @@ Para manter a performance da tela de **Saldos** sem varrer anos de histórico em
 
 - **Agrupamento:** O array global é processado e segmentado por chaves `YYYY-MM`.
 - **Persistência Particionada:** Cada grupo é salvo na chave correspondente  
-  `@financeiro:transacoes:Y-M`.
+  `@panorama$:transacoes:Y-M`.
 - **Sincronização:** As escritas são sequenciais (`await`) para garantir que o cache mensal
   nunca diverja do índice global.
 
