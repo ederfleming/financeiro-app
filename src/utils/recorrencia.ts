@@ -1,46 +1,64 @@
 import { Recorrencia, Transacao } from "@/types";
-import { formatDate, parseDate } from "./dateUtils";
+import { parseDate } from "./dateUtils";
 
 /**
  * Calcula a próxima data de ocorrência baseada na recorrência
  */
 export const calcularProximaData = (
-  dataInicial: string,
+  dataInicial: string, // Espera "2023-12-25"
   recorrencia: Recorrencia
 ): string | null => {
-  const data = parseDate(dataInicial);
+  // 1. Quebramos a string manualmente para evitar o comportamento UTC do construtor Date
+  const partes = dataInicial.split("-");
+  const ano = parseInt(partes[0], 10);
+  const mes = parseInt(partes[1], 10) - 1; // Meses em JS começam em 0
+  const dia = parseInt(partes[2], 10);
+
+  // 2. Criamos a data no fuso local
+  const data = new Date(ano, mes, dia);
+
+  // Resetamos o horário para meio-dia (12:00:00)
+  // Isso cria uma "margem de segurança". Mesmo que o fuso mude 1 ou 2 horas,
+  // a data continuará sendo a mesma dentro do ciclo de 24h.
+  data.setHours(12, 0, 0, 0);
 
   switch (recorrencia) {
     case "unica":
       return null;
-
-    case "diaria": // ✅ Adicionar
+    case "diaria":
       data.setDate(data.getDate() + 1);
-      return formatDate(data);
-
+      break;
     case "semanal":
       data.setDate(data.getDate() + 7);
-      return formatDate(data);
-
+      break;
     case "quinzenal":
       data.setDate(data.getDate() + 14);
-      return formatDate(data);
-
+      break;
     case "cada21dias":
       data.setDate(data.getDate() + 21);
-      return formatDate(data);
-
+      break;
     case "cada28dias":
       data.setDate(data.getDate() + 28);
-      return formatDate(data);
-
+      break;
     case "mensal":
+      const diaDesejado = data.getDate();
       data.setMonth(data.getMonth() + 1);
-      return formatDate(data);
-
+      // Se o mês seguinte não tiver o dia (ex: 31 de jan -> 31 de fev),
+      // o setDate(0) volta para o último dia do mês correto.
+      if (data.getDate() !== diaDesejado) {
+        data.setDate(0);
+      }
+      break;
     default:
       return null;
   }
+
+  // 3. Formatação Manual (NUNCA use toISOString() aqui, pois ele volta para UTC)
+  const y = data.getFullYear();
+  const m = String(data.getMonth() + 1).padStart(2, "0");
+  const d = String(data.getDate()).padStart(2, "0");
+
+  return `${y}-${m}-${d}`;
 };
 
 /**
@@ -150,37 +168,47 @@ export const getTransacoesAplicaveisNaData = (
 };
 
 // Função auxiliar para verificar se data corresponde à recorrência
+// Função auxiliar para garantir que o cálculo de dias seja exato e ignore horas/fuso
+const getDiffDays = (d1: Date, d2: Date): number => {
+  const UTC1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+  const UTC2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+  return Math.floor((UTC1 - UTC2) / (1000 * 60 * 60 * 24));
+};
+
 const verificaSeDataCorresponde = (
   transacao: Transacao,
   dataAlvo: Date
 ): boolean => {
-  const dataInicio = new Date(transacao.data + "T00:00:00");
-  const diffTime = dataAlvo.getTime() - dataInicio.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  // Criar data de início ignorando horas
+  const partes = transacao.data.split("-");
+  const dataInicio = new Date(
+    parseInt(partes[0]),
+    parseInt(partes[1]) - 1,
+    parseInt(partes[2])
+  );
+
+  const diffDays = getDiffDays(dataAlvo, dataInicio);
+
+  if (diffDays < 0) return false;
 
   switch (transacao.recorrencia) {
     case "diaria":
-      return diffDays >= 0;
+      return true;
     case "semanal":
-      return diffDays >= 0 && diffDays % 7 === 0;
+      return diffDays % 7 === 0;
     case "quinzenal":
-      return diffDays >= 0 && diffDays % 15 === 0;
+      return diffDays % 14 === 0; // ✅ CORRIGIDO: de 15 para 14
     case "cada21dias":
-      return diffDays >= 0 && diffDays % 21 === 0;
+      return diffDays % 21 === 0;
     case "cada28dias":
-      return diffDays >= 0 && diffDays % 28 === 0;
+      return diffDays % 28 === 0;
     case "mensal":
-      return (
-        diffDays >= 0 &&
-        dataAlvo.getDate() === dataInicio.getDate() &&
-        (dataAlvo.getMonth() >= dataInicio.getMonth() ||
-          dataAlvo.getFullYear() > dataInicio.getFullYear())
-      );
+      // Para mensal, comparamos o dia do mês diretamente
+      return dataAlvo.getDate() === dataInicio.getDate();
     default:
       return false;
   }
 };
-
 // Aplica edições específicas se existirem
 const aplicarEdicaoEspecifica = (
   transacao: Transacao,

@@ -1,44 +1,37 @@
-## 🎯 Próximos Passos: Implementação da Tela de Menu (Versão Atualizada)
+## 🎯 Próximos Passos: Implementação da Tela de Menu
 
-Sou desenvolvedor front-end trabalhando no **Panorama$**. Após revisar o `RESUMO_PROJETO.md`, os objetivos atualizados para esta sprint são:
+Sou desenvolvedor front-end trabalhando no **Panorama$**. Após revisar o `RESUMO_PROJETO.md` e validar a lógica de cálculo atual, os objetivos são:
 
 ### 1. Feature Selecionada
 
-* **Implementação da Tela de Menu**
+* **Implementação da Tela de Menu e Subtelas**
 
 ### 2. Arquivos para Análise
 
-Para uma implementação integrada, os seguintes arquivos devem ser analisados:
-
-* **Tipagem & Navegação:** Definições de interfaces e rotas do sistema.
-* **Storage:** Lógica de persistência para as novas regras de gasto.
-* **Setup:** Tela de cadastro inicial (será o componente base para a nova funcionalidade).
-* **Utils & Temas:** Padronização visual e funções auxiliares da pasta `util`.
+* **Storage (`services/storage.ts`):** Para implementar o `updateConfig` e `resetStorage`.
+* **Utils (`utils/calculoSaldo.ts`):** Validar a integração com `calcularTotaisDia`.
+* **Setup (`screens/ConfiguracaoInicialScreen/`):** Base para a nova tela de Previsão.
+* **Navegação:** Adicionar as novas rotas no `AppNavigator`.
 
 ### 3. Objetivos da Implementação
 
 #### A. Subtela: Previsão de Gasto Diário
 
-* **Acesso:** Criar entrada na Tela de Menu para esta nova visualização.
-* **Gerenciamento:** Listagem de gastos variáveis com opções de **adicionar** e **remover**.
-* **Lógica de Substituição:** * O novo gasto variável deve substituir o `gastoDiarioPadrao` antigo conforme a nova regra.
-* **Respeito ao Histórico:** O novo valor **não** deve afetar dias anteriores à data escolhida.
-* **Priorização:** A aplicação deve validar se o valor a ser exibido/considerado é o gasto padrão ou o gasto real, seguindo a hierarquia de dados do projeto.
+* **Interface:** Criar uma "cópia" funcional da tela de cadastro inicial, adaptada para o contexto de edição.
+* **Gerenciamento:** Listar, adicionar e remover gastos variáveis.
+* **Lógica de Valor Default:** * Ao salvar, o novo `gastoDiarioPadrao` (calculado pela soma dos novos gastos variáveis) substitui o valor antigo no objeto `Config`.
+* **Comportamento Inteligente (Baseado em `calcularTotaisDia`):**
+* **Histórico:** Dias passados sem gasto real permanecem `0`, conforme a regra `else if (gastoDiarioReal === 0) { totais.diarios = 0; }`.
+* **Projeção:** O novo valor padrão será aplicado automaticamente para **Hoje** e **Futuro** onde não houver gasto real.
 
 
-* **Sincronização:** * Recalcular o `gastoDiarioPadrao` automaticamente após alterações.
-* Salvar no storage e forçar o recarregamento das telas dependentes (**Saldos** e **Panoramas**).
-
-
-* **Desenvolvimento:** Reaproveitar **na íntegra** a tela de cadastro inicial para manter a consistência.
+* **Persistência:** Atualizar o storage e garantir que as telas de **Saldos** e **Panoramas** reflitam a nova projeção imediatamente.
 
 #### B. Opção: Reiniciar Panoramas
 
-* **Segurança:** Exibir modal de alerta crítico antes de qualquer ação.
-* **Ações:**
-* **Cancelar:** Fecha o modal e mantém o estado atual.
-* **Confirmar:** Executa o *hard reset* (limpa todos os valores, zera as tags e apaga o storage relacionado).
+* **Segurança:** Modal de alerta com aviso de perda total de dados (transações, tags e configurações).
+* **Fluxo de Confirmação:** * Limpeza completa das chaves `@panorama:` no `AsyncStorage`.
+* **Reset de Navegação:** Redirecionar para `ConfiguracaoInicialScreen`, limpando a pilha de histórico (o usuário não pode "voltar" para o menu após o reset).
 
 
-* **Fluxo de Saída:** Após o reset, redirecionar obrigatoriamente para a tela de **Configurações Iniciais** para um novo setup.
-
+Me pergunte o que precisar caso tenha duvidas e peça os arquivos necessários para que você possa analisar.

@@ -14,6 +14,7 @@ export const styles = StyleSheet.create({
   content: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 12,
   },
   iconContainer: {
     width: 48,
@@ -47,10 +48,8 @@ export const styles = StyleSheet.create({
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
+    alignSelf: "flex-end",
     marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[100],
   },
   deleteText: {
     fontSize: 14,

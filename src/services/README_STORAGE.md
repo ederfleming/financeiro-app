@@ -1,3 +1,4 @@
+```markdown
 # 📘 Especificação Técnica: Motor de Persistência (Storage Service)
 
 ## 1. Visão Geral
@@ -42,9 +43,9 @@ Representa o estado inicial e as preferências de domínio do usuário.
 export interface Config {
   saldoInicial: number;
   dataInicial: string;        // Formato YYYY-MM-DD
-  gastosVariaveis: GastoVariavel[]; // ✨ NOVO: Lista de gastos mensais fixos
-  diasParaDivisao: 28 | 30 | 31;    // ✨ NOVO: Base de cálculo do gasto diário
-  gastoDiarioPadrao: number;         // ✨ ATUALIZADO: Calculado automaticamente
+  gastosVariaveis: GastoVariavel[]; // Lista de gastos mensais fixos
+  diasParaDivisao: 28 | 30 | 31;    // Base de cálculo do gasto diário
+  gastoDiarioPadrao: number;         // Calculado automaticamente
   percentualEconomia: number;
   onboardingCompleto: boolean;
 }
@@ -58,8 +59,9 @@ export interface GastoVariavel {
 ```
 
 **Comportamento do `gastoDiarioPadrao`:**
-- É calculado automaticamente durante o onboarding: `totalGastosVariaveis / diasParaDivisao`
+- É calculado automaticamente: `totalGastosVariaveis / diasParaDivisao`
 - Exemplo: R$ 3.000 de gastos ÷ 30 dias = R$ 100/dia
+- **Editável via:** MenuScreen → PrevisaoGastoDiarioScreen → `updateConfig()`
 - **Uso na Tela de Saldos:**
   - Dias passados sem gasto real → `diarios = 0`
   - Dia atual sem gasto real → `diarios = gastoDiarioPadrao` (estimativa)
@@ -80,7 +82,7 @@ export type Categoria =
 export type Recorrencia =
   | "unica" | "diaria" | "semanal" | "quinzenal" 
   | "cada21dias" | "cada28dias" | "mensal";
-  ````
+```
 
 > 📌 **Nota:** A categoria `"todas"` é um utilitário exclusivo de UI/Filtro e **não deve ser persistida** em registros individuais de `Transacao`.
 
@@ -99,9 +101,9 @@ export interface Transacao {
 
   // CONTROLE DE RECORRÊNCIA VIRTUAL
   datasExcluidas?: string[];  // Blacklist de datas da série
-  dataFimRecorrencia?: string; // ✨ NOVO: Encerra a recorrência nesta data (YYYY-MM-DD)
+  dataFimRecorrencia?: string; // Encerra a recorrência nesta data (YYYY-MM-DD)
   edicoesEspecificas?: {      // Overrides pontuais por data
-    [data: string]: Partial<
+    [data: string]: Partial
       Omit<Transacao, "id" | "recorrencia" | "datasExcluidas" | "edicoesEspecificas">
     >;
   };
@@ -110,8 +112,117 @@ export interface Transacao {
 
 ---
 
-## 5. Escrita Redundante por Mês (Otimização)
-### `saveTransacoesPorMes`
+## 5. Operações de Escrita
+
+### 5.1 Operações de Configuração
+
+#### `setConfig(config: Config): Promise<void>`
+Substitui a configuração completa.
+```typescript
+await setConfig({
+  saldoInicial: 5000,
+  dataInicial: '2024-12-01',
+  gastosVariaveis: [...],
+  diasParaDivisao: 30,
+  gastoDiarioPadrao: 100,
+  percentualEconomia: 10,
+  onboardingCompleto: true,
+});
+```
+
+#### `updateConfig(novaConfig: Partial<Config>): Promise<void>` ← ✨ NOVO
+Atualiza parcialmente a configuração (merge inteligente).
+```typescript
+// Atualiza apenas gastosVariaveis e gastoDiarioPadrao
+await updateConfig({
+  gastosVariaveis: [...novosGastos],
+  diasParaDivisao: 28,
+  gastoDiarioPadrao: 110.50,
+});
+```
+
+**Uso principal:**
+- PrevisaoGastoDiarioScreen para editar gastos pós-onboarding
+- Evita reescrever campos não relacionados
+- Mantém integridade dos outros campos do Config
+
+**Implementação:**
+```typescript
+export async function updateConfig(novaConfig: Partial<Config>): Promise<void> {
+  try {
+    const configAtual = await getConfig();
+    const configAtualizada = { ...configAtual, ...novaConfig };
+    await setConfig(configAtualizada);
+  } catch (error) {
+    console.error('Erro ao atualizar config:', error);
+    throw error;
+  }
+}
+```
+
+---
+
+### 5.2 Operações de Reset
+
+#### `resetStorage(): Promise<void>` ← ✨ NOVO
+Remove TODAS as chaves do Panorama$ do AsyncStorage.
+
+**⚠️ ATENÇÃO: OPERAÇÃO IRREVERSÍVEL**
+
+Remove:
+- Todas as transações
+- Todas as tags
+- Todas as configurações
+- Gastos variáveis
+- Dias conciliados
+- Cache mensal de transações
+
+```typescript
+await resetStorage();
+// AsyncStorage agora está limpo
+// App retorna para ConfiguracaoInicialScreen
+```
+
+**Implementação:**
+```typescript
+export async function resetStorage(): Promise<void> {
+  try {
+    const allKeys = await AsyncStorage.getAllKeys();
+    const panoramaKeys = allKeys.filter((key) => key.startsWith('@panorama$:'));
+    await AsyncStorage.multiRemove(panoramaKeys);
+  } catch (error) {
+    console.error('Erro ao resetar storage:', error);
+    throw error;
+  }
+}
+```
+
+**Uso principal:**
+- MenuScreen → Opção "Reiniciar Panoramas"
+- Desenvolvimento e testes
+- Recuperação de estado inconsistente
+
+**Fluxo completo:**
+```
+MenuScreen → handleReiniciarPanoramas()
+    ↓
+Alert.alert() com confirmação
+    ↓
+await resetStorage()
+    ↓
+navigation.dispatch(CommonActions.reset({
+  index: 0,
+  routes: [{ name: 'ConfiguracaoInicial' }],
+}))
+    ↓
+Usuário volta ao onboarding sem histórico de navegação
+```
+
+---
+
+### 5.3 Escrita Redundante por Mês (Otimização)
+
+#### `saveTransacoesPorMes(transacoes: Transacao[]): Promise<void>`
 
 Para manter a performance da tela de **Saldos** sem varrer anos de histórico em cada renderização:
 
@@ -125,20 +236,52 @@ Para manter a performance da tela de **Saldos** sem varrer anos de histórico em
 
 ## 6. Lógica de Leitura de Dados
 
-### 6.1 Leitura Mensal (Cache Strategy)
+### 6.1 Leitura de Configuração
 
-A função `getTransacoesMes(year, month)` segue uma estratégia de **auto-reparo**:
+#### `getConfig(): Promise<Config>`
+Retorna a configuração atual ou cria uma padrão se não existir.
+
+```typescript
+const config = await getConfig();
+console.log(config.gastoDiarioPadrao); // 100
+console.log(config.diasParaDivisao);   // 30
+```
+
+#### `isOnboardingCompleto(): Promise<boolean>`
+Verifica rapidamente se o usuário já completou o onboarding.
+
+```typescript
+if (await isOnboardingCompleto()) {
+  navigation.navigate('Login');
+} else {
+  navigation.navigate('ConfiguracaoInicial');
+}
+```
+
+---
+
+### 6.2 Leitura Mensal (Cache Strategy)
+
+#### `getTransacoesMes(year: number, month: number): Promise<Transacao[]>`
+
+Segue uma estratégia de **auto-reparo**:
 
 - **Cache Hit:** Retorno imediato se a chave mensal existir.
 - **Cache Miss:** Filtra o índice global em tempo de execução, retorna os dados
   e persiste automaticamente o cache mensal para consultas futuras.
 
+```typescript
+// Busca transações de Janeiro/2025
+const transacoes = await getTransacoesMes(2025, 0); // month é 0-indexed
+```
+
 ---
 
-### 6.2 Leitura por Data com Recorrência
+### 6.3 Leitura por Data com Recorrência
 
-A função `getTransacoesPorDataComRecorrencia(data)` resolve a recorrência
-**exclusivamente em tempo de leitura**.
+#### `getTransacoesPorDataComRecorrencia(data: string): Promise<Transacao[]>`
+
+Resolve a recorrência **exclusivamente em tempo de leitura**.
 
 > ⚠️ **Importante:**  
 > Esta função **não cria nem persiste ocorrências físicas**.  
@@ -146,13 +289,19 @@ A função `getTransacoesPorDataComRecorrencia(data)` resolve a recorrência
 
 **Fluxo de resolução:**
 
-1. Avaliação Temporal:
+1. **Avaliação Temporal:**
    - Verifica se a data consultada é >= data inicial
    - Verifica se NÃO ultrapassa `dataFimRecorrencia` (quando definida)
 
 2. **Supressão:** Ignora datas presentes em `datasExcluidas`.
+
 3. **Override:** Aplica `edicoesEspecificas[data]` via *shallow merge* sobre a transação mestre.
 
+```typescript
+// Retorna transações aplicáveis em 2024-12-23
+// Inclui: únicas do dia + recorrências ativas + overrides
+const transacoes = await getTransacoesPorDataComRecorrencia('2024-12-23');
+```
 
 ---
 
@@ -162,9 +311,10 @@ A função `getTransacoesPorDataComRecorrencia(data)` resolve a recorrência
 | **Alterar Série** | `updateTransacao` | Afeta a raiz e todas as ocorrências. |
 | **Editar Ocorrência** | `editarOcorrenciaRecorrente` | Cria exceção. Afeta apenas a data específica. |
 | **Excluir Ocorrência** | `excluirOcorrenciaRecorrente` | Adiciona à blacklist. A série permanece. |
-| **✨ Excluir A Partir De** | `excluirRecorrenciaAPartirDe` | Define data fim. Encerra série mas preserva histórico. |
+| **Excluir A Partir De** | `excluirRecorrenciaAPartirDe` | Define data fim. Encerra série mas preserva histórico. |
 | **Excluir Série** | `deleteTransacao` | Remoção total. Destrói tudo. |
-
+| **Atualizar Config Parcial** | `updateConfig` ← ✨ NOVO | Merge inteligente. Mantém outros campos. |
+| **Reset Completo** | `resetStorage` ← ✨ NOVO | Remove TUDO. Volta ao onboarding. |
 
 ---
 
@@ -230,19 +380,143 @@ Dia 22 (futuro): Sem gasto cadastrado → diarios = R$ 100,00 (projeção)
 - Dia 19: Saldo desconta R$ 150 (gasto real)
 - Dias 21 e 22: Saldo desconta R$ 100 (estimativa/projeção)
 
+**Edição Pós-Onboarding:**
+```
+MenuScreen → PrevisaoGastoDiario
+    ↓
+Usuário adiciona "Netflix: R$ 45"
+    ↓
+Total: R$ 3.000 + R$ 45 = R$ 3.045
+    ↓
+Novo gastoDiarioPadrao: R$ 3.045 / 30 = R$ 101,50
+    ↓
+await updateConfig({ 
+  gastosVariaveis: [...], 
+  gastoDiarioPadrao: 101.50 
+})
+    ↓
+Próxima visita ao SaldosScreen/PanoramasScreen
+    ↓
+Dias futuros sem gasto usam R$ 101,50
+Dias passados sem gasto continuam R$ 0,00
+```
+
 > 📌 **Importante:** Esta lógica é implementada em `utils/calculoSaldo.ts` na função `calcularTotaisDia()`, que recebe o `config` como parâmetro para acessar `gastoDiarioPadrao` e `dataInicial`.
 
 ---
 
-## 8. Riscos e Mitigações
+## 8. Fluxos de Integração
+
+### 8.1 Fluxo de Edição de Gastos Variáveis ← ✨ NOVO
+
+```
+PrevisaoGastoDiarioScreen monta
+    ↓
+const config = await getConfig()
+    ↓
+setGastosVariaveis(config.gastosVariaveis)
+setDiasParaDivisao(config.diasParaDivisao)
+    ↓
+Usuário adiciona/remove gastos
+    ↓
+const novoGastoDiario = Σ(gastos) / dias
+    ↓
+await updateConfig({
+  gastosVariaveis: [...],
+  diasParaDivisao: 28,
+  gastoDiarioPadrao: novoGastoDiario
+})
+    ↓
+Config persistido no AsyncStorage
+    ↓
+Telas SaldosScreen/PanoramasScreen
+usam getConfig() no próximo mount
+    ↓
+Nova projeção aplicada automaticamente
+```
+
+### 8.2 Fluxo de Reset Completo ← ✨ NOVO
+
+```
+MenuScreen → "Reiniciar Panoramas"
+    ↓
+Alert.alert(
+  '⚠️ Ação Irreversível',
+  'Apagará: transações, tags, config...',
+  [Cancelar, Confirmar]
+)
+    ↓
+await resetStorage()
+    ↓
+AsyncStorage.getAllKeys()
+    ↓
+Filter('@panorama$:*')
+    ↓
+AsyncStorage.multiRemove([...keys])
+    ↓
+navigation.dispatch(CommonActions.reset({
+  index: 0,
+  routes: [{ name: 'ConfiguracaoInicial' }]
+}))
+    ↓
+App reinicia do zero
+Sem histórico de navegação
+```
+
+---
+
+## 9. Riscos e Mitigações
 
 * **Concorrência:** O `AsyncStorage` é assíncrono por natureza. **Mitigação:** Todas as escritas são centralizadas e executadas de forma sequencial via `await`.
 * **Limites de Memória (Android):** Arquivos JSON gigantes podem causar lentidão. **Mitigação:** Particionamento mensal para garantir que a UI principal manipule apenas pequenos fragmentos de dados.
 * **Integridade de Referência:** A lógica de edições pontuais depende do `id`. **Mitigação:** IDs são gerados na criação e tratados como imutáveis.
+* **Reset Acidental:** `resetStorage()` é destrutivo. **Mitigação:** Sempre exigir confirmação via Alert com texto detalhado antes de executar.
+* **Merge Incorreto:** `updateConfig()` usa spread operator. **Mitigação:** Sempre passar apenas campos que devem ser atualizados, nunca passar `undefined` ou `null` para campos críticos.
 
 ---
 
-## 9. Status e Roadmap
+## 10. Tabela de Operações Disponíveis
+
+### Configuração
+| Função | Tipo | Descrição |
+|--------|------|-----------|
+| `getConfig()` | Leitura | Retorna config atual ou padrão |
+| `setConfig(config)` | Escrita | Substitui config completa |
+| `updateConfig(partial)` | Escrita | Atualiza campos específicos ← ✨ NOVO |
+| `isOnboardingCompleto()` | Leitura | Verifica flag de onboarding |
+
+### Transações
+| Função | Tipo | Descrição |
+|--------|------|-----------|
+| `getTransacoes()` | Leitura | Retorna todas as transações |
+| `getTransacoesMes(y, m)` | Leitura | Cache mensal otimizado |
+| `getTransacoesPorData(data)` | Leitura | Filtra por data exata |
+| `getTransacoesPorDataComRecorrencia(data)` | Leitura | Resolve recorrências on-the-fly |
+| `addTransacao(t)` | Escrita | Adiciona nova transação |
+| `updateTransacao(id, partial)` | Escrita | Atualiza série completa |
+| `deleteTransacao(id)` | Escrita | Remove série permanentemente |
+| `excluirOcorrenciaRecorrente(id, data)` | Escrita | Blacklist de data específica |
+| `excluirRecorrenciaAPartirDe(id, data)` | Escrita | Define dataFimRecorrencia |
+| `editarOcorrenciaRecorrente(id, data, dados)` | Escrita | Override pontual |
+
+### Conciliação e Tags
+| Função | Tipo | Descrição |
+|--------|------|-----------|
+| `getDiasConciliados()` | Leitura | Lista de dias conciliados |
+| `toggleDiaConciliado(data)` | Escrita | Adiciona/remove da lista |
+| `isDiaConciliado(data)` | Leitura | Verifica se dia está conciliado |
+| `getTags()` | Leitura | Lista de tags disponíveis |
+| `addTag(tag)` | Escrita | Adiciona nova tag |
+| `deleteTag(tag)` | Escrita | Remove tag |
+
+### Sistema ← ✨ NOVO
+| Função | Tipo | Descrição |
+|--------|------|-----------|
+| `resetStorage()` | Escrita | Remove TODAS as chaves do app ⚠️ |
+
+---
+
+## 11. Status e Roadmap
 
 - [x] Particionamento mensal e redundância de escrita.
 - [x] Motor de recorrência virtual com suporte a exclusão/edição pontual.
@@ -250,7 +524,17 @@ Dia 22 (futuro): Sem gasto cadastrado → diarios = R$ 100,00 (projeção)
 - [x] CRUD de Tags e Conciliação de dias.
 - [x] Sistema de gastos variáveis com cálculo automático de gasto diário padrão.
 - [x] Lógica inteligente de gasto diário (real vs estimado) baseada em período temporal.
-- [ ] **Roadmap:** Tela de edição de gastos variáveis pós-onboarding.
+- [x] **updateConfig()** para edição parcial de configurações ← ✅ IMPLEMENTADO
+- [x] **resetStorage()** para reset completo do aplicativo ← ✅ IMPLEMENTADO
+- [x] Tela de edição de gastos variáveis pós-onboarding ← ✅ IMPLEMENTADO
 - [ ] **Roadmap:** Implementar função de `rebuildIndices()` para reconstruir caches mensais a partir do global.
 - [ ] **Roadmap:** Exportação de dados em JSON para backup externo.
-- [ ] **Roadmap:** Indicadores visuais na coluna "diarios" (ícone diferente para estimativa vs real).
+- [ ] **Roadmap:** Validação de integridade de dados (detectar inconsistências entre cache e global).
+- [ ] **Roadmap:** Compressão de histórico antigo (arquivar transações de anos anteriores).
+
+---
+
+**Última atualização:** 23/12/2024  
+**Versão:** 2.1.0  
+**Status:** ✅ updateConfig() e resetStorage() Implementados
+```

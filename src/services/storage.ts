@@ -45,6 +45,35 @@ export const getConfig = async (): Promise<Config> => {
   }
 };
 
+/**
+ * Atualiza parcialmente as configurações do app
+ */
+export const updateConfig = async (novaConfig: Partial<Config>): Promise<void> => {
+  try {
+    const configAtual = await getConfig();
+    const configAtualizada = { ...configAtual, ...novaConfig };
+    await setConfig(configAtualizada);
+  } catch (error) {
+    console.error('Erro ao atualizar config:', error);
+    throw error;
+  }
+};
+
+/**
+ * Reseta completamente o storage (remove todas as chaves do app)
+ * ⚠️ CUIDADO: Esta operação é IRREVERSÍVEL!
+ */
+export const resetStorage = async (): Promise<void> => {
+  try {
+    const allKeys = await AsyncStorage.getAllKeys();
+    const panoramaKeys = allKeys.filter((key) => key.startsWith('@panorama$:'));
+    await AsyncStorage.multiRemove(panoramaKeys);
+  } catch (error) {
+    console.error('Erro ao resetar storage:', error);
+    throw error;
+  }
+};
+
 // ✅ Adicionar função para verificar onboarding
 export const isOnboardingCompleto = async (): Promise<boolean> => {
   try {

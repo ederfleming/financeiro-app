@@ -4,20 +4,21 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Imports das telas (vamos criar em seguida)
+// Imports das telas
 import CadastroScreen from "@/screens/CadastroScreen";
 import ConfiguracaoInicialScreen from "@/screens/ConfiguracaoInicialScreen";
 import DetalhesScreen from "@/screens/DetalhesScreen";
 import LoginScreen from "@/screens/LoginScreen";
 import MenuScreen from "@/screens/MenuScreen";
 import PanoramasScreen from "@/screens/PanoramasScreen";
+import PrevisaoGastoDiarioScreen from "@/screens/PrevisaoGastoDiarioScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
 import TagsScreen from "@/screens/TagsScreen";
 import TotaisScreen from "@/screens/TotaisScreen";
 import { colors } from "@/theme/colors";
 import { RootStackParamList, TabParamList } from "@/types/navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -89,7 +90,6 @@ function TabNavigator() {
           ),
         }}
       />
-
       <Tab.Screen
         name="Tags"
         component={TagsScreen}
@@ -109,9 +109,9 @@ export default function AppNavigator() {
       <Stack.Navigator
         id="RootStack"
         screenOptions={{ headerShown: false }}
-        initialRouteName="Login" // ✅ Começa no login
+        initialRouteName="Login"
       >
-        {/* ✅ Telas de Onboarding */}
+        {/* Telas de Onboarding */}
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen
           name="ConfiguracaoInicial"
@@ -120,6 +120,7 @@ export default function AppNavigator() {
 
         {/* Telas principais */}
         <Stack.Screen name="MainTabs" component={TabNavigator} />
+
         <Stack.Screen
           name="Cadastro"
           component={CadastroScreen}
@@ -133,7 +134,17 @@ export default function AppNavigator() {
           }}
         />
         <Stack.Screen name="Detalhes" component={DetalhesScreen} />
+
         <Stack.Screen name="Menu" component={MenuScreen} />
+
+        {/* ✨ NOVO: Previsão como modal */}
+        <Stack.Screen
+          name="PrevisaoGastoDiario"
+          component={PrevisaoGastoDiarioScreen}
+          options={{
+            presentation: "modal",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -4,6 +4,7 @@ import { formatarMoeda } from "@/utils/calculoSaldo";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import Divider from "../Divider";
 import { styles } from "./styles";
 
 interface GastoVariavelCardProps {
@@ -21,13 +22,13 @@ export default function GastoVariavelCard({
         <View
           style={[
             styles.iconContainer,
-            { backgroundColor: colors.yellow[300] }, // Cor da categoria 'diario'
+            { backgroundColor: colors.orange[100] }, // Cor da categoria 'diario'
           ]}
         >
           <Ionicons
             name="cart-outline" // Ícone representativo de gastos recorrentes/diários
             size={24}
-            color={colors.yellow[500]}
+            color={colors.orange[300]}
           />
         </View>
 
@@ -41,6 +42,8 @@ export default function GastoVariavelCard({
 
         <Text style={styles.valor}>{formatarMoeda(gasto.valor)}</Text>
       </View>
+
+      <Divider color={colors.gray[200]} />
 
       <TouchableOpacity
         style={styles.deleteButton}
