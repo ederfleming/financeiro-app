@@ -19,6 +19,10 @@ export default function MenuScreen() {
     navigation.navigate("PrevisaoGastoDiario");
   }
 
+  function handleMetaEconomia() {
+    navigation.navigate("MetaEconomia");
+  }
+
   function handleReiniciarPanoramas() {
     Alert.alert(
       "⚠️ Atenção: Ação Irreversível",
@@ -27,6 +31,7 @@ export default function MenuScreen() {
         "• Todas as tags\n" +
         "• Todas as configurações\n" +
         "• Gastos variáveis\n" +
+        "• Meta de economia\n" +
         "• Dias conciliados\n\n" +
         "Esta ação NÃO PODE SER DESFEITA!\n\n" +
         "Deseja realmente continuar?",
@@ -48,7 +53,6 @@ export default function MenuScreen() {
     try {
       await resetStorage();
 
-      // Reset completo da navegação (não permite voltar)
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -66,7 +70,6 @@ export default function MenuScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* ✨ Header com botão de voltar */}
       <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -78,11 +81,9 @@ export default function MenuScreen() {
           <Text style={styles.headerTitle}>Menu</Text>
           <Text style={styles.headerSubtitle}>Configurações e opções</Text>
         </View>
-        {/* View vazia para manter o título centralizado */}
         <View style={styles.backButton} />
       </View>
 
-      {/* Menu Items */}
       <View style={styles.menuList}>
         {/* Previsão de Gasto Diário */}
         <TouchableOpacity
@@ -101,6 +102,25 @@ export default function MenuScreen() {
             <Text style={styles.menuItemTitle}>Previsão de Gasto Diário</Text>
             <Text style={styles.menuItemDescription}>
               Edite seus gastos variáveis mensais
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+        </TouchableOpacity>
+
+        {/* ✨ Meta de Economia - NOVO */}
+        <TouchableOpacity style={styles.menuItem} onPress={handleMetaEconomia}>
+          <View
+            style={[
+              styles.menuIconContainer,
+              { backgroundColor: colors.green[100] },
+            ]}
+          >
+            <Ionicons name="trending-up" size={24} color={colors.green[700]} />
+          </View>
+          <View style={styles.menuItemContent}>
+            <Text style={styles.menuItemTitle}>Meta de Economia</Text>
+            <Text style={styles.menuItemDescription}>
+              Defina quanto quer economizar por mês
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
@@ -131,7 +151,6 @@ export default function MenuScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Panorama$ v1.0.0</Text>
         <Text style={styles.footerSubtext}>

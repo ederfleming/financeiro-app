@@ -5,7 +5,8 @@ export type RootStackParamList = {
   ConfiguracaoInicial: undefined;
   MainTabs: undefined;
   Menu: undefined;
-  PrevisaoGastoDiario: undefined; // ← NOVA ROTA
+  PrevisaoGastoDiario: undefined;
+  MetaEconomia: undefined;
   Cadastro: {
     data?: string; // YYYY-MM-DD
     categoria?: Categoria;

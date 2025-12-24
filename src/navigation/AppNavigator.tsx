@@ -12,6 +12,7 @@ import ConfiguracaoInicialScreen from "@/screens/ConfiguracaoInicialScreen";
 import DetalhesScreen from "@/screens/DetalhesScreen";
 import LoginScreen from "@/screens/LoginScreen";
 import MenuScreen from "@/screens/MenuScreen";
+import MetaEconomiaScreen from "@/screens/MetaEconomiaScreen";
 import PanoramasScreen from "@/screens/PanoramasScreen";
 import PrevisaoGastoDiarioScreen from "@/screens/PrevisaoGastoDiarioScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
@@ -137,13 +138,17 @@ export default function AppNavigator() {
 
         <Stack.Screen name="Menu" component={MenuScreen} />
 
-        {/* ✨ NOVO: Previsão como modal */}
         <Stack.Screen
           name="PrevisaoGastoDiario"
           component={PrevisaoGastoDiarioScreen}
           options={{
             presentation: "modal",
           }}
+        />
+        <Stack.Screen
+          name="MetaEconomia"
+          component={MetaEconomiaScreen}
+          options={{ presentation: "modal" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
