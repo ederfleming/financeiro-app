@@ -5,12 +5,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Keys para o AsyncStorage
 const KEYS = {
-  TRANSACOES: "@financeiro:transacoes",
+  TRANSACOES: "@panorama$:transacoes",
   TRANSACOES_MES: (year: number, month: number) =>
-    `@financeiro:transacoes:${year}-${month}`,
-  CONFIG: "@financeiro:config",
-  DIAS_CONCILIADOS: "@financeiro:dias_conciliados",
-  TAGS: "@financeiro:tags",
+    `@panorama$:transacoes:${year}-${month}`,
+  CONFIG: "@panorama$:config",
+  DIAS_CONCILIADOS: "@panorama$:dias_conciliados",
+  TAGS: "@panorama$:tags",
 };
 
 // ==================== CONFIG ====================
@@ -42,6 +42,35 @@ export const getConfig = async (): Promise<Config> => {
       percentualEconomia: 0,
       onboardingCompleto: false,
     };
+  }
+};
+
+/**
+ * Atualiza parcialmente as configurações do app
+ */
+export const updateConfig = async (novaConfig: Partial<Config>): Promise<void> => {
+  try {
+    const configAtual = await getConfig();
+    const configAtualizada = { ...configAtual, ...novaConfig };
+    await setConfig(configAtualizada);
+  } catch (error) {
+    console.error('Erro ao atualizar config:', error);
+    throw error;
+  }
+};
+
+/**
+ * Reseta completamente o storage (remove todas as chaves do app)
+ * ⚠️ CUIDADO: Esta operação é IRREVERSÍVEL!
+ */
+export const resetStorage = async (): Promise<void> => {
+  try {
+    const allKeys = await AsyncStorage.getAllKeys();
+    const panoramaKeys = allKeys.filter((key) => key.startsWith('@panorama$:'));
+    await AsyncStorage.multiRemove(panoramaKeys);
+  } catch (error) {
+    console.error('Erro ao resetar storage:', error);
+    throw error;
   }
 };
 

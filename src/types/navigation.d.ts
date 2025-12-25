@@ -5,6 +5,7 @@ export type RootStackParamList = {
   ConfiguracaoInicial: undefined;
   MainTabs: undefined;
   Menu: undefined;
+  PrevisaoGastoDiario: undefined; // ← NOVA ROTA
   Cadastro: {
     data?: string; // YYYY-MM-DD
     categoria?: Categoria;
@@ -23,8 +24,10 @@ export type TabParamList = {
   Panoramas: undefined;
   Tags: undefined;
 };
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
-  }
-}
+
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
+
+export type TabScreenProps<T extends keyof TabParamList> = CompositeScreenProps;
+BottomTabScreenProps<TabParamList, T>,
+  NativeStackScreenProps<RootStackParamList>;

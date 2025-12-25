@@ -1,51 +1,37 @@
----
+## 🎯 Próximos Passos: Implementação da Tela de Menu
 
-## 🎯 Como Continuar
+Sou desenvolvedor front-end trabalhando no **Panorama$**. Após revisar o `RESUMO_PROJETO.md` e validar a lógica de cálculo atual, os objetivos são:
 
-Para iniciar uma nova sessão de desenvolvimento, forneça:
+### 1. Feature Selecionada
 
-1. **Qual feature:** Nome da funcionalidade a implementar
-2. **Quais arquivos:** Arquivos relacionados que devem ser analisados
-3. **Qual o objetivo:** Descrição clara do comportamento esperado
+* **Implementação da Tela de Menu e Subtelas**
 
-**Exemplo:**
-```
-"Vou implementar a tela de edição de gastos variáveis.
-Preciso que você veja: ConfiguracaoInicialScreen, storage.ts, Config interface.
-Objetivo: Permitir adicionar/editar/remover gastos variáveis após o onboarding,
-com recálculo automático do gastoDiarioPadrao."
-```
+### 2. Arquivos para Análise
 
-**Contexto sempre disponível:**
-- Este arquivo de resumo (`RESUMO_PROJETO.md`)
-- READMEs específicos de cada feature
-- Estrutura do projeto documentada acima
+* **Storage (`services/storage.ts`):** Para implementar o `updateConfig` e `resetStorage`.
+* **Utils (`utils/calculoSaldo.ts`):** Validar a integração com `calcularTotaisDia`.
+* **Setup (`screens/ConfiguracaoInicialScreen/`):** Base para a nova tela de Previsão.
+* **Navegação:** Adicionar as novas rotas no `AppNavigator`.
 
----
+### 3. Objetivos da Implementação
 
-Sou desenvolvedor front-end trabalhando no Panorama$.
-Acabei de ler o RESUMO_PROJETO.md acima.
+#### A. Subtela: Previsão de Gasto Diário
 
-1. **Qual feature:** Agora quero implementar: **Tela de Menu**
+* **Interface:** Criar uma "cópia" funcional da tela de cadastro inicial, adaptada para o contexto de edição.
+* **Gerenciamento:** Listar, adicionar e remover gastos variáveis.
+* **Lógica de Valor Default:** * Ao salvar, o novo `gastoDiarioPadrao` (calculado pela soma dos novos gastos variáveis) substitui o valor antigo no objeto `Config`.
+* **Comportamento Inteligente (Baseado em `calcularTotaisDia`):**
+* **Histórico:** Dias passados sem gasto real permanecem `0`, conforme a regra `else if (gastoDiarioReal === 0) { totais.diarios = 0; }`.
+* **Projeção:** O novo valor padrão será aplicado automaticamente para **Hoje** e **Futuro** onde não houver gasto real.
 
-2. **Quais arquivos:** Arquivos relacionados que devem ser analisados;
-  - Talvez seja importante você conhecer os arquivos de tipagem, navegação, storage, tela de cadastro inicial, temas e arquivos da pasta util.
 
-3. **Qual o objetivo:** 
-- Criar uma tela de menu, a princípio com 2 subtelas: Previsão de gasto diário e Reiniciar panoramas;
-  * Para a previsão de gastos diários devemos: 
-    - Criar uma tela acessível pelo Menu
-    - Listar gastos variáveis cadastrados
-    - Permitir adicionar/editar/remover gastos
-    - Permitir escolher a partir de qual data esse novo valor será aplicado
-    - O novo valor não pode substituir os valores já cadastrados nos dias anteriores ao escolhido
-    - Recalcular gastoDiarioPadrao automaticamente
-    - Salvar no storage e recarregar telas afetadas (Saldos, Panoramas)
-    - Pode reaproveitar o máximo possivel da tela de configurações iniciais
+* **Persistência:** Atualizar o storage e garantir que as telas de **Saldos** e **Panoramas** reflitam a nova projeção imediatamente.
 
-  * A segunda opção do menu deve ser 'Reiniciar Panoramas':
-    - Deve mostrar um modal de alerta avisando que todos os valores cadastrados serão perdidos se confirmado;
-    - Se cancelado, apenas fecha o modal;
-    - Se confirmado, deve zerar todos os valores cadastrados, todas as tags criadas, e deve redicionar para a tela de configurações iniciais para ser feito o setup inicial do projeto novamente.
-    
-Me pergunte se tiver dúvidas ou peça os arquivos necessários.
+#### B. Opção: Reiniciar Panoramas
+
+* **Segurança:** Modal de alerta com aviso de perda total de dados (transações, tags e configurações).
+* **Fluxo de Confirmação:** * Limpeza completa das chaves `@panorama:` no `AsyncStorage`.
+* **Reset de Navegação:** Redirecionar para `ConfiguracaoInicialScreen`, limpando a pilha de histórico (o usuário não pode "voltar" para o menu após o reset).
+
+
+Me pergunte o que precisar caso tenha duvidas e peça os arquivos necessários para que você possa analisar.

@@ -12,6 +12,7 @@ import { SaldoDia } from "@/types";
 import { getMonthName, isFimDeSemana } from "@/utils/dateUtils";
 
 import { usePanoramas } from "@/hooks/usePanoramas";
+import { colors } from "@/theme/colors";
 import { formatarMoedaAbreviada } from "@/utils/calculoSaldo";
 import { styles } from "./styles";
 
@@ -65,17 +66,35 @@ export default function PanoramasScreen() {
         {/* Lista de dias */}
         <View style={styles.colunaScroll}>
           {col.saldos.map((item) => {
-            const saldoStyle = getSaldoStyle(item.saldoAcumulado, 2000);
+            const saldoStyle = getSaldoStyle(item.saldoAcumulado, 2000); //TODO: Corrigir esse segundo parametro
             const mesAtual = new Date();
             const fimDeSemana = isFimDeSemana(item.dia, mesAtual);
 
+            const isToday =
+              item.dia === mesAtual.getDate() &&
+              col.mes.getMonth() === mesAtual.getMonth() &&
+              col.mes.getFullYear() === mesAtual.getFullYear();
+
             return (
-              <View key={item.dia} style={styles.diaRow}>
+              <View
+                key={item.dia}
+                style={[
+                  styles.diaRow,
+                  isToday && {
+                    borderBottomWidth: 2,
+                    borderBottomColor: colors.purple[500],
+                  },
+                ]}
+              >
                 <View style={styles.diaColuna}>
                   <View
                     style={[
                       styles.diaNumero,
                       fimDeSemana && styles.diaRowWeekend,
+                      isToday && {
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.purple[500],
+                      },
                     ]}
                   >
                     <Text

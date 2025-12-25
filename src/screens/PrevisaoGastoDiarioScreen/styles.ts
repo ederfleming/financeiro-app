@@ -1,0 +1,286 @@
+import { borderRadius, colors, fontSize, spacing, typography } from "@/theme/colors";
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.gray[50],
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.purple[500],
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  headerButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: fontSize.lg,
+    fontFamily: typography.semibold,
+    color: colors.white,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl * 2,
+  },
+  infoBox: {
+    flexDirection: "row",
+    backgroundColor: colors.purple[100],
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: fontSize.sm,
+    color: colors.gray[800],
+    marginLeft: spacing.sm,
+    lineHeight: 18,
+  },
+  section: {
+    marginBottom: spacing.xl,
+  },
+  label: {
+    fontSize: fontSize.md,
+    fontFamily: typography.semibold,
+    color: colors.gray[800],
+    marginBottom: spacing.sm,
+  },
+  diasButtonContainer: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  diasButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    borderRadius: borderRadius.lg,
+    alignItems: "center",
+  },
+  diasButtonActive: {
+    backgroundColor: colors.purple[500],
+    borderColor: colors.purple[500],
+  },
+  diasButtonText: {
+    fontSize: fontSize.md,
+    fontFamily: typography.medium,
+    color: colors.gray[800],
+  },
+  diasButtonTextActive: {
+    color: colors.white,
+    fontFamily: typography.semibold,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.purple[500],
+    borderRadius: borderRadius.md,
+  },
+  addButtonText: {
+    color: colors.white,
+    fontSize: fontSize.sm,
+    fontFamily: typography.semibold,
+    marginLeft: 4,
+  },
+  emptyState: {
+    paddingVertical: spacing.xxl * 2,
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    borderStyle: "dashed",
+  },
+  emptyStateText: {
+    fontSize: fontSize.md,
+    fontFamily: typography.medium,
+    color: colors.gray[600],
+    marginTop: spacing.md,
+  },
+  emptyStateSubtext: {
+    fontSize: fontSize.sm,
+    color: colors.gray[400],
+    marginTop: spacing.xs,
+    textAlign: "center",
+    paddingHorizontal: spacing.xl,
+  },
+  resumo: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
+  resumoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: spacing.sm,
+  },
+  resumoRowDestaque: {
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[200],
+    marginTop: spacing.sm,
+    paddingTop: spacing.md,
+  },
+  resumoLabel: {
+    fontSize: fontSize.md,
+    color: colors.gray[600],
+  },
+  resumoValue: {
+    fontSize: fontSize.md,
+    color: colors.gray[800],
+    fontFamily: typography.medium,
+  },
+  resumoLabelDestaque: {
+    fontSize: fontSize.lg,
+    color: colors.gray[800],
+    fontFamily: typography.semibold,
+  },
+  resumoValueDestaque: {
+    fontSize: fontSize.lg,
+    color: colors.purple[500],
+    fontFamily: typography.bold,
+  },
+  salvarButton: {
+    backgroundColor: colors.purple[500],
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.lg,
+    alignItems: "center",
+    marginTop: spacing.md,
+  },
+  salvarButtonDisabled: {
+    backgroundColor: colors.gray[300],
+  },
+  salvarTexto: {
+    color: colors.white,
+    fontSize: fontSize.lg,
+    fontFamily: typography.semibold,
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: borderRadius.xl,
+    borderTopRightRadius: borderRadius.xl,
+    paddingBottom: spacing.xxl,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray[200],
+  },
+  modalTitulo: {
+    fontSize: fontSize.xl,
+    fontFamily: typography.semibold,
+    color: colors.gray[900],
+  },
+  modalBody: {
+    padding: spacing.lg,
+  },
+  modalLabel: {
+    fontSize: fontSize.sm,
+    fontFamily: typography.medium,
+    color: colors.gray[700],
+    marginBottom: spacing.xs,
+    marginTop: spacing.md,
+  },
+  modalInput: {
+    backgroundColor: colors.gray[50],
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: fontSize.md,
+    color: colors.gray[900],
+  },
+  valorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    borderWidth: 2,
+    borderColor: colors.purple[500],
+  },
+  cifrao: {
+    fontSize: fontSize.xxxl,
+    fontFamily: typography.bold,
+    color: colors.gray[600],
+    marginRight: spacing.sm,
+  },
+  valorInput: {
+    flex: 1,
+    fontSize: fontSize.xxxl,
+    fontFamily: typography.bold,
+    color: colors.gray[800],
+  },
+  modalFooter: {
+    flexDirection: "row",
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.md,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: "center",
+  },
+  modalButtonSecondary: {
+    backgroundColor: colors.gray[100],
+  },
+  modalButtonPrimary: {
+    backgroundColor: colors.purple[500],
+  },
+  modalButtonTextSecondary: {
+    color: colors.gray[800],
+    fontSize: fontSize.md,
+    fontFamily: typography.semibold,
+  },
+  modalButtonTextPrimary: {
+    color: colors.white,
+    fontSize: fontSize.md,
+    fontFamily: typography.semibold,
+  },
+  input: {
+    backgroundColor: colors.gray[50],
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    fontSize: fontSize.lg,
+    fontFamily: typography.regular,
+    color: colors.gray[800],
+    borderWidth: 1,
+    borderColor: colors.gray[200],
+  },
+});
