@@ -46,7 +46,7 @@ export interface Config {
   gastosVariaveis: GastoVariavel[]; // Lista de gastos mensais fixos
   diasParaDivisao: 28 | 30 | 31;    // Base de cálculo do gasto diário
   gastoDiarioPadrao: number;         // Calculado automaticamente
-  percentualEconomia: number;        // Meta de economia (0-100%)
+  percentualEconomia: number;
   onboardingCompleto: boolean;
 }
 
@@ -67,13 +67,6 @@ export interface GastoVariavel {
   - Dia atual sem gasto real → `diarios = gastoDiarioPadrao` (estimativa)
   - Dias futuros sem gasto real → `diarios = gastoDiarioPadrao` (projeção)
   - Qualquer dia COM gasto real → `diarios = soma dos gastos reais`
-
-**Comportamento do `percentualEconomia`:** ← ✨ NOVO
-- Armazena meta de economia mensal (0% a 100%)
-- Exemplo: 15% = usuário quer economizar 15% das entradas
-- **Editável via:** MenuScreen → MetaEconomiaScreen → `updateConfig()`
-- **Uso futuro:** TotaisScreen exibirá progresso mensal (Meta vs Real)
-- **Cálculo da meta em R$:** `(mediaEntradas * percentualEconomia) / 100`
 
 > 📌 **Nota:** O gasto diário padrão é uma **estimativa/limite sugerido**, não um custo automático. Ele só impacta o saldo quando não há gasto real cadastrado no dia (hoje ou futuro).
 
@@ -132,30 +125,24 @@ await setConfig({
   gastosVariaveis: [...],
   diasParaDivisao: 30,
   gastoDiarioPadrao: 100,
-  percentualEconomia: 15, // Meta de 15%
+  percentualEconomia: 10,
   onboardingCompleto: true,
 });
 ```
 
-#### `updateConfig(novaConfig: Partial<Config>): Promise<void>` ← ✨ IMPLEMENTADO
+#### `updateConfig(novaConfig: Partial<Config>): Promise<void>` ← ✨ NOVO
 Atualiza parcialmente a configuração (merge inteligente).
 ```typescript
-// Exemplo 1: Atualiza gastos variáveis
+// Atualiza apenas gastosVariaveis e gastoDiarioPadrao
 await updateConfig({
   gastosVariaveis: [...novosGastos],
   diasParaDivisao: 28,
   gastoDiarioPadrao: 110.50,
 });
-
-// Exemplo 2: Atualiza apenas meta de economia
-await updateConfig({
-  percentualEconomia: 20, // Muda meta para 20%
-});
 ```
 
-**Casos de uso:**
-- PrevisaoGastoDiarioScreen: Edita `gastosVariaveis`, `diasParaDivisao`, `gastoDiarioPadrao`
-- MetaEconomiaScreen: Edita `percentualEconomia` ← ✨ NOVO
+**Uso principal:**
+- PrevisaoGastoDiarioScreen para editar gastos pós-onboarding
 - Evita reescrever campos não relacionados
 - Mantém integridade dos outros campos do Config
 
@@ -177,7 +164,7 @@ export async function updateConfig(novaConfig: Partial<Config>): Promise<void> {
 
 ### 5.2 Operações de Reset
 
-#### `resetStorage(): Promise<void>` ← ✨ IMPLEMENTADO
+#### `resetStorage(): Promise<void>` ← ✨ NOVO
 Remove TODAS as chaves do Panorama$ do AsyncStorage.
 
 **⚠️ ATENÇÃO: OPERAÇÃO IRREVERSÍVEL**
@@ -187,7 +174,6 @@ Remove:
 - Todas as tags
 - Todas as configurações
 - Gastos variáveis
-- Meta de economia ← ✨ INCLUÍDO
 - Dias conciliados
 - Cache mensal de transações
 
@@ -220,7 +206,7 @@ export async function resetStorage(): Promise<void> {
 ```
 MenuScreen → handleReiniciarPanoramas()
     ↓
-Alert.alert() com confirmação detalhada
+Alert.alert() com confirmação
     ↓
 await resetStorage()
     ↓
@@ -257,9 +243,8 @@ Retorna a configuração atual ou cria uma padrão se não existir.
 
 ```typescript
 const config = await getConfig();
-console.log(config.gastoDiarioPadrao);   // 100
-console.log(config.diasParaDivisao);     // 30
-console.log(config.percentualEconomia);  // 15
+console.log(config.gastoDiarioPadrao); // 100
+console.log(config.diasParaDivisao);   // 30
 ```
 
 #### `isOnboardingCompleto(): Promise<boolean>`
@@ -328,14 +313,101 @@ const transacoes = await getTransacoesPorDataComRecorrencia('2024-12-23');
 | **Excluir Ocorrência** | `excluirOcorrenciaRecorrente` | Adiciona à blacklist. A série permanece. |
 | **Excluir A Partir De** | `excluirRecorrenciaAPartirDe` | Define data fim. Encerra série mas preserva histórico. |
 | **Excluir Série** | `deleteTransacao` | Remoção total. Destrói tudo. |
-| **Atualizar Config Parcial** | `updateConfig` | Merge inteligente. Mantém outros campos. |
-| **Reset Completo** | `resetStorage` | Remove TUDO. Volta ao onboarding. |
+| **Atualizar Config Parcial** | `updateConfig` ← ✨ NOVO | Merge inteligente. Mantém outros campos. |
+| **Reset Completo** | `resetStorage` ← ✨ NOVO | Remove TUDO. Volta ao onboarding. |
+
+---
+
+## 7.1 Lógica do Gasto Diário (Categoria "diarios")
+
+A categoria "diarios" possui comportamento especial na tela de Saldos, combinando gastos reais com estimativa configurada.
+
+### Regra de Resolução (por dia)
+```typescript
+function resolverGastoDiario(data: string, transacoes: Transacao[], config: Config): number {
+  const gastoDiarioReal = soma(transacoes onde categoria === 'diarios' e data === data);
+  
+  // 1. Dias antes da dataInicial configurada
+  if (data < config.dataInicial) {
+    return 0;
+  }
+  
+  // 2. Tem gasto real cadastrado? Sempre usa o real
+  if (gastoDiarioReal > 0) {
+    return gastoDiarioReal;
+  }
+  
+  // 3. Sem gasto real: depende do período
+  const hoje = formatDate(new Date());
+  
+  if (data < hoje) {
+    return 0; // Passou sem gastar, fica zero
+  } else {
+    return config.gastoDiarioPadrao; // Hoje ou futuro = estimativa
+  }
+}
+```
+
+### Tabela de Comportamento
+
+| Período | Tem Gasto Real? | Resultado |
+|---------|-----------------|-----------|
+| Antes de `dataInicial` | Qualquer | `0` |
+| Passado | ✅ Sim | Soma dos gastos reais |
+| Passado | ❌ Não | `0` |
+| Hoje | ✅ Sim | Soma dos gastos reais |
+| Hoje | ❌ Não | `gastoDiarioPadrao` |
+| Futuro | ✅ Sim | Soma dos gastos reais |
+| Futuro | ❌ Não | `gastoDiarioPadrao` |
+
+### Exemplo Prático
+
+**Configuração:**
+- `gastoDiarioPadrao = R$ 100,00`
+- `dataInicial = 2024-12-01`
+
+**Cenário:**
+```
+Dia 18 (passado): Sem gasto cadastrado → diarios = R$ 0,00
+Dia 19 (passado): Gastou R$ 150 (2 refeições) → diarios = R$ 150,00
+Dia 20 (passado): Sem gasto cadastrado → diarios = R$ 0,00
+Dia 21 (HOJE): Sem gasto cadastrado → diarios = R$ 100,00 (estimativa)
+Dia 22 (futuro): Sem gasto cadastrado → diarios = R$ 100,00 (projeção)
+```
+
+**Impacto no Saldo:**
+- Dias 18 e 20: Saldo não é afetado (passou sem gastar)
+- Dia 19: Saldo desconta R$ 150 (gasto real)
+- Dias 21 e 22: Saldo desconta R$ 100 (estimativa/projeção)
+
+**Edição Pós-Onboarding:**
+```
+MenuScreen → PrevisaoGastoDiario
+    ↓
+Usuário adiciona "Netflix: R$ 45"
+    ↓
+Total: R$ 3.000 + R$ 45 = R$ 3.045
+    ↓
+Novo gastoDiarioPadrao: R$ 3.045 / 30 = R$ 101,50
+    ↓
+await updateConfig({ 
+  gastosVariaveis: [...], 
+  gastoDiarioPadrao: 101.50 
+})
+    ↓
+Próxima visita ao SaldosScreen/PanoramasScreen
+    ↓
+Dias futuros sem gasto usam R$ 101,50
+Dias passados sem gasto continuam R$ 0,00
+```
+
+> 📌 **Importante:** Esta lógica é implementada em `utils/calculoSaldo.ts` na função `calcularTotaisDia()`, que recebe o `config` como parâmetro para acessar `gastoDiarioPadrao` e `dataInicial`.
 
 ---
 
 ## 8. Fluxos de Integração
 
-### 8.1 Fluxo de Edição de Gastos Variáveis
+### 8.1 Fluxo de Edição de Gastos Variáveis ← ✨ NOVO
 
 ```
 PrevisaoGastoDiarioScreen monta
@@ -363,41 +435,14 @@ usam getConfig() no próximo mount
 Nova projeção aplicada automaticamente
 ```
 
-### 8.2 Fluxo de Definição de Meta de Economia ← ✨ NOVO
-
-```
-MetaEconomiaScreen monta
-    ↓
-const config = await getConfig()
-const transacoes = await getTransacoes()
-    ↓
-calcularMediaMensalEntradas(transacoes)
-    ↓
-Se média === 0 → Abre modal de estimativa
-Se média > 0 → Exibe total de entradas
-    ↓
-Usuário ajusta % via slider ou inputs
-    ↓
-await updateConfig({
-  percentualEconomia: X
-})
-    ↓
-Config persistido no AsyncStorage
-    ↓
-Retorna para MenuScreen
-    ↓
-(Futuro) TotaisScreen usa percentualEconomia
-para exibir progresso mensal
-```
-
-### 8.3 Fluxo de Reset Completo
+### 8.2 Fluxo de Reset Completo ← ✨ NOVO
 
 ```
 MenuScreen → "Reiniciar Panoramas"
     ↓
 Alert.alert(
   '⚠️ Ação Irreversível',
-  'Apagará: transações, tags, config, meta de economia...',
+  'Apagará: transações, tags, config...',
   [Cancelar, Confirmar]
 )
     ↓
@@ -437,7 +482,7 @@ Sem histórico de navegação
 |--------|------|-----------|
 | `getConfig()` | Leitura | Retorna config atual ou padrão |
 | `setConfig(config)` | Escrita | Substitui config completa |
-| `updateConfig(partial)` | Escrita | Atualiza campos específicos |
+| `updateConfig(partial)` | Escrita | Atualiza campos específicos ← ✨ NOVO |
 | `isOnboardingCompleto()` | Leitura | Verifica flag de onboarding |
 
 ### Transações
@@ -464,7 +509,7 @@ Sem histórico de navegação
 | `addTag(tag)` | Escrita | Adiciona nova tag |
 | `deleteTag(tag)` | Escrita | Remove tag |
 
-### Sistema
+### Sistema ← ✨ NOVO
 | Função | Tipo | Descrição |
 |--------|------|-----------|
 | `resetStorage()` | Escrita | Remove TODAS as chaves do app ⚠️ |
@@ -479,28 +524,17 @@ Sem histórico de navegação
 - [x] CRUD de Tags e Conciliação de dias.
 - [x] Sistema de gastos variáveis com cálculo automático de gasto diário padrão.
 - [x] Lógica inteligente de gasto diário (real vs estimado) baseada em período temporal.
-- [x] `updateConfig()` para edição parcial de configurações.
-- [x] `resetStorage()` para reset completo do aplicativo.
-- [x] Tela de edição de gastos variáveis pós-onboarding.
-- [x] Sistema de meta de economia com `percentualEconomia` ← ✅ IMPLEMENTADO
+- [x] **updateConfig()** para edição parcial de configurações ← ✅ IMPLEMENTADO
+- [x] **resetStorage()** para reset completo do aplicativo ← ✅ IMPLEMENTADO
+- [x] Tela de edição de gastos variáveis pós-onboarding ← ✅ IMPLEMENTADO
 - [ ] **Roadmap:** Implementar função de `rebuildIndices()` para reconstruir caches mensais a partir do global.
 - [ ] **Roadmap:** Exportação de dados em JSON para backup externo.
-- [ ] **Roadmap:** Indicadores visuais na coluna "diarios" (ícone diferente para estimativa vs real).
 - [ ] **Roadmap:** Validação de integridade de dados (detectar inconsistências entre cache e global).
 - [ ] **Roadmap:** Compressão de histórico antigo (arquivar transações de anos anteriores).
 
 ---
 
-**Última atualização:** 24/12/2024  
-**Versão:** 1.0.0  
-**Status:** ✅ Sistema de Meta de Economia Implementado
+**Última atualização:** 23/12/2024  
+**Versão:** 2.1.0  
+**Status:** ✅ updateConfig() e resetStorage() Implementados
 ```
-
----
-
-✅ **Storage README atualizado com:**
-1. Campo `percentualEconomia` documentado
-2. Novo fluxo de integração (8.2)
-3. MetaEconomiaScreen nos casos de uso
-4. Alert de reset atualizado
-5. Status e roadmap atualizados
