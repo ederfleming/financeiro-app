@@ -3,8 +3,7 @@ export type Categoria =
   | "saidas"
   | "diarios"
   | "cartao"
-  | "economia"
-  | "todas";
+  | "economia";
 
 export type Recorrencia =
   | "unica"
@@ -15,6 +14,14 @@ export type Recorrencia =
   | "cada28dias"
   | "mensal";
 
+// ==================== TAGS POR CATEGORIA ====================
+export interface TagsPorCategoria {
+  entradas: string[];
+  saidas: string[];
+  diarios: string[];
+  cartao: string[];
+  economia: string[];
+}
 
 export interface Transacao {
   id: string;

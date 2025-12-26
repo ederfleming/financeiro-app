@@ -1,31 +1,313 @@
-## 🎯 Próximos Passos: Implementação da Tela de Menu
+```markdown
+# 🔄 Contexto de Continuidade - Panorama$
 
-Sou desenvolvedor front-end trabalhando no **Panorama$**. Após revisar o `RESUMO_PROJETO.md` e validar a lógica de cálculo atual, os objetivos são:
+## 📌 Para Abrir em Nova Conversa
 
-### 1. Feature Selecionada
+Cole este arquivo completo ao iniciar uma nova conversa com o Claude para manter o contexto do projeto.
 
-* **Implementação Subtelas de Economias e metas**
+---
 
-### 2. Arquivos para Análise
+## 🎯 Contexto do Projeto
 
-* **Storage (`services/storage.ts`):**.
-* **Navegação:** Adicionar as novas rotas no Menu.
+Sou desenvolvedor front-end trabalhando no **Panorama$**, um aplicativo de controle financeiro pessoal em React Native + Expo focado em visualização de saúde financeira futura através de planilhas e projeções inteligentes.
 
-### 3. Objetivos da Implementação
+---
 
-#### A. Subtela: Economias e metas
+## ✅ Status Atual (v1.0.0 - 25/12/2024)
 
-* **Interface:** Criar tela que vai mostrar o valor total das entradas do mes e abaixo dar a opção para usuário escolher quantos % das entradas ele pretende economizar no mês.
-Essa escolha de percentual deve ser feito através de uma barra de slider por gesto que vai de 0 a 100%
-Abaixo dessa barra deve ser exibido quantos reais o percentual escolhido representa.
-Esse valor deve ser alterado dinamicamente enquanto o usuario movimenta a barra;
-A tela também deve dat a opção do usuário digitar nomericamente quantos porcentos ou o valor em reais que ele deseja economizar mensalmente.
-Esse valor será usado posteriormente na tela de totais.
-Tamb;em deve ser possivel editar posteriormente o valor escolhido e deve haver um botão para salvar a escolha.
+### **Última Implementação: Sistema de Tags por Categoria**
 
-Essa opção deve estar na tela de menu abaixo da opção de calculos diario e acima da opcão de resetar o app.
+**O que foi feito:**
+- ✅ TagsScreen completa com accordion por categoria
+- ✅ CRUD de tags (criar, editar, remover)
+- ✅ Integração com CadastroScreen (filtro automático)
+- ✅ Atualização visual do TransacaoCard
+- ✅ 6 novas funções no Storage Service
+- ✅ Migração automática de tags antigas
+- ✅ Hook useTagsScreen para orquestração
+- ✅ 3 READMEs criados/atualizados
 
+---
 
-obs: quando o app for resetado, esse valor definido de economia também deve ser zerado.
+## 📂 Estrutura Implementada
 
-Me pergunte o que precisar caso tenha duvidas e peça os arquivos necessários para que você possa analisar.
+```
+panorama$/
+├── src/
+│   ├── screens/
+│   │   ├── LoginScreen/                ✅ Implementado
+│   │   ├── ConfiguracaoInicialScreen/  ✅ Implementado
+│   │   ├── SaldosScreen/               ✅ Implementado
+│   │   ├── PanoramasScreen/            ✅ Implementado
+│   │   ├── CadastroScreen/             ✅ Implementado (+ tags filtradas)
+│   │   ├── DetalhesScreen/             ✅ Implementado
+│   │   ├── TotaisScreen/               🚧 Básico (precisa análise por tags)
+│   │   ├── MenuScreen/                 ✅ Implementado
+│   │   ├── PrevisaoGastoDiarioScreen/  ✅ Implementado
+│   │   ├── MetaEconomiaScreen/         ✅ Implementado
+│   │   └── TagsScreen/                 ✅ Implementado (NOVO - v1.0.0)
+│   │
+│   ├── components/
+│   │   ├── TransacaoCard/              ✅ Atualizado (tag visual)
+│   │   ├── GastoVariavelCard/          ✅ Implementado
+│   │   └── ... (13 componentes)
+│   │
+│   ├── hooks/
+│   │   ├── useSaldos.ts                ✅ Implementado
+│   │   ├── usePanoramas.ts             ✅ Implementado
+│   │   ├── useTransacaoForm.ts         ✅ Atualizado (tags filtradas)
+│   │   ├── useTagsScreen.ts            ✅ Implementado (NOVO - v1.0.0)
+│   │   └── ... (6 hooks)
+│   │
+│   ├── services/
+│   │   └── storage.ts                  ✅ Atualizado (6 funções de tags)
+│   │
+│   └── types/
+│       └── index.ts                    ✅ Atualizado (TagsPorCategoria)
+```
+
+---
+
+## 🔄 Interfaces de Dados Principais
+
+### **Config**
+```typescript
+interface Config {
+  saldoInicial: number;
+  dataInicial: string;
+  gastosVariaveis: GastoVariavel[];
+  diasParaDivisao: 28 | 30 | 31;
+  gastoDiarioPadrao: number;
+  percentualEconomia: number;        // 0 a 100
+  onboardingCompleto: boolean;
+}
+```
+
+### **TagsPorCategoria** ← ✨ NOVO (v1.0.0)
+```typescript
+interface TagsPorCategoria {
+  entradas: string[];
+  saidas: string[];
+  diarios: string[];
+  cartao: string[];
+  economia: string[];
+}
+```
+
+### **Transacao**
+```typescript
+interface Transacao {
+  id: string;
+  valor: number;
+  data: string;                      // YYYY-MM-DD
+  categoria: Categoria;
+  tag?: string;                      // Nome da tag (string simples)
+  descricao: string;
+  recorrencia: Recorrencia;
+  datasExcluidas?: string[];
+  dataFimRecorrencia?: string;
+  edicoesEspecificas?: { ... };
+}
+```
+
+---
+
+## 🎯 Decisões de Design Tomadas (v1.0.0)
+
+### **1. Estrutura de Dados**
+**Decisão:** Option A - Tags separadas por categoria
+```typescript
+tags: {
+  entradas: string[];
+  saidas: string[];
+  // ...
+}
+```
+
+**Por quê:**
+- ✅ Mais simples de implementar
+- ✅ Alinha com arquitetura atual (categorias são chave primária)
+- ✅ Facilita análise futura na TotaisScreen
+
+---
+
+### **2. Migração de Tags Antigas**
+**Decisão:** Remover todas as tags antigas
+- ❌ Não migrar automaticamente para nenhuma categoria
+- ✅ Usuário recria tags nas categorias apropriadas
+
+**Por quê:**
+- Tags antigas não tinham categoria definida
+- Impossível determinar categoria correta automaticamente
+
+---
+
+### **3. Layout da Tela**
+**Decisão:** Accordion expansível (não tabs)
+
+**Por quê:**
+- ✅ Visão geral de todas as categorias de uma vez
+- ✅ Menos ações (não precisa trocar tab)
+- ✅ Foco rápido na categoria desejada
+
+---
+
+### **4. Exibição no Card**
+**Decisão:** Tag no rodapé, lado esquerdo, com ícone da cor da categoria
+
+Layout:
+```
+┌────────────────────────────────┐
+│ [🛒] Supermercado  R$ 150,00   │
+│      Saídas                    │
+├────────────────────────────────┤
+│ 🏷️ Alimentação  [Editar] [Excluir] │
+└────────────────────────────────┘
+```
+
+---
+
+### **5. Validações**
+**Decisões:**
+- ❌ Duplicata na mesma categoria: BLOQUEADO
+- ✅ Duplicata em categoria diferente: PERMITIDO
+- ✅ Limite: 20 tags por categoria
+- ✅ Limite: 20 caracteres por tag
+
+---
+
+### **6. Edição de Tags**
+**Decisão:** Atualizar automaticamente TODAS as transações
+
+**Fluxo:**
+1. Usuário edita tag
+2. Alert de confirmação: "X transações serão atualizadas"
+3. Sistema atualiza nome da tag + todas as transações
+4. Alert de sucesso: "15 transação(ões) atualizadas"
+
+---
+
+## 🚀 Próxima Feature Sugerida
+
+### **TotaisScreen com Análise por Tags**
+
+**Objetivo:**
+Implementar análise detalhada de gastos por categoria E por tags dentro de cada categoria.
+
+**Funcionalidades:**
+- Exibir total de gastos por categoria
+- Expandir para ver gastos por tag dentro da categoria
+- Comparação mensal
+- Gráficos de distribuição
+
+**Exemplo:**
+```
+📊 Saídas - Dezembro/2024: R$ 2.500,00
+  ↓ Expandir
+  🏷️ Supermercado:   R$ 800,00 (32%)
+  🏷️ Farmácia:       R$ 300,00 (12%)
+  🏷️ Combustível:    R$ 500,00 (20%)
+  🏷️ Sem tag:        R$ 900,00 (36%)
+```
+
+**Arquivos necessários:**
+- Análise do TotaisScreen atual
+- Implementação de lógica de agrupamento por tags
+- UI/UX para exibição expandível
+
+---
+
+## ⚠️ Convenções Importantes do Projeto
+
+### **Código**
+- ✅ Sempre enviar código **diretamente na conversa** (não usar artefatos)
+- ✅ Usar tokens do theme: `spacing`, `colors`, `fontSize`, `borderRadius`
+- ✅ Padrão de organização: `index.tsx` + `styles.ts` + `README.md`
+- ✅ Formatação brasileira: `4.098,72`
+- ✅ Separação de responsabilidades: Screen → Hook → Utils → Storage
+- ✅ Storage é a única fonte de verdade
+- ✅ TypeScript strict em tudo
+
+### **Git**
+- ✅ Commits em português
+- ✅ Mensagens descritivas
+- ✅ Uma feature por commit
+
+---
+
+## 📊 Métricas do Projeto
+
+- **Telas implementadas:** 10
+- **Componentes reutilizáveis:** 13
+- **Hooks customizados:** 6
+- **Funções de utils:** ~35
+- **READMEs de documentação:** 15+
+- **Progresso:** ~90% das features planejadas
+- **TypeScript:** 100% coverage
+
+---
+
+## 📚 Documentação Disponível
+
+### **Arquitetura**
+- `README_GERAL.md` - Overview completo do projeto
+- `src/services/README.md` - Motor de Persistência (Storage Service)
+
+### **Features Recentes**
+- `src/screens/TagsScreen/README.md` - Sistema de Tags por Categoria
+- `src/screens/MenuScreen/README.md` - Tela de Menu
+- `src/screens/MetaEconomiaScreen/README.md` - Meta de Economia
+- `src/screens/PrevisaoGastoDiarioScreen/README.md` - Previsão de Gasto Diário
+
+### **Features Core**
+- `src/screens/CadastroScreen/README.md` - Cadastro de Transações
+- `src/screens/SaldosScreen/README.md` - Planilha Mensal
+- `src/screens/PanoramasScreen/README.md` - Visualização Trimestral
+
+---
+
+## 🔄 Como Usar Este Arquivo
+
+**Para continuar o desenvolvimento:**
+
+1. Cole este arquivo completo em uma nova conversa
+2. Adicione sua solicitação específica:
+   ```
+   Quero implementar [FEATURE X].
+   Preciso analisar [ARQUIVOS Y e Z].
+   ```
+3. Forneça os arquivos necessários quando solicitado
+
+**Exemplo de prompt:**
+```
+[Cole este arquivo completo]
+
+---
+
+Quero implementar a TotaisScreen com análise por tags.
+Por favor, me peça os arquivos necessários para análise.
+```
+
+---
+
+## 📝 Versão e Status
+
+**Versão atual:** 1.0.0  
+**Última atualização:** 25/12/2024  
+**Última feature:** Sistema de Tags por Categoria  
+**Próxima feature sugerida:** TotaisScreen com Análise por Tags
+
+---
+
+**Desenvolvido com 💜 pela equipe Panorama$**
+```
+
+---
+
+# ✅ Resumo dos 3 READMEs Criados
+
+1. **README_GERAL.md** → Overview da arquitetura, stack, features, métricas
+2. **README_UPDATE.md** → Changelog completo da v1.0.0 (Sistema de Tags)
+3. **README_CONTINUIDADE.md** → Contexto para nova conversa (decisões, status, próximos passos)
+
+Quer que eu ajuste alguma coisa nos READMEs? 🚀

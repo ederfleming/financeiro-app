@@ -292,4 +292,11 @@ export const styles = StyleSheet.create({
     fontFamily: typography.semibold,
     color: colors.gray[600],
   },
+  semTagsTexto: {
+    fontSize: fontSize.sm,
+    color: colors.gray[400],
+    textAlign: "center",
+    paddingVertical: spacing.md,
+    fontStyle: "italic",
+  },
 });

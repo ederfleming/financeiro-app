@@ -11,26 +11,21 @@ export const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.lg,
+    padding: spacing.md,
     marginBottom: spacing.md,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.gray[100],
   },
+
+  // ==================== HEADER ====================
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: spacing.md,
   },
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.md,
     justifyContent: "center",
     alignItems: "center",
     marginRight: spacing.md,
@@ -40,42 +35,65 @@ export const styles = StyleSheet.create({
   },
   descricao: {
     fontSize: fontSize.md,
-    fontFamily: typography.semibold,
-    color: colors.gray[800],
-    marginBottom: 4,
+    fontWeight: "600",
+    color: colors.gray[900],
+    marginBottom: spacing.xs,
   },
   metaContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
   },
   categoriaLabel: {
     fontSize: fontSize.sm,
-    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   separator: {
     fontSize: fontSize.sm,
-    fontFamily: typography.regular,
     color: colors.gray[400],
+    marginHorizontal: spacing.xs,
   },
   tag: {
     fontSize: fontSize.sm,
-    fontFamily: typography.regular,
     color: colors.gray[600],
   },
   valor: {
     fontSize: fontSize.lg,
-    fontFamily: typography.bold,
-    color: colors.gray[800],
+    fontWeight: "700",
+    color: colors.gray[900],
+    marginLeft: spacing.sm,
   },
+
+  // ==================== ACTIONS (TAG + BOTÕES) ====================
   actionsContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: spacing.lg,
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.gray[100],
-    paddingTop: spacing.md,
+  },
+
+  // Tag à esquerda
+  tagContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+  },
+  tagText: {
+    fontSize: fontSize.md,
+    fontFamily: typography.regular,
+    marginLeft: spacing.xs,
+    color: colors.gray[500],
+  },
+
+  // Botões à direita
+  actionButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
   },
   actionButton: {
     flexDirection: "row",
@@ -84,7 +102,7 @@ export const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: fontSize.sm,
-    fontFamily: typography.semibold,
+    fontWeight: "600",
     color: colors.purple[500],
   },
 });
