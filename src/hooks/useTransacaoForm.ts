@@ -5,7 +5,7 @@ import { Alert } from "react-native";
 import {
   addTransacao,
   editarOcorrenciaRecorrente,
-  getTags,
+  getTagsCategoria,
   getTransacoes,
   updateTransacao,
 } from "@/services/storage";
@@ -35,6 +35,7 @@ export function useTransacaoForm({
   const [descricao, setDescricao] = useState("");
   const [recorrencia, setRecorrencia] = useState<Recorrencia>("unica");
   const [tags, setTags] = useState<string[]>([]);
+  const [tagsDisponiveis, setTagsDisponiveis] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [transacaoOriginal, setTransacaoOriginal] = useState<Transacao | null>(
     null
@@ -56,10 +57,23 @@ export function useTransacaoForm({
     carregarDados();
   }, [transacaoId]);
 
-  const carregarDados = async () => {
-    const tagsCarregadas = await getTags();
-    setTags(tagsCarregadas);
+  useEffect(() => {
+    const carregarTags = async () => {
+      if (categoria) {
+        const tags = await getTagsCategoria(categoria);
+        setTagsDisponiveis(tags);
 
+        // Se a tag selecionada não existe mais na nova categoria, limpa
+        if (tagSelecionada && !tags.includes(tagSelecionada)) {
+          setTagSelecionada("");
+        }
+      }
+    };
+
+    carregarTags();
+  }, [categoria]);
+
+  const carregarDados = async () => {
     // Se tem transacaoId, é uma edição - carregar os dados
     if (transacaoId) {
       const todasTransacoes = await getTransacoes();
@@ -294,6 +308,7 @@ export function useTransacaoForm({
     data,
     categoria,
     tagSelecionada,
+    tagsDisponiveis,
     descricao,
     recorrencia,
     tags,

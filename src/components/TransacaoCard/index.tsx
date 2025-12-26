@@ -71,38 +71,53 @@ export default function TransacaoCard({
         <Text style={styles.valor}>{formatarMoeda(transacao.valor)}</Text>
       </View>
 
-      {/* Ações: Editar e Excluir */}
-      {showActions && (onEdit || onDelete) && (
+      {/* Ações: Tag + Editar e Excluir */}
+      {showActions && (onEdit || onDelete || transacao.tag) && (
         <View style={styles.actionsContainer}>
-          {onEdit && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => onEdit(transacao)}
-            >
+          {/* Tag à esquerda */}
+          {transacao.tag && (
+            <View style={styles.tagContainer}>
               <Ionicons
-                name="create-outline"
-                size={20}
-                color={colors.purple[500]}
+                name="pricetag"
+                size={16}
+                color={categoria?.color || colors.gray[600]}
               />
-              <Text style={styles.actionText}>Editar</Text>
-            </TouchableOpacity>
+              <Text style={[styles.tagText, ,]}>{transacao.tag}</Text>
+            </View>
           )}
 
-          {onDelete && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() => onDelete(transacao)}
-            >
-              <Ionicons
-                name="trash-outline"
-                size={20}
-                color={colors.red[500]}
-              />
-              <Text style={[styles.actionText, { color: colors.red[500] }]}>
-                Excluir
-              </Text>
-            </TouchableOpacity>
-          )}
+          {/* Botões à direita */}
+          <View style={styles.actionButtons}>
+            {onEdit && (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => onEdit(transacao)}
+              >
+                <Ionicons
+                  name="create-outline"
+                  size={20}
+                  color={colors.purple[500]}
+                />
+                <Text style={styles.actionText}>Editar</Text>
+              </TouchableOpacity>
+            )}
+
+            {onDelete && (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => onDelete(transacao)}
+              >
+                <Ionicons
+                  name="trash-outline"
+                  size={20}
+                  color={colors.red[500]}
+                />
+                <Text style={[styles.actionText, { color: colors.red[500] }]}>
+                  Excluir
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       )}
     </View>

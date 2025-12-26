@@ -48,7 +48,7 @@ export default function CadastroScreen() {
     tagSelecionada,
     descricao,
     recorrencia,
-    tags,
+    tagsDisponiveis, // ✨ NOVO: tags filtradas pela categoria
     loading,
     modalEdicaoVisible,
     modalRecorrenciaVisible,
@@ -244,47 +244,53 @@ export default function CadastroScreen() {
           {/* Seletor de Tag (Opcional) */}
           <View style={styles.section}>
             <Text style={styles.label}>Tag (opcional)</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.tagsContainer}
-            >
-              <TouchableOpacity
-                style={[
-                  styles.tagButton,
-                  !tagSelecionada && styles.tagButtonActive,
-                ]}
-                onPress={() => setTagSelecionada("")}
+            {tagsDisponiveis.length === 0 ? (
+              <Text style={styles.semTagsTexto}>
+                Nenhuma tag cadastrada para esta categoria
+              </Text>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.tagsContainer}
               >
-                <Text
-                  style={[
-                    styles.tagTexto,
-                    !tagSelecionada && styles.tagTextoActive,
-                  ]}
-                >
-                  Nenhuma
-                </Text>
-              </TouchableOpacity>
-              {tags.map((tag) => (
                 <TouchableOpacity
-                  key={tag}
                   style={[
                     styles.tagButton,
-                    tagSelecionada === tag && styles.tagButtonActive,
+                    !tagSelecionada && styles.tagButtonActive,
                   ]}
-                  onPress={() => setTagSelecionada(tag)}
+                  onPress={() => setTagSelecionada("")}
                 >
                   <Text
                     style={[
                       styles.tagTexto,
-                      tagSelecionada === tag && styles.tagTextoActive,
+                      !tagSelecionada && styles.tagTextoActive,
                     ]}
                   >
-                    {tag}
+                    Nenhuma
                   </Text>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+                {tagsDisponiveis.map((tag) => (
+                  <TouchableOpacity
+                    key={tag}
+                    style={[
+                      styles.tagButton,
+                      tagSelecionada === tag && styles.tagButtonActive,
+                    ]}
+                    onPress={() => setTagSelecionada(tag)}
+                  >
+                    <Text
+                      style={[
+                        styles.tagTexto,
+                        tagSelecionada === tag && styles.tagTextoActive,
+                      ]}
+                    >
+                      {tag}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
           </View>
 
           {/* Botão Salvar */}
