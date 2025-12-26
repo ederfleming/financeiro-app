@@ -199,6 +199,15 @@ Implementar análise detalhada de gastos por categoria E por tags dentro de cada
 - Expandir para ver gastos por tag dentro da categoria
 - Comparação mensal
 - Gráficos de distribuição
+- A tela deve ser uma nova Stack de navegação
+- Ela também deve possuir um cabeçalho igual a tela e saldos para seleção do mes e opção de back button a esquerda;
+- A tela também precisa ter algumas metricas que são elas:
+ - performance: soma das entradas menos todos os gastos mostrando o valor e abaixo se (sobrou dinheiro, faltou dinheiro ou ficou no 0 a 0)
+ - meta de economia: deve mostrar uma barra de progresso e o percentual economizado com base no valor estipulado em metas e economia, e algumas frases motivacionais embaixo da porcentagem incentivando o progresso da meta;
+ - custo de vida: soma de saidas + diário + cartão, mostrando o valor e abaixo uma descrição se está dentro da renda ou fora, assim como muito fora.
+ - diário médio: soma de gastos diários cadastrados no mês / pelo dia corrente, abaixo do titulo da categoria, mostrar o icone da categoria do gasto dividido pelo dia atual, a direita mostrar os valores e abaixo um 'velocímetro' com o gasto diario sugerido na tela de estimativa.
+
+Por favor, me peça os arquivos necessários para análise e qualquer duvida ou questão que não tenha ficado clara, me pergunte.
 
 **Exemplo:**
 ```
@@ -263,30 +272,6 @@ Implementar análise detalhada de gastos por categoria E por tags dentro de cada
 - `src/screens/CadastroScreen/README.md` - Cadastro de Transações
 - `src/screens/SaldosScreen/README.md` - Planilha Mensal
 - `src/screens/PanoramasScreen/README.md` - Visualização Trimestral
-
----
-
-## 🔄 Como Usar Este Arquivo
-
-**Para continuar o desenvolvimento:**
-
-1. Cole este arquivo completo em uma nova conversa
-2. Adicione sua solicitação específica:
-   ```
-   Quero implementar [FEATURE X].
-   Preciso analisar [ARQUIVOS Y e Z].
-   ```
-3. Forneça os arquivos necessários quando solicitado
-
-**Exemplo de prompt:**
-```
-[Cole este arquivo completo]
-
----
-
-Quero implementar a TotaisScreen com análise por tags.
-Por favor, me peça os arquivos necessários para análise.
-```
 
 ---
 
