@@ -64,12 +64,12 @@ export const styles = StyleSheet.create({
   },
   diaTexto: {
     fontSize: fontSize.md,
-    fontFamily: typography.bold,
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
   diaTextoWeekend: {
     fontSize: fontSize.md,
-    fontFamily: typography.bold,
+    fontFamily: typography.semibold,
     color: colors.white,
   },
   rowSaldoColuna: {
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   },
   saldoTexto: {
     fontSize: fontSize.md,
-    fontFamily: typography.bold,
+    fontFamily: typography.semibold,
     color: colors.gray[800],
   },
 });

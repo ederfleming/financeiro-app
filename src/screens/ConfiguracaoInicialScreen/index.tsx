@@ -15,9 +15,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import Button from "@/components/Button"; // ✨ Novo componente
+import Button from "@/components/Button";
 import GastoVariavelCard from "@/components/GastoVariavelCard";
-import { getConfig, setConfig } from "@/services/storage";
+import {
+  criarTagSaldoInicial,
+  criarTransacaoSaldoInicial,
+  existeTransacaoSaldoInicial,
+  getConfig,
+  setConfig,
+} from "@/services/storage";
 import { colors } from "@/theme/colors";
 import { GastoVariavel } from "@/types";
 import { RootStackParamList } from "@/types/navigation";
@@ -30,6 +36,11 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function ConfiguracaoInicialScreen() {
   const navigation = useNavigation<NavigationProp>();
 
+  // ========== ESTADOS DO STEP 0 (IDENTIFICAÇÃO) ========== ✨ NOVO
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+
   // Estados do Step 1
   const [saldoInicial, setSaldoInicial] = useState("");
   const [dataInicial, setDataInicial] = useState(formatDate(new Date()));
@@ -39,12 +50,12 @@ export default function ConfiguracaoInicialScreen() {
   const [diasParaDivisao, setDiasParaDivisao] = useState<28 | 30 | 31>(30);
   const [modalGastoVisible, setModalGastoVisible] = useState(false);
 
-  // ✨ Novos campos do Gasto
+  // Novos campos do Gasto
   const [novoGastoTitulo, setNovoGastoTitulo] = useState("");
   const [novoGastoDescricao, setNovoGastoDescricao] = useState("");
   const [novoGastoValor, setNovoGastoValor] = useState("");
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // ← ✨ MUDOU: Agora começa em 0
   const [loading, setLoading] = useState(false);
 
   // ========== UTILS & FORMATADORES ==========
@@ -75,6 +86,41 @@ export default function ConfiguracaoInicialScreen() {
       ? novaData.setDate(novaData.getDate() - 1)
       : novaData.setDate(novaData.getDate() + 1);
     setDataInicial(formatDate(novaData));
+  };
+
+  // ========== ✨ NOVO: FORMATADOR DE DATA DE NASCIMENTO ==========
+  const formatarDataNascimento = (texto: string) => {
+    // Remove tudo exceto números
+    const apenasNumeros = texto.replace(/[^0-9]/g, "");
+
+    if (apenasNumeros.length === 0) {
+      setDataNascimento("");
+      return;
+    }
+
+    let formatado = "";
+
+    // Formato: DD/MM/YYYY
+    if (apenasNumeros.length <= 2) {
+      formatado = apenasNumeros;
+    } else if (apenasNumeros.length <= 4) {
+      formatado = `${apenasNumeros.slice(0, 2)}/${apenasNumeros.slice(2)}`;
+    } else {
+      formatado = `${apenasNumeros.slice(0, 2)}/${apenasNumeros.slice(
+        2,
+        4
+      )}/${apenasNumeros.slice(4, 8)}`;
+    }
+
+    setDataNascimento(formatado);
+  };
+
+  // ========== ✨ NOVO: CONVERTER DATA DD/MM/YYYY PARA YYYY-MM-DD ==========
+  const converterDataParaISO = (dataBR: string): string => {
+    if (!dataBR || dataBR.length !== 10) return "";
+
+    const [dia, mes, ano] = dataBR.split("/");
+    return `${ano}-${mes}-${dia}`;
   };
 
   // ========== FUNÇÕES DO STEP 2 ==========
@@ -120,6 +166,40 @@ export default function ConfiguracaoInicialScreen() {
     return Math.round((total / diasParaDivisao) * 100) / 100;
   };
 
+  // ========== ✨ NOVO: VALIDAÇÃO DO STEP 0 ==========
+  const validarStep0 = (): boolean => {
+    if (!nome.trim()) {
+      Alert.alert("Atenção", "Informe como deseja ser chamado");
+      return false;
+    }
+
+    if (!email.trim()) {
+      Alert.alert("Atenção", "Informe seu email");
+      return false;
+    }
+
+    if (!dataNascimento || dataNascimento.length !== 10) {
+      Alert.alert(
+        "Atenção",
+        "Informe sua data de nascimento no formato DD/MM/AAAA"
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  // ========== ✨ NOVO: VALIDAÇÃO DO STEP 1 ==========
+  const validarStep1 = (): boolean => {
+    if (!saldoInicial) {
+      Alert.alert("Atenção", "Informe o saldo inicial");
+      return false;
+    }
+
+    return true;
+  };
+
+  // ========== ✨ ATUALIZADO: HANDLE FINALIZAR ==========
   const handleFinalizar = async () => {
     try {
       setLoading(true);
@@ -127,8 +207,27 @@ export default function ConfiguracaoInicialScreen() {
       const config = await getConfig();
       const gastoDiario = calcularGastoDiario();
 
+      // ✨ NOVO: Cria tag "Saldo Inicial" se não existir
+      await criarTagSaldoInicial();
+
+      // ✨ NOVO: Cria transação de saldo inicial (se não existir)
+      const jaExiste = await existeTransacaoSaldoInicial();
+      if (!jaExiste) {
+        await criarTransacaoSaldoInicial(
+          converterValorParaNumero(saldoInicial),
+          dataInicial
+        );
+      }
+
+      // Salva config completo
       await setConfig({
         ...config,
+        perfil: {
+          // ← ✨ NOVO
+          nome: nome.trim(),
+          email: email.trim(),
+          dataNascimento: converterDataParaISO(dataNascimento),
+        },
         saldoInicial: converterValorParaNumero(saldoInicial),
         dataInicial,
         gastosVariaveis,
@@ -139,9 +238,11 @@ export default function ConfiguracaoInicialScreen() {
 
       Alert.alert(
         "Sucesso",
-        `Gastos iniciais salvos com sucesso!\n\nGasto diário recomendado: ${formatarMoeda(
-          gastoDiario
-        )}\n\nSeus gastos variáveis podem ser editados posteriormente no menu de configurações.`,
+        `Configuração inicial concluída!\n\n${
+          gastoDiario > 0
+            ? `Gasto diário recomendado: ${formatarMoeda(gastoDiario)}`
+            : "Você pode adicionar gastos variáveis posteriormente no menu."
+        }`,
         [
           {
             text: "OK",
@@ -164,6 +265,19 @@ export default function ConfiguracaoInicialScreen() {
     setModalGastoVisible(false);
   };
 
+  // ========== ✨ NOVO: HANDLE PRÓXIMO STEP ==========
+  const handleProximoStep = () => {
+    if (step === 0) {
+      if (validarStep0()) {
+        setStep(1);
+      }
+    } else if (step === 1) {
+      if (validarStep1()) {
+        setStep(2);
+      }
+    }
+  };
+
   // ========== FORMATAÇÃO DE UI ==========
   const dataObj = parseDate(dataInicial);
   const dataFormatada = `${dataObj.getDate().toString().padStart(2, "0")}/${(
@@ -175,30 +289,105 @@ export default function ConfiguracaoInicialScreen() {
   const totalGastos = calcularTotalGastos();
   const gastoDiario = calcularGastoDiario();
 
+  // ========== ✨ NOVO: TÍTULO DO BOTÃO ==========
+  const getTituloBotao = () => {
+    if (step === 0 || step === 1) return "Próximo";
+    return "Finalizar";
+  };
+
+  // ========== ✨ NOVO: ÍCONE DO BOTÃO ==========
+  const getIconeBotao = () => {
+    if (step === 0 || step === 1) return "arrow-forward";
+    return "checkmark-done";
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        {/* Progress Indicator */}
+        {/* Progress Indicator ✨ ATUALIZADO */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View
               style={[
                 styles.progressFill,
-                { width: step === 1 ? "50%" : "100%" },
+                {
+                  width: step === 0 ? "33%" : step === 1 ? "66%" : "100%",
+                },
               ]}
             />
           </View>
-          <Text style={styles.progressText}>Etapa {step} de 2</Text>
+          <Text style={styles.progressText}>Etapa {step + 1} de 3</Text>
         </View>
 
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          {step === 1 ? (
+          {/* ========== ✨ NOVO: STEP 0 - IDENTIFICAÇÃO ========== */}
+          {step === 0 && (
+            <View>
+              <View style={styles.header}>
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name="person"
+                    size={60}
+                    color={colors.purple[500]}
+                  />
+                </View>
+                <Text style={styles.title}>Bem-vindo!</Text>
+                <Text style={styles.subtitle}>
+                  Vamos começar conhecendo você
+                </Text>
+              </View>
+
+              <View style={styles.form}>
+                <View style={styles.section}>
+                  <Text style={styles.label}>Como deseja ser chamado?</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={nome}
+                    onChangeText={setNome}
+                    placeholder="Ex: João"
+                    placeholderTextColor={colors.gray[400]}
+                    autoCapitalize="words"
+                  />
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.label}>Email</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholder="seuemail@exemplo.com"
+                    placeholderTextColor={colors.gray[400]}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                <View style={styles.section}>
+                  <Text style={styles.label}>Data de Nascimento</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={dataNascimento}
+                    onChangeText={formatarDataNascimento}
+                    placeholder="DD/MM/AAAA"
+                    placeholderTextColor={colors.gray[400]}
+                    keyboardType="numeric"
+                    maxLength={10}
+                  />
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* ========== STEP 1 - SALDO INICIAL ========== */}
+          {step === 1 && (
             <View>
               <View style={styles.header}>
                 <View style={styles.iconContainer}>
@@ -255,7 +444,10 @@ export default function ConfiguracaoInicialScreen() {
                 </View>
               </View>
             </View>
-          ) : (
+          )}
+
+          {/* ========== STEP 2 - GASTOS VARIÁVEIS ========== */}
+          {step === 2 && (
             <View>
               <View style={styles.header}>
                 <View style={styles.iconContainer}>
@@ -365,40 +557,26 @@ export default function ConfiguracaoInicialScreen() {
           )}
         </ScrollView>
 
-        {/* Footer com o novo Componente Button ✨ */}
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 12,
-            padding: 20,
-            borderTopWidth: 1,
-            borderTopColor: colors.gray[100],
-          }}
-        >
-          {step === 2 && (
+        {/* Footer ✨ ATUALIZADO */}
+        <View style={styles.footer}>
+          {step > 0 && (
             <Button
               title="Voltar"
               variant="outlined"
-              onPress={() => setStep(1)}
+              onPress={() => setStep(step - 1)}
               startIcon="arrow-back"
             />
           )}
           <Button
-            title={step === 1 ? "Próximo" : "Finalizar"}
-            onPress={
-              step === 1
-                ? () =>
-                    saldoInicial
-                      ? setStep(2)
-                      : Alert.alert("Erro", "Informe o saldo")
-                : handleFinalizar
-            }
+            title={getTituloBotao()}
+            onPress={step === 2 ? handleFinalizar : handleProximoStep}
             loading={loading}
-            endIcon={step === 1 ? "arrow-forward" : "checkmark-done"}
+            endIcon={getIconeBotao()}
           />
         </View>
       </KeyboardAvoidingView>
 
+      {/* Modal de Adicionar Gasto */}
       <Modal
         visible={modalGastoVisible}
         transparent

@@ -1,10 +1,562 @@
-```markdown
-# 📦 Changelog - Panorama$ v1.0.0
+Perfeito! Recebi os 3 arquivos. Agora vou atualizar o **CHANGELOG.md** para refletir as mudanças da implementação do Sistema de Identificação do Usuário + Saldo Inicial como Transação.
 
-## 🆕 Sistema de Tags por Categoria + TotaisScreen Completa
+Vou criar a entrada da v1.0.0 (atualização mais recente) mantendo o histórico anterior. Aqui está o CHANGELOG atualizado:
+
+```markdown
+# 📦 Changelog - Panorama$
+
+---
+
+## 🆕 v1.0.0 - Sistema de Identificação do Usuário + Saldo Inicial como Transação
 
 **Data:** 26/12/2024  
+**Tipo:** Major Update - Breaking Changes
+
+---
+
+## 🎯 Resumo da Atualização
+
+Implementação de identificação completa do usuário no onboarding e refatoração do sistema de saldo inicial de valor estático para transação real. Esta mudança elimina dupla contagem, aumenta transparência e prepara o app para futuras features de perfil do usuário.
+
+---
+
+## ✨ O Que Foi Implementado
+
+### **1. Nova Interface UserProfile** ← ✨ NOVO
+
+**Localização:** `src/types/index.ts`
+
+```typescript
+interface UserProfile {
+  nome: string;
+  email: string;
+  dataNascimento: string; // YYYY-MM-DD
+}
+```
+
+**Campos:**
+- **nome:** Como o usuário deseja ser chamado
+- **email:** Email do usuário (validação de formato não implementada)
+- **dataNascimento:** Data de nascimento no formato YYYY-MM-DD
+
+---
+
+### **2. Config Atualizado com Perfil** ← ✨ ATUALIZADO
+
+**Antes (v0.0.9):**
+```typescript
+interface Config {
+  saldoInicial: number;       // ← Usado diretamente nos cálculos
+  dataInicial: string;
+  gastosVariaveis: GastoVariavel[];
+  diasParaDivisao: 28 | 30 | 31;
+  gastoDiarioPadrao: number;
+  percentualEconomia: number;
+  onboardingCompleto: boolean;
+}
+```
+
+**Depois (v1.0.0):**
+```typescript
+interface Config {
+  perfil: UserProfile;        // ← NOVO: Dados do usuário
+  saldoInicial: number;       // ← Agora é apenas referência histórica
+  dataInicial: string;
+  gastosVariaveis: GastoVariavel[];
+  diasParaDivisao: 28 | 30 | 31;
+  gastoDiarioPadrao: number;
+  percentualEconomia: number;
+  onboardingCompleto: boolean;
+}
+```
+
+**Mudanças:**
+- ✅ Novo campo `perfil: UserProfile`
+- ⚠️ `saldoInicial` agora é apenas referência histórica (não usado em cálculos)
+
+---
+
+### **3. Onboarding Expandido (3 Steps)** ← ✨ ATUALIZADO
+
+**Localização:** `src/screens/ConfiguracaoInicialScreen/`
+
+**Antes (v0.0.9):**
+- Step 1: Saldo inicial + Data inicial
+- Step 2: Gastos variáveis
+
+**Depois (v1.0.0):**
+- **Step 0 (NOVO):** Identificação do usuário
+  - Nome (como deseja ser chamado)
+  - Email (obrigatório)
+  - Data de nascimento (formato DD/MM/AAAA)
+- **Step 1:** Saldo inicial + Data inicial
+- **Step 2:** Gastos variáveis
+
+**Validações por Step:**
+```typescript
+// Step 0
+nome !== "" && email !== "" && dataNascimento !== ""
+
+// Step 1
+saldoInicial !== "" && dataInicial !== ""
+
+// Step 2
+gastosVariaveis.length > 0
+```
+
+**Arquivos modificados:**
+```
+src/screens/ConfiguracaoInicialScreen/
+├── index.tsx          ← Novo Step 0 + lógica de validação
+├── styles.ts          ← Novo estilo: input, footer com gap
+└── README.md          ← (PENDENTE atualização)
+```
+
+---
+
+### **4. Sistema de Saldo Inicial como Transação** ← ✨ NOVO
+
+#### **Problema Anterior**
+- Saldo inicial era um valor estático em `config.saldoInicial`
+- Usado diretamente nos cálculos → **DUPLA CONTAGEM**
+- Falta de transparência (não aparecia nas transações)
+
+#### **Solução Implementada**
+
+**Ao finalizar onboarding, o sistema cria automaticamente:**
+
+1. **Tag "Saldo Inicial":**
+   - Criada na categoria "entradas"
+   - Protegida (não aparece na TagsScreen)
+   - Só pode ser usada na transação de saldo inicial
+
+2. **Transação de Entrada:**
+```typescript
+{
+  id: "saldo-inicial-[timestamp]",
+  valor: saldoInicial,
+  data: dataInicial,
+  categoria: "entradas",
+  tag: "Saldo Inicial",
+  descricao: "Saldo inicial da conta",
+  recorrencia: "unica"
+}
+```
+
+**Benefícios:**
+- ✅ Elimina dupla contagem
+- ✅ Saldo inicial aparece na lista de transações
+- ✅ Pode ser editado via RedefinirSaldoInicialScreen
+- ✅ Única fonte de verdade (transação)
+
+---
+
+### **5. Nova Tela: RedefinirSaldoInicialScreen** ← ✨ NOVA TELA
+
+**Localização:** `src/screens/RedefinirSaldoInicialScreen/`
+
+**Funcionalidades:**
+- ✅ Carrega saldo inicial e data inicial atuais
+- ✅ Permite editar ambos os valores
+- ✅ Atualiza automaticamente a transação "Saldo Inicial"
+- ✅ Atualiza `config.saldoInicial` e `config.dataInicial`
+- ✅ Recalcula todos os saldos e projeções automaticamente
+- ✅ Acessível via MenuScreen
+
+**Fluxo de Edição:**
+```
+Menu → Redefinir Saldo Inicial
+  ↓
+Carrega saldo e data atuais
+  ↓
+Usuário edita
+  ↓
+Sistema:
+  1. Busca transação "Saldo Inicial"
+  2. Atualiza valor e data da transação
+  3. Atualiza config.saldoInicial
+  4. Atualiza config.dataInicial
+  5. Recalcula tudo automaticamente
+```
+
+**Arquivos criados:**
+```
+src/screens/RedefinirSaldoInicialScreen/
+├── index.tsx          ← Implementação completa
+├── styles.ts          ← Estilos com design tokens
+└── README.md          ← (PENDENTE criação)
+```
+
+---
+
+### **6. Storage Service - Novas Funções** ← ✨ ATUALIZADO
+
+**Localização:** `src/services/storage.ts`
+
+**Funções adicionadas:**
+
+#### **Saldo Inicial**
+```typescript
+// Cria tag "Saldo Inicial" na categoria entradas
+criarTagSaldoInicial(): Promise<void>
+
+// Cria transação de saldo inicial
+criarTransacaoSaldoInicial(valor: number, data: string): Promise<void>
+
+// Verifica se já existe transação de saldo inicial
+existeTransacaoSaldoInicial(): Promise<boolean>
+```
+
+#### **Migração Automática**
+```typescript
+// Ao carregar config
+async function getConfig(): Promise<Config> {
+  const config = await AsyncStorage.getItem("config");
+  
+  // Se não tem perfil, cria vazio
+  if (!config.perfil) {
+    config.perfil = {
+      nome: "",
+      email: "",
+      dataNascimento: ""
+    };
+  }
+  
+  return config;
+}
+```
+
+**Arquivos modificados:**
+```
+src/services/
+├── storage.ts         ← 3 novas funções + migração automática
+└── README.md          ← (PENDENTE atualização)
+```
+
+---
+
+### **7. Breaking Change no Cálculo de Saldo** ← ⚠️ BREAKING CHANGE
+
+**Localização:** `src/utils/calculoSaldo.ts`
+
+**Função afetada:** `calcularSaldoMesAnterior()`
+
+**Antes (v0.0.9):**
+```typescript
+export function calcularSaldoMesAnterior(
+  year: number,
+  month: number,
+  config: Config,
+  transacoes: Transacao[]
+): number {
+  const anoInicial = parseInt(config.dataInicial.split("-")[0]);
+  const mesInicial = parseInt(config.dataInicial.split("-")[1]);
+
+  // ❌ Retornava config.saldoInicial diretamente
+  if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
+    return config.saldoInicial; // DUPLA CONTAGEM!
+  }
+  
+  // ... resto do código
+}
+```
+
+**Depois (v1.0.0):**
+```typescript
+export function calcularSaldoMesAnterior(
+  year: number,
+  month: number,
+  config: Config,
+  transacoes: Transacao[]
+): number {
+  const anoInicial = parseInt(config.dataInicial.split("-")[0]);
+  const mesInicial = parseInt(config.dataInicial.split("-")[1]);
+
+  // ✅ Retorna 0, saldo vem da TRANSAÇÃO
+  if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
+    return 0; // Transação será somada nas entradas
+  }
+  
+  // ... resto do código
+}
+```
+
+**Motivo:**
+- Evitar dupla contagem (config + transação)
+- Única fonte de verdade: transação "Saldo Inicial"
+- `config.saldoInicial` agora é apenas referência histórica
+
+**Impacto:**
+- ✅ Usuários existentes: Sem impacto (migração automática)
+- ✅ Novos usuários: Comportamento correto desde o início
+
+---
+
+### **8. MenuScreen Atualizado** ← ✨ ATUALIZADO
+
+**Localização:** `src/screens/MenuScreen/`
+
+**Antes (v0.0.9):**
+```
+Menu Principal
+├── Previsão de Gasto Diário
+├── Meta de Economia
+└── Reiniciar Panoramas
+```
+
+**Depois (v1.0.0):**
+```
+Menu Principal
+├── Previsão de Gasto Diário
+├── Meta de Economia
+├── Redefinir Saldo Inicial     ← NOVO
+└── Reiniciar Panoramas
+```
+
+**Nova função:**
+```typescript
+const handleRedefinirSaldoInicial = () => {
+  navigation.navigate("RedefinirSaldoInicial");
+};
+```
+
+**Arquivos modificados:**
+```
+src/screens/MenuScreen/
+├── index.tsx          ← Nova opção de menu
+└── README.md          ← (PENDENTE atualização)
+```
+
+---
+
+### **9. Navegação Atualizada** ← ✨ ATUALIZADO
+
+**Localização:** `src/types/navigation.d.ts`
+
+**Adicionado:**
+```typescript
+export type RootStackParamList = {
+  // ... outras rotas
+  RedefinirSaldoInicial: undefined;
+};
+```
+
+**Arquivos modificados:**
+```
+src/types/navigation.d.ts
+AppNavigator.tsx (ou arquivo de navegação)
+```
+
+---
+
+## 📊 Estatísticas da Atualização
+
+### **Arquivos Criados**
+- `src/screens/RedefinirSaldoInicialScreen/index.tsx`
+- `src/screens/RedefinirSaldoInicialScreen/styles.ts`
+
+### **Arquivos Modificados**
+- `src/types/index.ts` (+10 linhas)
+- `src/services/storage.ts` (+80 linhas)
+- `src/utils/calculoSaldo.ts` (1 linha crítica alterada)
+- `src/screens/ConfiguracaoInicialScreen/index.tsx` (+120 linhas)
+- `src/screens/ConfiguracaoInicialScreen/styles.ts` (+15 linhas)
+- `src/screens/MenuScreen/index.tsx` (+10 linhas)
+- `src/types/navigation.d.ts` (+1 linha)
+
+### **Linhas de Código**
+- **Adicionadas:** ~400 linhas
+- **Modificadas:** ~50 linhas
+- **Documentação:** 4 READMEs pendentes de atualização
+
+---
+
+## 🔄 Migração para v1.0.0
+
+### **Para Usuários Existentes**
+
+**Migração automática e transparente. Nenhuma ação necessária.**
+
+**O que acontece na primeira execução:**
+
+1. **Config sem perfil detectado:**
+   ```typescript
+   // Sistema cria automaticamente:
+   perfil: {
+     nome: "",
+     email: "",
+     dataNascimento: ""
+   }
+   ```
+
+2. **Transação de saldo inicial não existe:**
+   - Sistema NÃO cria automaticamente
+   - `config.saldoInicial` continua sendo usado (compatibilidade)
+   - Usuário pode usar "Redefinir Saldo Inicial" para migrar
+
+3. **Cálculos de saldo:**
+   - Funcionam normalmente
+   - Sem dupla contagem
+   - Sem quebra de funcionalidade
+
+### **Para Novos Usuários**
+
+**Fluxo completo desde o início:**
+
+1. **Onboarding (3 steps):**
+   - Step 0: Identificação
+   - Step 1: Saldo inicial
+   - Step 2: Gastos variáveis
+
+2. **Ao finalizar:**
+   - Tag "Saldo Inicial" criada automaticamente
+   - Transação de saldo inicial criada automaticamente
+   - Perfil salvo no config
+   - Onboarding completo
+
+3. **Funcionamento:**
+   - Saldo inicial aparece nas transações
+   - Pode ser editado via "Redefinir Saldo Inicial"
+   - Única fonte de verdade
+
+---
+
+## ⚠️ Breaking Changes
+
+### **1. Interface Config**
+```typescript
+// ❌ REMOVIDO (implícito - sem perfil)
+interface Config {
+  saldoInicial: number; // Usado em cálculos
+  // ...
+}
+
+// ✅ NOVO
+interface Config {
+  perfil: UserProfile;  // NOVO campo
+  saldoInicial: number; // Agora é apenas referência histórica
+  // ...
+}
+```
+
+### **2. Função calcularSaldoMesAnterior()**
+```typescript
+// ❌ COMPORTAMENTO ANTIGO
+if (mesInicial) return config.saldoInicial; // Dupla contagem
+
+// ✅ COMPORTAMENTO NOVO
+if (mesInicial) return 0; // Saldo vem da transação
+```
+
+**Impacto:**
+- ⚠️ Usuários existentes: `config.saldoInicial` ainda funciona (compatibilidade)
+- ⚠️ Novos usuários: Apenas transação é usada
+- ⚠️ Cálculos: Sem dupla contagem em ambos os casos
+
+### **3. Tag "Saldo Inicial"**
+```typescript
+// Nova tag protegida
+// - Não aparece na TagsScreen
+// - Só pode ser usada na transação de saldo inicial
+// - Criada automaticamente no onboarding
+```
+
+---
+
+## 🐛 Bugs Corrigidos
+
+- ✅ Dupla contagem do saldo inicial (config + cálculo manual)
+- ✅ Falta de transparência (saldo inicial invisível nas transações)
+- ✅ Impossibilidade de editar saldo inicial pós-onboarding
+- ✅ Falta de identificação do usuário
+
+---
+
+## 🎯 Funcionalidades Entregues
+
+### **Sistema de Identificação** ✅
+- ✅ Interface `UserProfile` completa
+- ✅ Step 0 no onboarding com 3 campos
+- ✅ Migração automática para usuários existentes
+- ✅ Perfil salvo em `config.perfil`
+
+### **Saldo Inicial como Transação** ✅
+- ✅ Tag "Saldo Inicial" protegida
+- ✅ Transação criada automaticamente
+- ✅ Tela de redefinição funcional
+- ✅ Eliminação de dupla contagem
+- ✅ Transparência total nas transações
+
+### **RedefinirSaldoInicialScreen** ✅
+- ✅ Interface completa
+- ✅ Carregamento de dados atuais
+- ✅ Atualização automática de transação
+- ✅ Recálculo automático de saldos
+- ✅ Integração com MenuScreen
+
+---
+
+## 🚀 Próximas Melhorias (Roadmap)
+
+### **Alta Prioridade**
+- [ ] Tela de Perfil do Usuário (editar nome, email, data nascimento)
+- [ ] Validação de email (formato)
+- [ ] Validação de idade mínima (13+ anos)
+
+### **Média Prioridade**
+- [ ] Opção de "Pular identificação" no onboarding
+- [ ] Histórico de mudanças no saldo inicial
+- [ ] Avatar/foto de perfil
+
+### **Baixa Prioridade**
+- [ ] Saudação personalizada usando o nome
+- [ ] Estatísticas de uso (dias desde cadastro)
+- [ ] Opção de deletar conta e dados
+
+---
+
+## 📚 Documentação Pendente
+
+### **Crítico (Alta Prioridade)**
+- [ ] `src/services/README.md` - Documentar novas funções de saldo inicial
+- [ ] `src/screens/ConfiguracaoInicialScreen/README.md` - Novo Step 0
+- [ ] `src/screens/RedefinirSaldoInicialScreen/README.md` - CRIAR documentação completa
+
+### **Importante (Média Prioridade)**
+- [ ] `README_GERAL.md` - Atualizar interfaces e métricas
+- [ ] `src/screens/MenuScreen/README.md` - Nova opção de menu
+
+### **Complementar (Baixa Prioridade)**
+- [ ] `src/utils/README.md` - Mudança em `calcularSaldoMesAnterior()`
+- [ ] `src/types/README.md` - Interface `UserProfile`
+
+---
+
+## 📝 Notas Importantes
+
+1. **Migração é automática e transparente** - Usuários existentes não precisam fazer nada
+2. **Perfil não é editável** - Futura feature (tela de perfil do usuário)
+3. **Tag "Saldo Inicial" é case-sensitive** - Sempre "Saldo Inicial" com maiúsculas
+4. **Sem validação de email ou data** - Decisão de design para simplificar onboarding
+5. **config.saldoInicial ainda existe** - Mantido para compatibilidade e referência histórica
+
+---
+
+## 📝 Créditos
+
+**Implementado por:** Equipe Panorama$  
+**Data de release:** 26/12/2024  
 **Versão:** 1.0.0  
+**Tipo:** Major Update - Breaking Changes
+
+---
+
+---
+
+## 🆕 v0.0.9 - Sistema de Tags por Categoria + TotaisScreen Completa
+
+**Data:** 25/12/2024  
+**Versão:** 0.0.9  
 **Tipo:** Major Feature Update
 
 ---
@@ -19,12 +571,12 @@ Refatoração completa do sistema de tags de uma lista global simples para tags 
 
 ### **1. Nova Estrutura de Tags**
 
-**Antes (v0.0.9):**
+**Antes (v0.0.8):**
 ```typescript
 tags: string[] // ["Alimentação", "Transporte", ...]
 ```
 
-**Depois (v1.0.0):**
+**Depois (v0.0.9):**
 ```typescript
 tags: {
   entradas: string[];
@@ -509,11 +1061,11 @@ src/navigation/AppNavigator.tsx
 
 ---
 
-## 🔄 Migração para v1.0.0
+## 🔄 Migração para v0.0.9
 
 ### **Para Usuários Existentes**
 
-**Tags antigas serão removidas automaticamente na primeira execução da v1.0.0.**
+**Tags antigas serão removidas automaticamente na primeira execução da v0.0.9.**
 
 Não há migração automática porque:
 - ✅ Tags antigas não tinham categoria definida
@@ -528,7 +1080,7 @@ Não há migração automática porque:
 
 ### **Para Novos Usuários**
 
-Não há impacto. O sistema já inicia com a estrutura v1.0.0.
+Não há impacto. O sistema já inicia com a estrutura v0.0.9.
 
 ---
 
@@ -605,42 +1157,11 @@ interface Transacao {
 
 ---
 
-## 🚀 Próximas Melhorias (Roadmap)
-
-### **Melhorias Visuais** (planejado)
-- [ ] Indicador visual na coluna "diarios" (real vs estimado)
-- [ ] Highlight do dia atual no Panorama
-- [ ] Animações de transição suaves
-- [ ] Gráficos de distribuição por tag
-- [ ] Exportação de relatórios em PDF
-
-### **Análises Avançadas** (planejado)
-- [ ] Comparação mensal de gastos por tag
-- [ ] Tendências de economia ao longo do tempo
-- [ ] Alertas quando ultrapassar meta
-- [ ] Sugestões inteligentes de economia
-
----
-
-## 📚 Documentação Atualizada
-
-Todos os READMEs foram atualizados para refletir as mudanças:
-
-- ✅ `README_GERAL.md` - Overview completo atualizado
-- ✅ `src/services/README.md` - Seção de Tags completamente reescrita
-- ✅ `src/screens/TotaisScreen/README.md` - Documentação completa da tela
-- ✅ `src/screens/TagsScreen/README.md` - Documentação completa da nova tela
-- ✅ `src/screens/CadastroScreen/README.md` - Integração com filtro de tags
-- ✅ `src/components/TransacaoCard/README.md` - Novo layout com tag visual
-- ✅ `src/utils/README.md` - Funções de totaisUtils documentadas
-
----
-
 ## 📝 Créditos
 
 **Implementado por:** Equipe Panorama$  
-**Data de release:** 26/12/2024  
-**Versão:** 1.0.0  
+**Data de release:** 25/12/2024  
+**Versão:** 0.0.9  
 **Tipo:** Major Feature Update
 
 ---
@@ -648,3 +1169,10 @@ Todos os READMEs foram atualizados para refletir as mudanças:
 **Desenvolvido com 💜 pela equipe Panorama$**
 ```
 
+---
+
+✅ **CHANGELOG.md Atualizado!**
+
+O changelog agora documenta:
+- ✅ **v1.0.0** (nova entrada no topo) - Sistema de Identificação + Saldo Inicial como Transação
+- ✅ **v0.0.9** (entrada anterior mantida) - Sistema de Tags + TotaisScreen

@@ -15,6 +15,7 @@ import MenuScreen from "@/screens/MenuScreen";
 import MetaEconomiaScreen from "@/screens/MetaEconomiaScreen";
 import PanoramasScreen from "@/screens/PanoramasScreen";
 import PrevisaoGastoDiarioScreen from "@/screens/PrevisaoGastoDiarioScreen";
+import RedefinirSaldoInicialScreen from "@/screens/RedefinirSaldoInicialScreen";
 import SaldosScreen from "@/screens/SaldosScreen";
 import TagsScreen from "@/screens/TagsScreen";
 import TotaisScreen from "@/screens/TotaisScreen";
@@ -149,6 +150,11 @@ export default function AppNavigator() {
           name="MetaEconomia"
           component={MetaEconomiaScreen}
           options={{ presentation: "modal" }}
+        />
+        <Stack.Screen
+          name="RedefinirSaldoInicial"
+          component={RedefinirSaldoInicialScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

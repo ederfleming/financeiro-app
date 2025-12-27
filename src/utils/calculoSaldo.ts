@@ -80,8 +80,14 @@ export const calcularSaldoMesAnterior = (
   const anoInicial = dataInicialConfig.getFullYear();
   const mesInicial = dataInicialConfig.getMonth();
 
+  // if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
+  //   return normalizar(config.saldoInicial);
+  // }
+
+  // ✨ CORRIGIDO: Se é o mês inicial ou anterior, retorna 0
+  // O saldo inicial virá da TRANSAÇÃO, não do config
   if (year < anoInicial || (year === anoInicial && month <= mesInicial)) {
-    return normalizar(config.saldoInicial);
+    return 0; // ← MUDOU de config.saldoInicial para 0
   }
 
   const mesAnterior = month === 0 ? 11 : month - 1;

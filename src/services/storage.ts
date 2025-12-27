@@ -19,10 +19,16 @@ export const getConfig = async (): Promise<Config> => {
     const config = await AsyncStorage.getItem(KEYS.CONFIG);
     if (!config) {
       const defaultConfig: Config = {
+        perfil: {
+          // ← ✨ NOVO
+          nome: "",
+          email: "",
+          dataNascimento: "",
+        },
         saldoInicial: 0,
         dataInicial: formatDate(new Date()),
-        gastosVariaveis: [], // ✨ NOVO
-        diasParaDivisao: 30, // ✨ NOVO
+        gastosVariaveis: [],
+        diasParaDivisao: 30,
         gastoDiarioPadrao: 0,
         percentualEconomia: 0,
         onboardingCompleto: false,
@@ -30,14 +36,31 @@ export const getConfig = async (): Promise<Config> => {
       await setConfig(defaultConfig);
       return defaultConfig;
     }
-    return JSON.parse(config);
+
+    const configParsed = JSON.parse(config);
+
+    // ✨ MIGRAÇÃO: Se não tem perfil, adiciona padrão
+    if (!configParsed.perfil) {
+      configParsed.perfil = {
+        nome: "",
+        email: "",
+        dataNascimento: "",
+      };
+    }
+
+    return configParsed;
   } catch (error) {
     console.error("Erro ao buscar config:", error);
     return {
+      perfil: {
+        nome: "",
+        email: "",
+        dataNascimento: "",
+      },
       saldoInicial: 0,
       dataInicial: formatDate(new Date()),
-      gastosVariaveis: [], // ✨ NOVO
-      diasParaDivisao: 30, // ✨ NOVO
+      gastosVariaveis: [],
+      diasParaDivisao: 30,
       gastoDiarioPadrao: 0,
       percentualEconomia: 0,
       onboardingCompleto: false,
@@ -583,5 +606,65 @@ export const getTagsCategoria = async (
   } catch (error) {
     console.error("Erro ao buscar tags da categoria:", error);
     return [];
+  }
+};
+
+// ==================== SALDO INICIAL ====================
+
+/**
+ * ✨ NOVO: Cria a tag "Saldo Inicial" se não existir
+ */
+export const criarTagSaldoInicial = async (): Promise<void> => {
+  try {
+    const tags = await getTags();
+
+    // Verifica se tag já existe
+    if (!tags.entradas.includes("Saldo Inicial")) {
+      tags.entradas.push("Saldo Inicial");
+      await setTags(tags);
+    }
+  } catch (error) {
+    console.error("Erro ao criar tag Saldo Inicial:", error);
+    throw error;
+  }
+};
+
+/**
+ * ✨ NOVO: Cria a transação de saldo inicial
+ */
+export const criarTransacaoSaldoInicial = async (
+  valor: number,
+  data: string
+): Promise<void> => {
+  try {
+    const transacao: Transacao = {
+      id: `saldo-inicial-${Date.now()}`,
+      valor,
+      data,
+      categoria: "entradas",
+      tag: "Saldo Inicial",
+      descricao: "Saldo inicial da conta",
+      recorrencia: "unica",
+    };
+
+    await addTransacao(transacao);
+  } catch (error) {
+    console.error("Erro ao criar transação de saldo inicial:", error);
+    throw error;
+  }
+};
+
+/**
+ * ✨ NOVO: Verifica se já existe transação de saldo inicial
+ */
+export const existeTransacaoSaldoInicial = async (): Promise<boolean> => {
+  try {
+    const transacoes = await getTransacoes();
+    return transacoes.some(
+      (t) => t.categoria === "entradas" && t.tag === "Saldo Inicial"
+    );
+  } catch (error) {
+    console.error("Erro ao verificar transação de saldo inicial:", error);
+    return false;
   }
 };

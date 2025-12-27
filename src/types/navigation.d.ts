@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Menu: undefined;
   PrevisaoGastoDiario: undefined;
   MetaEconomia: undefined;
+  RedefinirSaldoInicial: undefined;
   Cadastro: {
     data?: string; // YYYY-MM-DD
     categoria?: Categoria;

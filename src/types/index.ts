@@ -26,13 +26,13 @@ export interface TagsPorCategoria {
 export interface Transacao {
   id: string;
   valor: number;
-  data: string; // YYYY-MM-DD - Data inicial da recorrência
+  data: string;
   categoria: Categoria;
   tag?: string;
   descricao: string;
   recorrencia: Recorrencia;
-  datasExcluidas?: string[]; // Datas específicas onde a recorrência foi excluída
-  dataFimRecorrencia?: string; // ✨ NOVO: Data final da recorrência (YYYY-MM-DD)
+  datasExcluidas?: string[];
+  dataFimRecorrencia?: string;
   edicoesEspecificas?: {
     [data: string]: Partial<
       Omit<
@@ -53,13 +53,18 @@ export interface GastoVariavel {
   descricao?: string;
   valor: number;
 }
-
+export interface UserProfile {
+  nome: string;
+  email: string;
+  dataNascimento: string; // YYYY-MM-DD
+}
 export interface Config {
+  perfil: UserProfile;
   saldoInicial: number;
   dataInicial: string;
-  gastosVariaveis: GastoVariavel[]; // ✨ NOVO
-  diasParaDivisao: 28 | 30 | 31; // ✨ NOVO
-  gastoDiarioPadrao: number; // Calculado automaticamente
+  gastosVariaveis: GastoVariavel[];
+  diasParaDivisao: 28 | 30 | 31;
+  gastoDiarioPadrao: number;
   percentualEconomia: number;
   onboardingCompleto: boolean;
 }

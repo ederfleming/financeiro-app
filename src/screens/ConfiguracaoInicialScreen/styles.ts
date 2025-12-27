@@ -124,7 +124,31 @@ export const styles = StyleSheet.create({
     color: colors.blue[900],
     lineHeight: 20,
   },
+  input: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    fontSize: fontSize.lg,
+    fontFamily: typography.regular,
+    color: colors.gray[800],
+    borderWidth: 1,
+    borderColor: colors.purple[500],
+  },
+
+  // inputModal: {
+  //   backgroundColor: colors.gray[50],
+  //   borderRadius: borderRadius.lg,
+  //   padding: spacing.lg,
+  //   fontSize: fontSize.lg,
+  //   fontFamily: typography.regular,
+  //   color: colors.gray[800],
+  //   borderWidth: 1,
+  //   borderColor: colors.gray[200],
+  // },
+
   footer: {
+    flexDirection: "row",
+    gap: spacing.md,
     padding: spacing.xl,
     borderTopWidth: 1,
     borderTopColor: colors.gray[200],
@@ -307,16 +331,6 @@ export const styles = StyleSheet.create({
   },
   modalBody: {
     padding: spacing.xxl,
-  },
-  input: {
-    backgroundColor: colors.gray[50],
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    fontSize: fontSize.lg,
-    fontFamily: typography.regular,
-    color: colors.gray[800],
-    borderWidth: 1,
-    borderColor: colors.gray[200],
   },
   modalButton: {
     backgroundColor: colors.purple[500],

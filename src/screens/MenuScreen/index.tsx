@@ -22,6 +22,10 @@ export default function MenuScreen() {
   function handleMetaEconomia() {
     navigation.navigate("MetaEconomia");
   }
+  // ✨ NOVO
+  function handleRedefinirSaldoInicial() {
+    navigation.navigate("RedefinirSaldoInicial");
+  }
 
   function handleReiniciarPanoramas() {
     Alert.alert(
@@ -121,6 +125,27 @@ export default function MenuScreen() {
             <Text style={styles.menuItemTitle}>Meta de Economia</Text>
             <Text style={styles.menuItemDescription}>
               Defina quanto quer economizar por mês
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+        </TouchableOpacity>
+        {/* ✨ NOVO: Redefinir Saldo Inicial */}
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={handleRedefinirSaldoInicial}
+        >
+          <View
+            style={[
+              styles.menuIconContainer,
+              { backgroundColor: colors.blue[100] },
+            ]}
+          >
+            <Ionicons name="wallet" size={24} color={colors.blue[700]} />
+          </View>
+          <View style={styles.menuItemContent}>
+            <Text style={styles.menuItemTitle}>Redefinir Saldo Inicial</Text>
+            <Text style={styles.menuItemDescription}>
+              Altere o saldo e a data inicial
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
