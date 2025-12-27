@@ -8,8 +8,9 @@ interface CardMetricaProps {
   icones?: Array<{
     name: keyof typeof Ionicons.glyphMap;
     color: string;
-    description?: string
+    description?: string;
   }>;
+  iconSize?: number;
   valor?: string;
   valorCor?: string;
   subtitulo?: string;
@@ -20,6 +21,7 @@ interface CardMetricaProps {
 export default function CardMetrica({
   titulo,
   icones,
+  iconSize = 18,
   valor,
   valorCor,
   subtitulo,
@@ -37,7 +39,7 @@ export default function CardMetrica({
               <Fragment key={index}>
                 <Ionicons
                   name={icone.name}
-                  size={18}
+                  size={iconSize}
                   color={icone.color}
                   style={styles.icone}
                 />

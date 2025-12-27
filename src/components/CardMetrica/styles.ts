@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 2,
   },
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: fontSize.xl,
-    fontFamily: typography.semibold,
+    fontFamily: typography.medium,
     color: colors.gray[800],
   },
   iconesContainer: {
@@ -48,9 +48,9 @@ export const styles = StyleSheet.create({
     fontFamily: typography.regular,
   },
   description: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md,
     fontFamily: typography.regular,
     color: colors.gray[600],
-    marginLeft: 8
+    marginLeft: 8,
   },
 });

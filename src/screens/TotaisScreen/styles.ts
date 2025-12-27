@@ -107,7 +107,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   diarioMedioDivisor: {
-    fontSize: fontSize.xl,
+    fontSize: fontSize.lg,
     fontFamily: typography.semibold,
     color: colors.gray[600],
     marginLeft: spacing.sm,
@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   diarioMedioValor: {
-    fontSize: fontSize.xxxl,
+    fontSize: fontSize.xxl,
     fontFamily: typography.bold,
     color: colors.orange[300],
   },

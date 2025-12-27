@@ -18,7 +18,6 @@ export default function TotaisScreen() {
   const {
     mesAtual,
     loading,
-    config,
     totaisMes,
     totaisPorCategoria,
     diaAtualDoMes,
@@ -89,6 +88,7 @@ export default function TotaisScreen() {
         <CardMetrica
           titulo="Performance"
           icones={iconesPerformance}
+          iconSize={16}
           valor={formatarMoeda(performance)}
           valorCor={statusPerformance.cor}
           subtitulo={statusPerformance.texto}
@@ -102,6 +102,7 @@ export default function TotaisScreen() {
             { name: "wallet-outline", color: colors.green[900] },
             { name: "checkmark-circle", color: colors.green[500] },
           ]}
+          iconSize={16}
         >
           <View style={styles.economiaContainer}>
             {/* ✨ NOVO: Aviso se não houver entradas no mês */}
@@ -158,6 +159,7 @@ export default function TotaisScreen() {
         <CardMetrica
           titulo="Custo de vida"
           icones={iconesCustoDeVida}
+          iconSize={16}
           valor={formatarMoeda(custoDeVida)}
           valorCor={statusCustoDeVida.cor}
           subtitulo={statusCustoDeVida.texto}
@@ -174,6 +176,7 @@ export default function TotaisScreen() {
               description: formatarMoeda(gastoDiarioPadrao),
             },
           ]}
+          iconSize={16}
         >
           <View style={styles.diarioMedioContainer}>
             {/* Header com ícone e valores */}
@@ -181,7 +184,7 @@ export default function TotaisScreen() {
               <View style={styles.diarioMedioLeft}>
                 <Ionicons
                   name="cart-outline"
-                  size={24}
+                  size={20}
                   color={colors.orange[300]}
                 />
                 <Text style={styles.diarioMedioDivisor}>
